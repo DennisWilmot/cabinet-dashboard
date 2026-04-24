@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ——— Typography ——— */
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-display: var(--font-display), Georgia, serif;
+
+  /* Type scale: 1.33 ratio (perfect fourth), fixed rem for dashboard UI */
+  --text-display: 2.369rem;
+  --text-h1: 1.777rem;
+  --text-h2: 1.333rem;
+  --text-h3: 1rem;
+  --text-body: 0.875rem;
+  --text-caption: 0.75rem;
+  --text-micro: 0.625rem;
+
+  /* ——— Palette (OKLCH, neutrals tinted toward green hue ~155) ——— */
+  --color-page: oklch(97.5% 0.008 155);
+  --color-card: oklch(99% 0.004 155);
+  --color-sidebar: oklch(16% 0.01 155);
+
+  --color-border-default: oklch(88% 0.012 90);
+  --color-border-strong: oklch(78% 0.015 90);
+
+  --color-text-primary: oklch(18% 0.01 155);
+  --color-text-secondary: oklch(45% 0.01 155);
+  --color-text-inverse: oklch(97% 0.005 90);
+
+  --color-gold: oklch(83% 0.17 85);
+  --color-gold-light: oklch(95% 0.04 85);
+  --color-gold-dark: oklch(58% 0.13 75);
+
+  --color-jm-green: oklch(56% 0.16 155);
+  --color-jm-green-dark: oklch(42% 0.12 155);
+  --color-jm-green-light: oklch(95% 0.03 155);
+
+  --color-status-on-track: oklch(56% 0.16 155);
+  --color-status-at-risk: oklch(83% 0.17 85);
+  --color-status-off-track: oklch(55% 0.22 27);
+
+  --color-chart-current: oklch(56% 0.16 155);
+  --color-chart-prior: oklch(78% 0.015 90);
+  --color-chart-target: oklch(83% 0.17 85);
+  --color-chart-accent: oklch(18% 0.01 155);
+  --color-chart-grid: oklch(88% 0.012 90);
+  --color-chart-axis: oklch(45% 0.01 155);
+
+  /* ——— Spacing (4pt scale) ——— */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+/* Staggered page entrance */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+.stagger-6 { animation-delay: 300ms; }
