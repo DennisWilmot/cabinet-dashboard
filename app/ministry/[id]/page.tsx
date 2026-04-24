@@ -50,25 +50,30 @@ export default function MinistryPage() {
     <>
       <CabinetNav breadcrumbs={NAV_BREADCRUMBS} />
       <DashboardShell>
-        <div className="flex gap-[var(--space-3xl)]">
+        <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
           <div className="flex-1 min-w-0">
 
-            <header className="mb-[var(--space-2xl)] animate-fade-up">
-              <h1 className="text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
+            <header className="mb-[var(--space-lg)] sm:mb-[var(--space-2xl)] animate-fade-up">
+              <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
                 Ministry of Finance &amp; the Public Service
               </h1>
-              <p className="text-text-secondary text-[length:var(--text-body)] mt-[var(--space-xs)]">
+              <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
                 9 budget heads · Fiscal Year 2026-27
                 {hasActuals && ' · Reporting: September 2026'}
               </p>
             </header>
 
-            <div className="grid grid-cols-3 gap-[var(--space-xl)] pb-[var(--space-lg)] animate-fade-up stagger-2">
+            {/* Leadership on mobile — shown above metrics */}
+            <div className="lg:hidden mb-[var(--space-lg)] animate-fade-up stagger-2">
+              <LeadershipSidebar officers={mofLeadership} horizontal />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--space-lg)] sm:gap-[var(--space-xl)] pb-[var(--space-lg)] animate-fade-up stagger-2">
               <MetricCard label="Total Allocation" value={formatCurrency(overview.totalAllocation)}>
                 <div className="flex items-center gap-[var(--space-sm)]">
                   <YoYBadge current={overview.totalAllocation} prior={overview.priorYearAllocation} />
                 </div>
-                <div className="mt-[var(--space-sm)] flex gap-[var(--space-md)] text-[length:var(--text-caption)] text-text-secondary">
+                <div className="mt-[var(--space-sm)] flex flex-wrap gap-x-[var(--space-md)] gap-y-[var(--space-xs)] text-[length:var(--text-caption)] text-text-secondary">
                   <span>Recurrent: {formatCurrency(overview.recurrentTotal)}</span>
                   <span>Capital: {formatCurrency(overview.capitalTotal)}</span>
                 </div>
@@ -109,11 +114,11 @@ export default function MinistryPage() {
               </MetricCard>
             </div>
 
-            <section className="pt-[var(--space-lg)] pb-[var(--space-2xl)] animate-fade-up stagger-3">
-              <h2 className="text-[length:var(--text-h1)] font-bold text-text-primary mb-[var(--space-lg)]">
+            <section className="pt-[var(--space-lg)] pb-[var(--space-lg)] sm:pb-[var(--space-2xl)] animate-fade-up stagger-3">
+              <h2 className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary mb-[var(--space-md)] sm:mb-[var(--space-lg)]">
                 Budget Breakdown
               </h2>
-              <div className="grid grid-cols-3 gap-[var(--space-xl)]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--space-lg)] sm:gap-[var(--space-xl)]">
                 <BucketCard
                   title="Fixed Obligations"
                   subtitle={`~${formatPct(fixedObligations.pctOfMinistry)} of ministry budget`}
@@ -164,17 +169,21 @@ export default function MinistryPage() {
             </section>
 
             {hasActuals && (
-              <section className="py-[var(--space-2xl)] animate-fade-up stagger-4">
+              <section className="py-[var(--space-lg)] sm:py-[var(--space-2xl)] animate-fade-up stagger-4">
                 <h3 className="text-[length:var(--text-body)] font-semibold text-text-primary mb-[var(--space-base)]">
                   Ministry Spend Trajectory
                 </h3>
-                <SpendTimeSeries
-                  currentYear={overview.actuals}
-                  priorYear={overview.priorYearActuals}
-                  allocation={overview.totalAllocation}
-                  height={280}
-                />
-                <div className="flex items-center gap-[var(--space-lg)] mt-[var(--space-md)] text-[length:var(--text-caption)] text-text-secondary">
+                <div className="w-full overflow-x-auto -mx-[var(--space-base)] px-[var(--space-base)] sm:mx-0 sm:px-0">
+                  <div className="min-w-[480px]">
+                    <SpendTimeSeries
+                      currentYear={overview.actuals}
+                      priorYear={overview.priorYearActuals}
+                      allocation={overview.totalAllocation}
+                      height={280}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-[var(--space-lg)] gap-y-[var(--space-xs)] mt-[var(--space-md)] text-[length:var(--text-caption)] text-text-secondary">
                   <span className="flex items-center gap-[6px]">
                     <span className="inline-block w-4 h-[2px] bg-jm-green rounded-sm" />
                     FY 2026-27 Actual
@@ -192,7 +201,8 @@ export default function MinistryPage() {
             )}
           </div>
 
-          <aside className="w-56 flex-shrink-0">
+          {/* Leadership sidebar — desktop only */}
+          <aside className="hidden lg:block w-56 flex-shrink-0">
             <div className="sticky top-20 animate-fade-up stagger-5">
               <LeadershipSidebar officers={mofLeadership} />
             </div>

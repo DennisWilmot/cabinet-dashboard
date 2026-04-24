@@ -41,14 +41,14 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
 
   return (
     <nav className="sticky top-14 z-40 bg-page/95 backdrop-blur-sm border-b border-border-default">
-      <div className="max-w-7xl mx-auto px-[var(--space-lg)]">
+      <div className="max-w-7xl mx-auto px-[var(--space-base)] sm:px-[var(--space-lg)]">
         <div className="flex gap-[var(--space-xs)] overflow-x-auto py-[var(--space-sm)] -mb-px scrollbar-none">
           {items.map(({ id, label }) => (
             <button
               key={id}
               onClick={() => handleClick(id)}
               className={`
-                flex-shrink-0 px-[var(--space-md)] py-[var(--space-sm)] text-[length:var(--text-caption)] font-medium
+                flex-shrink-0 px-[var(--space-sm)] sm:px-[var(--space-md)] py-[var(--space-sm)] text-[length:var(--text-caption)] font-medium
                 rounded-sm transition-colors whitespace-nowrap
                 ${activeId === id
                   ? 'bg-sidebar text-text-inverse'

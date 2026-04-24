@@ -47,25 +47,25 @@ export function ProjectCard({ project, headless = false }: { project: CapitalPro
 function ContingencyView({ project: p }: { project: CapitalProject }) {
   return (
     <div className="space-y-[var(--space-base)]">
-      <div className="grid grid-cols-3 gap-[var(--space-xl)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Reserve Budget</p>
-          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
+          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
         </div>
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Drawn Down</p>
-          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
         </div>
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Remaining</p>
-          <p className="text-[length:var(--text-h2)] font-bold text-jm-green-dark">{formatCurrency(p.currentYearBudget - p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold text-jm-green-dark">{formatCurrency(p.currentYearBudget - p.currentYearSpent)}</p>
         </div>
       </div>
-      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed max-w-prose">{p.narrative}</p>
+      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">{p.narrative}</p>
       {p.mediumTermProjection && (
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-xs)]">Medium-term Trajectory</p>
-          <div className="flex gap-[var(--space-lg)] text-[length:var(--text-caption)]">
+          <div className="flex flex-wrap gap-[var(--space-md)] sm:gap-[var(--space-lg)] text-[length:var(--text-caption)]">
             {p.mediumTermProjection.map((v, i) => (
               <div key={i}>
                 <p className="font-semibold">{formatCurrency(v)}</p>
@@ -82,14 +82,14 @@ function ContingencyView({ project: p }: { project: CapitalProject }) {
 function StandardProjectView({ project: p }: { project: CapitalProject }) {
   return (
     <div className="space-y-[var(--space-base)]">
-      <div className="grid grid-cols-2 gap-[var(--space-xl)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Current Year Budget</p>
-          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
+          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
         </div>
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Current Year Spent</p>
-          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
         </div>
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Total Project Cost</p>
@@ -101,7 +101,7 @@ function StandardProjectView({ project: p }: { project: CapitalProject }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-[var(--space-xl)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-xs)]">Financial Progress</p>
           <div className="flex items-center gap-[var(--space-sm)]">
@@ -138,7 +138,7 @@ function StandardProjectView({ project: p }: { project: CapitalProject }) {
         </div>
       </div>
 
-      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed max-w-prose">{p.narrative}</p>
+      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">{p.narrative}</p>
 
       {p.milestones.length > 0 && (
         <div>

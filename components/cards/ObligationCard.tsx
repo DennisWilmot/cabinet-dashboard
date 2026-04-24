@@ -132,7 +132,7 @@ function DebtDetails({ details }: { details: DebtObligation['details'] }) {
 function PensionDetails({ details }: { details: PensionObligation['details'] }) {
   return (
     <div className="space-y-[var(--space-md)]">
-      <div className="grid grid-cols-3 gap-[var(--space-md)] text-[length:var(--text-body)]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-[var(--space-md)] text-[length:var(--text-body)]">
         <div>
           <p className="text-[length:var(--text-caption)] text-text-secondary">Total Pensioners</p>
           <p className="font-semibold">{formatNumber(details.pensionerCount)}</p>

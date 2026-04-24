@@ -57,8 +57,8 @@ export default function CapitalPage() {
           title={p.name}
           subtitle={`Code ${p.code} · ${formatCurrency(p.currentYearBudget)} budget`}
           headerRight={
-            <div className="flex items-center gap-[var(--space-md)]">
-              <span className={`text-[length:var(--text-caption)] font-semibold ${riskColors[p.riskLevel]}`}>
+            <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)]">
+              <span className={`text-[length:var(--text-caption)] font-semibold ${riskColors[p.riskLevel]} hidden sm:inline`}>
                 {p.riskLevel.charAt(0).toUpperCase() + p.riskLevel.slice(1)} Risk
               </span>
               {hasActuals && <StatusBadge status={pStatus.status} tooltip={pStatus.tooltip} size="sm" />}
@@ -78,18 +78,18 @@ export default function CapitalPage() {
       <DashboardShell>
         <div>
           <div id="overview" className="animate-fade-up scroll-mt-28">
-            <Link href="/ministry/mof" className="inline-flex items-center gap-[4px] text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
+            <Link href="/ministry/mof" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
               </svg>
               Back to Ministry Overview
             </Link>
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-[var(--space-xs)]">
               <div>
-                <h1 className="text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
+                <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
                   Capital Projects
                 </h1>
-                <p className="text-text-secondary text-[length:var(--text-body)] mt-[var(--space-xs)]">
+                <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
                   {capital.projects.length} projects
                   {hasActuals && ` · Avg physical progress: ${formatPct(avgPhysical)}`}
                 </p>
@@ -98,32 +98,36 @@ export default function CapitalPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-[var(--space-xl)] py-[var(--space-2xl)] border-b border-border-default animate-fade-up stagger-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-[var(--space-md)] sm:gap-[var(--space-xl)] py-[var(--space-lg)] sm:py-[var(--space-2xl)] border-b border-border-default animate-fade-up stagger-2">
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Total Allocation</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{formatCurrency(capital.totalAllocation)}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(capital.totalAllocation)}</p>
             </div>
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Total Spent</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{hasActuals ? formatCurrency(capital.totalSpent) : '—'}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{hasActuals ? formatCurrency(capital.totalSpent) : '—'}</p>
             </div>
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Utilization</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{hasActuals ? formatPct(utilPct) : '—'}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{hasActuals ? formatPct(utilPct) : '—'}</p>
             </div>
           </div>
 
           {hasActuals && (
-            <section className="py-[var(--space-2xl)] animate-fade-up stagger-3">
+            <section className="py-[var(--space-lg)] sm:py-[var(--space-2xl)] animate-fade-up stagger-3">
               <h3 className="text-[length:var(--text-body)] font-semibold mb-[var(--space-md)]">
                 Capital Spend Trajectory
               </h3>
-              <SpendTimeSeries
-                currentYear={capital.actuals}
-                priorYear={capital.priorYearActuals}
-                allocation={capital.totalAllocation}
-                height={220}
-              />
+              <div className="w-full overflow-x-auto -mx-[var(--space-base)] px-[var(--space-base)] sm:mx-0 sm:px-0">
+                <div className="min-w-[400px]">
+                  <SpendTimeSeries
+                    currentYear={capital.actuals}
+                    priorYear={capital.priorYearActuals}
+                    allocation={capital.totalAllocation}
+                    height={220}
+                  />
+                </div>
+              </div>
             </section>
           )}
 

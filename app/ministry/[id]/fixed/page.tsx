@@ -60,18 +60,18 @@ export default function FixedObligationsPage() {
       <DashboardShell>
         <div>
           <div id="overview" className="animate-fade-up scroll-mt-28">
-            <Link href="/ministry/mof" className="inline-flex items-center gap-[4px] text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
+            <Link href="/ministry/mof" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
               </svg>
               Back to Ministry Overview
             </Link>
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-[var(--space-xs)]">
               <div>
-                <h1 className="text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
+                <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
                   Fixed Obligations
                 </h1>
-                <p className="text-text-secondary text-[length:var(--text-body)] mt-[var(--space-xs)]">
+                <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
                   ~{formatPct(fixedObligations.pctOfMinistry)} of ministry budget · {fixedObligations.obligations.length} obligations
                 </p>
               </div>
@@ -79,39 +79,43 @@ export default function FixedObligationsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-[var(--space-xl)] py-[var(--space-2xl)] border-b border-border-default animate-fade-up stagger-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-[var(--space-md)] sm:gap-[var(--space-xl)] py-[var(--space-lg)] sm:py-[var(--space-2xl)] border-b border-border-default animate-fade-up stagger-2">
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Total Allocation</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{formatCurrency(fixedObligations.totalAllocation)}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(fixedObligations.totalAllocation)}</p>
             </div>
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Total Paid</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{hasActuals ? formatCurrency(fixedObligations.totalPaid) : '—'}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{hasActuals ? formatCurrency(fixedObligations.totalPaid) : '—'}</p>
             </div>
             <div>
               <p className="text-[length:var(--text-caption)] text-text-secondary">Utilization</p>
-              <p className="text-[length:var(--text-h1)] font-bold">{hasActuals ? formatPct(utilPct) : '—'}</p>
+              <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{hasActuals ? formatPct(utilPct) : '—'}</p>
             </div>
           </div>
 
           {hasActuals && (
-            <section className="py-[var(--space-2xl)] animate-fade-up stagger-3">
+            <section className="py-[var(--space-lg)] sm:py-[var(--space-2xl)] animate-fade-up stagger-3">
               <h3 className="text-[length:var(--text-body)] font-semibold mb-[var(--space-md)]">
                 Fixed Obligations Spend Trajectory
               </h3>
-              <SpendTimeSeries
-                currentYear={fixedObligations.actuals}
-                priorYear={fixedObligations.priorYearActuals}
-                allocation={fixedObligations.totalAllocation}
-                height={220}
-              />
+              <div className="w-full overflow-x-auto -mx-[var(--space-base)] px-[var(--space-base)] sm:mx-0 sm:px-0">
+                <div className="min-w-[400px]">
+                  <SpendTimeSeries
+                    currentYear={fixedObligations.actuals}
+                    priorYear={fixedObligations.priorYearActuals}
+                    allocation={fixedObligations.totalAllocation}
+                    height={220}
+                  />
+                </div>
+              </div>
             </section>
           )}
 
           <div className="animate-fade-up stagger-4">
             <ReorderableList
               items={cardItems}
-              className="grid grid-cols-2 gap-x-[var(--space-xl)] gap-y-[var(--space-lg)]"
+              className="grid grid-cols-1 md:grid-cols-2 gap-x-[var(--space-xl)] gap-y-[var(--space-lg)]"
             />
           </div>
         </div>
