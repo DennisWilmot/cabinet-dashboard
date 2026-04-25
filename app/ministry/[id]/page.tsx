@@ -13,18 +13,12 @@ import { UtilizationGauge } from '@/components/ui/UtilizationGauge';
 import { useMockData } from '@/lib/context';
 import { formatCurrency, formatPct, EXPECTED_UTILIZATION } from '@/lib/utils';
 import { deriveUtilizationStatus, deriveRevenueStatus } from '@/lib/status';
-import { mofLeadership } from '@/lib/people-data';
 
-import { useMofData } from './useMofData';
-
-const NAV_BREADCRUMBS = [
-  { label: 'Cabinet', href: '/' },
-  { label: 'Ministry of Finance' },
-];
+import { useMinistryData } from './useMofData';
 
 export default function MinistryPage() {
   const { mockDataEnabled } = useMockData();
-  const data = useMofData();
+  const data = useMinistryData();
   const hasActuals = data.overview.actuals.length > 0;
 
   const { overview, revenue, fixedObligations, operational, capital } = data;
@@ -46,75 +40,114 @@ export default function MinistryPage() {
     ? (overview.totalSpent / overview.totalAllocation) * 100
     : 0;
 
+  const hasRevenue = revenue.totalTarget > 0;
+
+  const entityCount = operational.entities.length
+    + fixedObligations.obligations.length
+    + capital.projects.length;
+
+  const breadcrumbs = [
+    { label: 'Cabinet', href: '/' },
+    { label: overview.shortName },
+  ];
+
+  const sidebarMetrics = (
+    <div className="space-y-[var(--space-lg)]">
+      <div>
+        <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Total Allocation</p>
+        <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+          {formatCurrency(overview.totalAllocation)}
+        </p>
+        <div className="mt-[var(--space-xs)]">
+          <YoYBadge current={overview.totalAllocation} prior={overview.priorYearAllocation} />
+        </div>
+        <div className="mt-[var(--space-xs)] flex flex-wrap gap-x-[var(--space-md)] text-[length:var(--text-caption)] text-text-secondary">
+          <span>Recurrent: {formatCurrency(overview.recurrentTotal)}</span>
+          <span>Capital: {formatCurrency(overview.capitalTotal)}</span>
+        </div>
+      </div>
+
+      <div className="border-t border-border-default pt-[var(--space-lg)]">
+        <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Budget Utilization</p>
+        <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+          {hasActuals ? formatPct(overallUtilPct) : '—'}
+        </p>
+        {hasActuals && (
+          <div className="mt-[var(--space-sm)]">
+            <UtilizationGauge actual={overallUtilPct} expected={EXPECTED_UTILIZATION} />
+          </div>
+        )}
+        {!hasActuals && (
+          <p className="text-[length:var(--text-caption)] text-text-secondary mt-[var(--space-xs)]">
+            Awaiting expenditure data
+          </p>
+        )}
+      </div>
+
+      {hasRevenue && (
+        <div className="border-t border-border-default pt-[var(--space-lg)]">
+          <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Revenue Performance</p>
+          <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+            {hasActuals ? formatCurrency(revenue.totalCollected) : '—'}
+          </p>
+          {hasActuals ? (
+            <>
+              <div className="flex items-center gap-[var(--space-sm)] mt-[var(--space-xs)]">
+                <span className="text-[length:var(--text-caption)] text-text-secondary">
+                  vs {formatCurrency(revenue.totalTarget)} target
+                </span>
+                <StatusBadge status={revenueStatus.status} tooltip={revenueStatus.tooltip} size="sm" />
+              </div>
+              <div className="text-[length:var(--text-caption)] mt-[var(--space-xs)]">
+                <span className={revenue.variancePct >= 0 ? 'text-jm-green-dark font-semibold' : 'text-status-off-track font-semibold'}>
+                  {revenue.variancePct >= 0 ? '+' : ''}{formatCurrency(revenue.variance)} ({revenue.variancePct >= 0 ? '+' : ''}{formatPct(revenue.variancePct)})
+                </span>
+              </div>
+              <div className="mt-[var(--space-md)]">
+                <RevenueSplitBar data={revenue.bySplit} />
+              </div>
+            </>
+          ) : (
+            <p className="text-[length:var(--text-caption)] text-text-secondary mt-[var(--space-xs)]">
+              Target: {formatCurrency(revenue.totalTarget)}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
-      <CabinetNav breadcrumbs={NAV_BREADCRUMBS} />
+      <CabinetNav breadcrumbs={breadcrumbs} />
       <DashboardShell>
         <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
           <div className="flex-1 min-w-0">
 
             <header className="mb-[var(--space-lg)] sm:mb-[var(--space-2xl)] animate-fade-up">
               <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
-                Ministry of Finance &amp; the Public Service
+                {overview.name}
               </h1>
               <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
-                9 budget heads · Fiscal Year 2026-27
+                {entityCount} budget heads · Fiscal Year 2026-27
                 {hasActuals && ' · Reporting: September 2026'}
               </p>
             </header>
 
-            {/* Leadership on mobile — shown above metrics */}
-            <div className="lg:hidden mb-[var(--space-lg)] animate-fade-up stagger-2">
-              <LeadershipSidebar officers={mofLeadership} horizontal />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--space-lg)] sm:gap-[var(--space-xl)] pb-[var(--space-lg)] animate-fade-up stagger-2">
-              <MetricCard label="Total Allocation" value={formatCurrency(overview.totalAllocation)}>
-                <div className="flex items-center gap-[var(--space-sm)]">
+            {/* Mobile: Leadership + metrics stacked */}
+            <div className="lg:hidden mb-[var(--space-xl)] animate-fade-up stagger-2">
+              <LeadershipSidebar officers={data.leadership} horizontal />
+              <div className="mt-[var(--space-lg)] grid grid-cols-2 gap-[var(--space-md)]">
+                <MetricCard label="Allocation" value={formatCurrency(overview.totalAllocation)}>
                   <YoYBadge current={overview.totalAllocation} prior={overview.priorYearAllocation} />
-                </div>
-                <div className="mt-[var(--space-sm)] flex flex-wrap gap-x-[var(--space-md)] gap-y-[var(--space-xs)] text-[length:var(--text-caption)] text-text-secondary">
-                  <span>Recurrent: {formatCurrency(overview.recurrentTotal)}</span>
-                  <span>Capital: {formatCurrency(overview.capitalTotal)}</span>
-                </div>
-              </MetricCard>
-
-              <MetricCard label="Budget Utilization" value={hasActuals ? formatPct(overallUtilPct) : '—'}>
-                {hasActuals && <UtilizationGauge actual={overallUtilPct} expected={EXPECTED_UTILIZATION} />}
-                {!hasActuals && (
-                  <p className="text-[length:var(--text-caption)] text-text-secondary mt-[var(--space-xs)]">
-                    Awaiting expenditure data
-                  </p>
-                )}
-              </MetricCard>
-
-              <MetricCard label="Revenue Performance" value={hasActuals ? formatCurrency(revenue.totalCollected) : '—'}>
-                {hasActuals ? (
-                  <>
-                    <div className="flex items-center gap-[var(--space-sm)] mb-[var(--space-sm)]">
-                      <span className="text-[length:var(--text-caption)] text-text-secondary">
-                        vs {formatCurrency(revenue.totalTarget)} target
-                      </span>
-                      <StatusBadge status={revenueStatus.status} tooltip={revenueStatus.tooltip} size="sm" />
-                    </div>
-                    <div className="text-[length:var(--text-caption)]">
-                      <span className={revenue.variancePct >= 0 ? 'text-jm-green-dark font-semibold' : 'text-status-off-track font-semibold'}>
-                        {revenue.variancePct >= 0 ? '+' : ''}{formatCurrency(revenue.variance)} ({revenue.variancePct >= 0 ? '+' : ''}{formatPct(revenue.variancePct)})
-                      </span>
-                    </div>
-                    <div className="mt-[var(--space-md)]">
-                      <RevenueSplitBar data={revenue.bySplit} />
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-[length:var(--text-caption)] text-text-secondary mt-[var(--space-xs)]">
-                    Target: {formatCurrency(revenue.totalTarget)}
-                  </p>
-                )}
-              </MetricCard>
+                </MetricCard>
+                <MetricCard label="Utilization" value={hasActuals ? formatPct(overallUtilPct) : '—'}>
+                  {hasActuals && <UtilizationGauge actual={overallUtilPct} expected={EXPECTED_UTILIZATION} />}
+                </MetricCard>
+              </div>
             </div>
 
-            <section className="pt-[var(--space-lg)] pb-[var(--space-lg)] sm:pb-[var(--space-2xl)] animate-fade-up stagger-3">
+            <section className="pb-[var(--space-lg)] sm:pb-[var(--space-2xl)] animate-fade-up stagger-3">
               <h2 className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary mb-[var(--space-md)] sm:mb-[var(--space-lg)]">
                 Budget Breakdown
               </h2>
@@ -122,7 +155,7 @@ export default function MinistryPage() {
                 <BucketCard
                   title="Fixed Obligations"
                   subtitle={`~${formatPct(fixedObligations.pctOfMinistry)} of ministry budget`}
-                  href="/ministry/mof/fixed"
+                  href={`/ministry/${overview.id}/fixed`}
                   allocation={fixedObligations.totalAllocation}
                   priorYearAllocation={fixedObligations.priorYearAllocation}
                   spent={fixedObligations.totalPaid}
@@ -138,7 +171,7 @@ export default function MinistryPage() {
                 <BucketCard
                   title="Operational Programmes"
                   subtitle={`~${formatPct(100 - fixedObligations.pctOfMinistry - (capital.totalAllocation / overview.totalAllocation * 100))} of ministry budget`}
-                  href="/ministry/mof/ops"
+                  href={`/ministry/${overview.id}/ops`}
                   allocation={operational.totalAllocation}
                   priorYearAllocation={operational.priorYearAllocation}
                   spent={operational.totalSpent}
@@ -154,7 +187,7 @@ export default function MinistryPage() {
                 <BucketCard
                   title="Capital Projects"
                   subtitle={`~${formatPct((capital.totalAllocation / overview.totalAllocation) * 100)} of ministry budget`}
-                  href="/ministry/mof/capital"
+                  href={`/ministry/${overview.id}/capital`}
                   allocation={capital.totalAllocation}
                   priorYearAllocation={capital.priorYearAllocation}
                   spent={capital.totalSpent}
@@ -201,10 +234,13 @@ export default function MinistryPage() {
             )}
           </div>
 
-          {/* Leadership sidebar — desktop only */}
-          <aside className="hidden lg:block w-56 flex-shrink-0">
+          {/* Sidebar — desktop only: Leadership + metrics */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-20 animate-fade-up stagger-5">
-              <LeadershipSidebar officers={mofLeadership} />
+              <LeadershipSidebar officers={data.leadership} />
+              <div className="mt-[var(--space-xl)] pt-[var(--space-xl)] border-t border-border-default">
+                {sidebarMetrics}
+              </div>
             </div>
           </aside>
         </div>

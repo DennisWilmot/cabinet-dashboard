@@ -12,19 +12,19 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useMockData } from '@/lib/context';
 import { formatCurrency, formatPct, formatNumber, EXPECTED_UTILIZATION } from '@/lib/utils';
 import { deriveUtilizationStatus } from '@/lib/status';
-import { useMofData } from '../useMofData';
-
-const NAV_BREADCRUMBS = [
-  { label: 'Cabinet', href: '/' },
-  { label: 'Finance', href: '/ministry/mof' },
-  { label: 'Operational Programmes' },
-];
+import { useMinistryData } from '../useMofData';
 
 export default function OperationalPage() {
   const { mockDataEnabled } = useMockData();
-  const data = useMofData();
-  const { operational } = data;
+  const data = useMinistryData();
+  const { operational, overview } = data;
   const hasActuals = operational.actuals.length > 0;
+
+  const breadcrumbs = [
+    { label: 'Cabinet', href: '/' },
+    { label: overview.shortName, href: `/ministry/${overview.id}` },
+    { label: 'Operational Programmes' },
+  ];
 
   const statusResult = deriveUtilizationStatus(operational.utilizationPct, EXPECTED_UTILIZATION);
 
@@ -52,12 +52,12 @@ export default function OperationalPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={NAV_BREADCRUMBS} />
+      <CabinetNav breadcrumbs={breadcrumbs} />
       <SectionNav items={sectionItems} />
       <DashboardShell>
         <div>
           <div id="overview" className="animate-fade-up scroll-mt-28">
-            <Link href="/ministry/mof" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
+            <Link href={`/ministry/${overview.id}`} className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
               </svg>
