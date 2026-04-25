@@ -1,6 +1,6 @@
 'use client';
 
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart, ReferenceLine } from 'recharts';
 import { CHART_COLORS } from '@/lib/chart-tokens';
 import type { MonthlySnapshot } from '@/lib/types';
 import { formatCurrency, formatPeriod } from '@/lib/utils';
@@ -32,24 +32,26 @@ export function SpendTimeSeries({
     prior: priorYear && priorYear[i] ? priorYear[i].cumulative : undefined,
   }));
 
+  const todayLabel = data.length > 0 ? data[data.length - 1].period : undefined;
+
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <ComposedChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: compact ? 0 : 5 }}>
+      <ComposedChart data={data} margin={{ top: 5, right: 25, bottom: 5, left: compact ? 0 : 5 }}>
         {!compact && (
           <XAxis
             dataKey="period"
-            tick={{ fontSize: 11, fill: AXIS_COLOR }}
+            tick={{ fontSize: 13, fill: AXIS_COLOR }}
             axisLine={{ stroke: GRID_COLOR }}
             tickLine={false}
           />
         )}
         {!compact && (
           <YAxis
-            tick={{ fontSize: 11, fill: AXIS_COLOR }}
+            tick={{ fontSize: 13, fill: AXIS_COLOR }}
             axisLine={false}
             tickLine={false}
             tickFormatter={v => formatCurrency(v)}
-            width={65}
+            width={75}
           />
         )}
         <Tooltip
@@ -58,7 +60,7 @@ export function SpendTimeSeries({
             name === 'current' ? 'FY 2026-27' : name === 'prior' ? 'FY 2025-26' : 'Expected Pace',
           ]}
           contentStyle={{
-            fontSize: 12,
+            fontSize: 14,
             borderRadius: 4,
             border: `1px solid ${GRID_COLOR}`,
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -98,6 +100,20 @@ export function SpendTimeSeries({
           strokeDasharray="4 4"
           dot={false}
         />
+        {todayLabel && (
+          <ReferenceLine
+            x={todayLabel}
+            stroke="oklch(50% 0.25 25)"
+            strokeWidth={2}
+            label={{
+              value: 'Today',
+              position: 'top',
+              fill: 'oklch(50% 0.25 25)',
+              fontSize: compact ? 10 : 13,
+              fontWeight: 700,
+            }}
+          />
+        )}
       </ComposedChart>
     </ResponsiveContainer>
   );

@@ -659,6 +659,12 @@ export const mofData: MinistryData = {
     obligations: allObligations,
     actuals: fixedActuals,
     priorYearActuals: fixedPY,
+    debtService: {
+      amortisationPaid: 89246,
+      interestPaid: 109697,
+      newBorrowing: 142000,
+      outstandingStock: 2847000,
+    },
   },
 
   operational: {

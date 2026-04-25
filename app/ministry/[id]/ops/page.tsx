@@ -41,7 +41,7 @@ export default function OperationalPage() {
         <CollapsibleCard
           id={e.id}
           title={e.name}
-          subtitle={`Head ${e.headCode}${e.headOfficer ? ` · ${e.headOfficer.name}` : ''}`}
+          subtitle={<>Head <span className="relative group/head inline cursor-help border-b border-dotted border-text-secondary/40">{e.headCode}<span className="invisible group-hover/head:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-52 px-3 py-2 text-[length:var(--text-caption)] text-page bg-text-primary rounded shadow-lg z-50 text-center leading-snug font-normal">Official reference number from the Estimates of Expenditure</span></span>{e.headOfficer ? ` · ${e.headOfficer.name}` : ''}</>}
           headerRight={hasActuals ? <StatusBadge status={eStatus.status} tooltip={eStatus.tooltip} size="sm" /> : undefined}
         >
           <EntityCard entity={e} headless />
@@ -55,7 +55,8 @@ export default function OperationalPage() {
       <CabinetNav breadcrumbs={breadcrumbs} />
       <SectionNav items={sectionItems} />
       <DashboardShell>
-        <div>
+        <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
+          <div className="flex-1 min-w-0">
           <div id="overview" className="animate-fade-up scroll-mt-28">
             <Link href={`/ministry/${overview.id}`} className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -74,6 +75,13 @@ export default function OperationalPage() {
               </div>
               {hasActuals && <StatusBadge status={statusResult.status} tooltip={statusResult.tooltip} />}
             </div>
+          </div>
+
+          {/* Mobile: description panel */}
+          <div className="lg:hidden mt-[var(--space-lg)] p-[var(--space-lg)] bg-card rounded-lg border border-border-default animate-fade-up stagger-2">
+            <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">
+              Operational programmes fund the ministry&apos;s day-to-day activities — staffing, administration, service delivery, and programme execution. Each entity (department or agency) operates under an approved establishment of posts with its own allocation and performance targets.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-md)] sm:gap-[var(--space-xl)] py-[var(--space-lg)] sm:py-[var(--space-2xl)] border-b border-border-default animate-fade-up stagger-2">
@@ -116,9 +124,54 @@ export default function OperationalPage() {
           <div className="animate-fade-up stagger-4">
             <ReorderableList
               items={cardItems}
-              className="grid grid-cols-1 md:grid-cols-2 gap-x-[var(--space-xl)] gap-y-[var(--space-lg)]"
+              className="space-y-[var(--space-xl)]"
             />
           </div>
+          </div>
+
+          {/* Sidebar — desktop only */}
+          <aside className="hidden lg:block w-72 flex-shrink-0">
+            <div className="sticky top-20 animate-fade-up stagger-5">
+              <h3 className="text-[length:var(--text-body)] font-semibold text-text-primary uppercase tracking-widest mb-[var(--space-md)]">About</h3>
+              <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">
+                Operational programmes fund the ministry&apos;s day-to-day activities — staffing, administration, service delivery, and programme execution. Each entity (department or agency) operates under an approved establishment of posts with its own allocation and performance targets.
+              </p>
+              <div className="mt-[var(--space-xl)] pt-[var(--space-xl)] border-t border-border-default space-y-[var(--space-lg)]">
+                <div>
+                  <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Total Allocation</p>
+                  <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+                    {formatCurrency(operational.totalAllocation)}
+                  </p>
+                </div>
+                <div className="border-t border-border-default pt-[var(--space-lg)]">
+                  <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Entities</p>
+                  <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+                    {operational.entities.length}
+                  </p>
+                </div>
+                <div className="border-t border-border-default pt-[var(--space-lg)]">
+                  <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Approved Posts</p>
+                  <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+                    {formatNumber(operational.totalApprovedPosts)}
+                  </p>
+                  <p className="text-[length:var(--text-caption)] text-text-secondary mt-[var(--space-xs)]">
+                    {formatPct(operational.vacancyRate)} vacancy rate
+                  </p>
+                </div>
+                {hasActuals && (
+                  <div className="border-t border-border-default pt-[var(--space-lg)]">
+                    <p className="text-[length:var(--text-caption)] text-text-secondary font-medium">Utilization</p>
+                    <p className="text-[length:var(--text-h2)] font-bold text-text-primary tracking-tight mt-[2px]">
+                      {formatPct(operational.utilizationPct)}
+                    </p>
+                    <div className="flex items-center gap-[var(--space-sm)] mt-[var(--space-xs)]">
+                      <StatusBadge status={statusResult.status} tooltip={statusResult.tooltip} size="sm" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </aside>
         </div>
       </DashboardShell>
     </>

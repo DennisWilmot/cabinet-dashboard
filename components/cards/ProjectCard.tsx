@@ -46,26 +46,26 @@ export function ProjectCard({ project, headless = false }: { project: CapitalPro
 
 function ContingencyView({ project: p }: { project: CapitalProject }) {
   return (
-    <div className="space-y-[var(--space-base)]">
-      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
+    <div className="space-y-[var(--space-lg)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)] pb-[var(--space-lg)] border-b border-border-default">
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Reserve Budget</p>
-          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Reserve Budget</p>
+          <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Drawn Down</p>
-          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Drawn Down</p>
+          <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Remaining</p>
-          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold text-jm-green-dark">{formatCurrency(p.currentYearBudget - p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Remaining</p>
+          <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-jm-green-dark">{formatCurrency(p.currentYearBudget - p.currentYearSpent)}</p>
         </div>
       </div>
-      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">{p.narrative}</p>
+      <p className="text-[length:var(--text-h3)] text-text-secondary leading-relaxed">{p.narrative}</p>
       {p.mediumTermProjection && (
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-xs)]">Medium-term Trajectory</p>
-          <div className="flex flex-wrap gap-[var(--space-md)] sm:gap-[var(--space-lg)] text-[length:var(--text-caption)]">
+          <p className="text-[length:var(--text-body)] text-text-secondary mb-[var(--space-xs)]">Medium-term Trajectory</p>
+          <div className="flex flex-wrap gap-[var(--space-md)] sm:gap-[var(--space-lg)] text-[length:var(--text-body)]">
             {p.mediumTermProjection.map((v, i) => (
               <div key={i}>
                 <p className="font-semibold">{formatCurrency(v)}</p>
@@ -81,48 +81,48 @@ function ContingencyView({ project: p }: { project: CapitalProject }) {
 
 function StandardProjectView({ project: p }: { project: CapitalProject }) {
   return (
-    <div className="space-y-[var(--space-base)]">
-      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
+    <div className="space-y-[var(--space-lg)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)] pb-[var(--space-lg)] border-b border-border-default">
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Current Year Budget</p>
-          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Current Year Budget</p>
+          <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(p.currentYearBudget)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Current Year Spent</p>
-          <p className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Current Year Spent</p>
+          <p className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold">{formatCurrency(p.currentYearSpent)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Total Project Cost</p>
-          <p className="text-[length:var(--text-body)] font-semibold">{formatCurrency(p.totalProjectCost)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Total Project Cost</p>
+          <p className="text-[length:var(--text-h3)] font-semibold">{formatCurrency(p.totalProjectCost)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Cumulative Spend</p>
-          <p className="text-[length:var(--text-body)] font-semibold">{formatCurrency(p.cumulativeSpend)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Cumulative Spend</p>
+          <p className="text-[length:var(--text-h3)] font-semibold">{formatCurrency(p.cumulativeSpend)}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-xl)]">
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-xs)]">Financial Progress</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary mb-[var(--space-xs)]">Financial Progress</p>
           <div className="flex items-center gap-[var(--space-sm)]">
-            <div className="flex-1 h-[6px] bg-border-default/30 rounded-sm overflow-hidden">
+            <div className="flex-1 h-[8px] bg-border-default/30 rounded-sm overflow-hidden">
               <div className="h-full bg-jm-green rounded-sm" style={{ width: `${p.financialProgressPct}%` }} />
             </div>
-            <span className="text-[length:var(--text-caption)] font-semibold">{formatPct(p.financialProgressPct)}</span>
+            <span className="text-[length:var(--text-body)] font-semibold">{formatPct(p.financialProgressPct)}</span>
           </div>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-xs)]">Physical Progress</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary mb-[var(--space-xs)]">Physical Progress</p>
           <div className="flex items-center gap-[var(--space-sm)]">
-            <div className="flex-1 h-[6px] bg-border-default/30 rounded-sm overflow-hidden">
+            <div className="flex-1 h-[8px] bg-border-default/30 rounded-sm overflow-hidden">
               <div className="h-full bg-chart-accent rounded-sm" style={{ width: `${p.physicalProgressPct}%` }} />
             </div>
-            <span className="text-[length:var(--text-caption)] font-semibold">{formatPct(p.physicalProgressPct)}</span>
+            <span className="text-[length:var(--text-body)] font-semibold">{formatPct(p.physicalProgressPct)}</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-[var(--space-md)] text-[length:var(--text-caption)]">
+      <div className="grid grid-cols-2 gap-[var(--space-md)] text-[length:var(--text-body)]">
         <div>
           <p className="text-text-secondary">Start</p>
           <p className="font-semibold">{formatFullDate(p.startDate)}</p>
@@ -138,11 +138,11 @@ function StandardProjectView({ project: p }: { project: CapitalProject }) {
         </div>
       </div>
 
-      <p className="text-[length:var(--text-body)] text-text-secondary leading-relaxed">{p.narrative}</p>
+      <p className="text-[length:var(--text-h3)] text-text-secondary leading-relaxed pt-[var(--space-lg)] border-t border-border-default">{p.narrative}</p>
 
       {p.milestones.length > 0 && (
-        <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
+        <div className="pt-[var(--space-lg)] border-t border-border-default">
+          <p className="text-[length:var(--text-body)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
             Milestones
           </p>
           <MilestoneTrack milestones={p.milestones} />
@@ -150,8 +150,8 @@ function StandardProjectView({ project: p }: { project: CapitalProject }) {
       )}
 
       {p.funding.length > 0 && (
-        <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
+        <div className="pt-[var(--space-lg)] border-t border-border-default">
+          <p className="text-[length:var(--text-body)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
             Funding Sources
           </p>
           <FundingSplit data={p.funding.map(f => ({ source: f.source, committed: f.committed, disbursed: f.disbursed }))} />
@@ -159,12 +159,12 @@ function StandardProjectView({ project: p }: { project: CapitalProject }) {
       )}
 
       {p.actuals.length > 0 && (
-        <div className="pt-[var(--space-md)] border-t border-border-default">
-          <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-sm)]">Spend Trajectory</p>
+        <div className="pt-[var(--space-lg)] border-t border-border-default">
+          <p className="text-[length:var(--text-body)] text-text-secondary mb-[var(--space-sm)]">Spend Trajectory</p>
           <SpendTimeSeries
             currentYear={p.actuals}
             allocation={p.currentYearBudget}
-            height={140}
+            height={180}
             compact
           />
         </div>

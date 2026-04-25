@@ -18,7 +18,7 @@ export function TrendSparkline({ values, labels }: { values: number[]; labels?: 
         <Tooltip
           formatter={(value) => [formatCurrency(value as number), 'Estimate']}
           contentStyle={{
-            fontSize: 11,
+            fontSize: 13,
             borderRadius: 4,
             border: `1px solid ${GRID}`,
             padding: '4px 8px',

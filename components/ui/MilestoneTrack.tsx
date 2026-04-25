@@ -35,8 +35,8 @@ export function MilestoneTrack({ milestones }: { milestones: MilestoneItem[] }) 
       </div>
       <div className="space-y-[var(--space-xs)]">
         {milestones.map(m => (
-          <div key={m.name} className="flex items-center gap-[var(--space-sm)] text-[length:var(--text-caption)]">
-            <span className={`w-[6px] h-[6px] rounded-full flex-shrink-0 ${dotColors[m.status]}`} />
+          <div key={m.name} className="flex items-center gap-[var(--space-sm)] text-[length:var(--text-body)]">
+            <span className={`w-[8px] h-[8px] rounded-full flex-shrink-0 ${dotColors[m.status]}`} />
             <span className="text-text-secondary truncate flex-1">{m.name}</span>
             <span className="text-text-secondary/60 flex-shrink-0">{m.weightPct}%</span>
           </div>

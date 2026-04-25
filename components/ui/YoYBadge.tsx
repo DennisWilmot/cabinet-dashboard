@@ -11,7 +11,7 @@ export function YoYBadge({ current, prior, isCurrency = true }: { current: numbe
 
   return (
     <span
-      className={`inline-flex items-center gap-[3px] text-[length:var(--text-caption)] font-semibold ${colorClass}`}
+      className={`inline-flex items-center gap-[3px] text-[length:var(--text-body)] font-semibold ${colorClass}`}
       title={`Prior year: ${priorLabel}`}
     >
       {arrow} {Math.abs(pct).toFixed(1)}% YoY

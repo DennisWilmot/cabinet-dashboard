@@ -81,7 +81,7 @@ function buildSearchIndex(allData: MinistryData[]): SearchHit[] {
         ministrySlug: slug,
         type: 'obligation',
         label: ob.name,
-        detail: `Fixed Obligation · ${d.overview.shortName}`,
+        detail: `Recurring Expenditure · ${d.overview.shortName}`,
         href: `${base}/fixed`,
       });
     }

@@ -5,14 +5,14 @@
   --font-sans: var(--font-body), system-ui, sans-serif;
   --font-display: var(--font-display), Georgia, serif;
 
-  /* Type scale: 1.33 ratio (perfect fourth), fixed rem for dashboard UI */
-  --text-display: 2.369rem;
-  --text-h1: 1.777rem;
-  --text-h2: 1.333rem;
-  --text-h3: 1rem;
-  --text-body: 0.875rem;
-  --text-caption: 0.75rem;
-  --text-micro: 0.625rem;
+  /* Type scale: bumped ~14% for squint-test legibility */
+  --text-display: 2.625rem;
+  --text-h1: 2rem;
+  --text-h2: 1.5rem;
+  --text-h3: 1.125rem;
+  --text-body: 1rem;
+  --text-caption: 0.875rem;
+  --text-micro: 0.75rem;
 
   /* ——— Palette (OKLCH, neutrals tinted toward green hue ~155) ——— */
   --color-page: oklch(97.5% 0.008 155);

@@ -29,39 +29,39 @@ export function EntityCard({ entity, headless = false }: { entity: OperationalEn
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-[var(--space-md)] mb-[var(--space-base)]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-[var(--space-lg)] mb-[var(--space-base)]">
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Allocation</p>
-          <p className="text-[length:var(--text-h3)] font-bold">{formatCurrency(e.allocation)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Allocation</p>
+          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(e.allocation)}</p>
           <YoYBadge current={e.allocation} prior={e.priorYearAllocation} />
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Spent</p>
-          <p className="text-[length:var(--text-h3)] font-bold">{formatCurrency(e.spent)}</p>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">{formatPct(e.utilizationPct)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Spent</p>
+          <p className="text-[length:var(--text-h2)] font-bold">{formatCurrency(e.spent)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">{formatPct(e.utilizationPct)}</p>
         </div>
         <div>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">Staffing</p>
-          <p className="text-[length:var(--text-h3)] font-bold">{formatNumber(e.staffing.filledPosts)}</p>
-          <p className="text-[length:var(--text-caption)] text-text-secondary">of {formatNumber(e.staffing.approvedPosts)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">Staffing</p>
+          <p className="text-[length:var(--text-h2)] font-bold">{formatNumber(e.staffing.filledPosts)}</p>
+          <p className="text-[length:var(--text-body)] text-text-secondary">of {formatNumber(e.staffing.approvedPosts)}</p>
         </div>
       </div>
 
-      <div className="mb-[var(--space-base)]">
+      <div className="mb-[var(--space-lg)]">
         <ProgressBar value={e.utilizationPct} color={utilColor} height="sm" />
       </div>
 
-      <div className="flex items-center gap-[var(--space-sm)] mb-[var(--space-base)]">
+      <div className="flex items-center gap-[var(--space-sm)] mb-[var(--space-lg)] pb-[var(--space-lg)] border-b border-border-default">
         <StaffingBadge health={staffResult.health} tooltip={staffResult.tooltip} />
-        <span className="text-[length:var(--text-caption)] text-text-secondary">{formatPct(e.staffing.vacancyRate)} vacancy</span>
+        <span className="text-[length:var(--text-body)] text-text-secondary">{formatPct(e.staffing.vacancyRate)} vacancy</span>
       </div>
 
       {e.revenueData && (
         <div className="mb-[var(--space-base)] py-[var(--space-md)] border-y border-jm-green/15">
-          <p className="text-[length:var(--text-caption)] font-semibold text-jm-green-dark mb-[var(--space-xs)]">Revenue Collection</p>
+          <p className="text-[length:var(--text-body)] font-semibold text-jm-green-dark mb-[var(--space-xs)]">Revenue Collection</p>
           <div className="flex items-baseline gap-[var(--space-sm)]">
-            <span className="text-[length:var(--text-h3)] font-bold text-jm-green-dark">{formatCurrency(e.revenueData.collected)}</span>
-            <span className="text-[length:var(--text-caption)] text-text-secondary">
+            <span className="text-[length:var(--text-h2)] font-bold text-jm-green-dark">{formatCurrency(e.revenueData.collected)}</span>
+            <span className="text-[length:var(--text-body)] text-text-secondary">
               vs {formatCurrency(e.revenueData.target)} target
               ({e.revenueData.variancePct > 0 ? '+' : ''}{formatPct(e.revenueData.variancePct)})
             </span>
@@ -70,15 +70,15 @@ export function EntityCard({ entity, headless = false }: { entity: OperationalEn
       )}
 
       {e.kpis.length > 0 && (
-        <div className="mb-[var(--space-base)]">
-          <p className="text-[length:var(--text-caption)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
-            KPIs
+        <div className="mb-[var(--space-lg)] pb-[var(--space-lg)] border-b border-border-default">
+          <p className="text-[length:var(--text-body)] text-text-secondary font-semibold uppercase tracking-widest mb-[var(--space-sm)]">
+            Key Performance Indicators
           </p>
           <div className="space-y-[var(--space-sm)]">
             {e.kpis.map(kpi => {
               const kpiResult = deriveKpiStatus(kpi, MONTHS_ELAPSED);
               return (
-                <div key={kpi.name} className="flex items-center justify-between text-[length:var(--text-caption)]">
+                <div key={kpi.name} className="flex items-center justify-between text-[length:var(--text-body)]">
                   <span className="text-text-secondary truncate mr-[var(--space-sm)]">{kpi.name}</span>
                   <div className="flex items-center gap-[var(--space-sm)] flex-shrink-0">
                     <span className="font-semibold">
@@ -94,13 +94,13 @@ export function EntityCard({ entity, headless = false }: { entity: OperationalEn
       )}
 
       {e.actuals.length > 0 && (
-        <div className="pt-[var(--space-md)] border-t border-border-default">
-          <p className="text-[length:var(--text-caption)] text-text-secondary mb-[var(--space-sm)]">Spend Trajectory</p>
+        <div className="pt-[var(--space-lg)] border-t border-border-default">
+          <p className="text-[length:var(--text-body)] text-text-secondary mb-[var(--space-sm)]">Spend Trajectory</p>
           <SpendTimeSeries
             currentYear={e.actuals}
             priorYear={e.priorYearActuals}
             allocation={e.allocation}
-            height={140}
+            height={180}
             compact
           />
         </div>

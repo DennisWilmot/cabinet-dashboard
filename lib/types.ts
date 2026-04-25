@@ -182,6 +182,13 @@ export interface CapitalProject {
   mediumTermProjection?: number[];
 }
 
+export interface DebtServiceSummary {
+  amortisationPaid: number;
+  interestPaid: number;
+  newBorrowing: number;
+  outstandingStock: number;
+}
+
 export interface FixedObligationsData {
   totalAllocation: number;
   priorYearAllocation: number;
@@ -190,6 +197,7 @@ export interface FixedObligationsData {
   obligations: Obligation[];
   actuals: MonthlySnapshot[];
   priorYearActuals: MonthlySnapshot[];
+  debtService?: DebtServiceSummary;
 }
 
 export interface OperationalData {

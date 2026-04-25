@@ -5,7 +5,7 @@ import { useState, useRef, type ReactNode } from 'react';
 interface CollapsibleCardProps {
   id: string;
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   headerRight?: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
@@ -24,17 +24,17 @@ export function CollapsibleCard({
   return (
     <article
       id={id}
-      className="scroll-mt-28 border-t-2 border-border-strong"
+      className="scroll-mt-28 bg-card rounded-lg border border-border-default shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]"
       data-card-id={id}
     >
       <button
         type="button"
         onClick={() => setOpen(prev => !prev)}
-        className="w-full flex items-start justify-between gap-[var(--space-md)] pt-[var(--space-base)] pb-[var(--space-sm)] text-left group cursor-pointer"
+        className="w-full flex items-start justify-between gap-[var(--space-md)] px-[var(--space-lg)] pt-[var(--space-lg)] pb-[var(--space-md)] text-left group cursor-pointer"
       >
         <div className="flex-1 min-w-0 flex items-start gap-[var(--space-md)]">
           <svg
-            className={`w-4 h-4 mt-[3px] flex-shrink-0 text-text-secondary transition-transform duration-200 ${
+            className={`w-5 h-5 mt-[2px] flex-shrink-0 text-text-secondary transition-transform duration-200 ${
               open ? 'rotate-90' : 'rotate-0'
             }`}
             fill="none"
@@ -45,11 +45,11 @@ export function CollapsibleCard({
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
           <div className="min-w-0">
-            <h3 className="font-bold text-[length:var(--text-h3)] text-text-primary group-hover:text-gold-dark transition-colors">
+            <h3 className="font-bold text-[length:var(--text-h2)] text-text-primary group-hover:text-gold-dark transition-colors">
               {title}
             </h3>
             {subtitle && (
-              <p className="text-[length:var(--text-caption)] text-text-secondary mt-[2px]">{subtitle}</p>
+              <p className="text-[length:var(--text-body)] text-text-secondary mt-[4px]">{subtitle}</p>
             )}
           </div>
         </div>
@@ -65,7 +65,7 @@ export function CollapsibleCard({
         style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
       >
         <div className="overflow-hidden">
-          <div className="pb-[var(--space-base)]">
+          <div className="px-[var(--space-lg)] pb-[var(--space-lg)]">
             {children}
           </div>
         </div>

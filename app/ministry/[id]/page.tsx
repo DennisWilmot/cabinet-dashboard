@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { MetricCard } from '@/components/cards/MetricCard';
@@ -125,11 +126,26 @@ export default function MinistryPage() {
           <div className="flex-1 min-w-0">
 
             <header className="mb-[var(--space-lg)] sm:mb-[var(--space-2xl)] animate-fade-up">
+              <Link href="/" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                All Ministries
+              </Link>
               <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
                 {overview.name}
               </h1>
               <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
-                {entityCount} budget heads · Fiscal Year 2026-27
+                {entityCount} budget heads
+                <span className="relative group/head inline-block ml-[2px] cursor-help">
+                  <svg className="inline w-3.5 h-3.5 text-text-secondary/60 -mt-[1px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.01" />
+                  </svg>
+                  <span className="invisible group-hover/head:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-56 px-3 py-2 text-[length:var(--text-caption)] text-page bg-text-primary rounded shadow-lg z-50 text-center leading-snug">
+                    A &ldquo;Head&rdquo; is the official reference number assigned to each department or programme in the Estimates of Expenditure.
+                  </span>
+                </span>
+                {' '}· Fiscal Year 2026-27
                 {hasActuals && ' · Reporting: September 2026'}
               </p>
             </header>
@@ -153,7 +169,7 @@ export default function MinistryPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--space-lg)] sm:gap-[var(--space-xl)]">
                 <BucketCard
-                  title="Fixed Obligations"
+                  title="Recurring Expenditure"
                   subtitle={`~${formatPct(fixedObligations.pctOfMinistry)} of ministry budget`}
                   href={`/ministry/${overview.id}/fixed`}
                   allocation={fixedObligations.totalAllocation}
@@ -185,7 +201,7 @@ export default function MinistryPage() {
                 </BucketCard>
 
                 <BucketCard
-                  title="Capital Projects"
+                  title="Capital Expenditure"
                   subtitle={`~${formatPct((capital.totalAllocation / overview.totalAllocation) * 100)} of ministry budget`}
                   href={`/ministry/${overview.id}/capital`}
                   allocation={capital.totalAllocation}

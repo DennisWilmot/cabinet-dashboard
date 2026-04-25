@@ -10,7 +10,7 @@ const { axis: AXIS_COLOR, grid: GRID_COLOR, current: GREEN } = CHART_COLORS;
 export function RevenueSplitBar({ data }: { data: { entity: string; amount: number; pct: number }[] }) {
   return (
     <div className="space-y-[var(--space-sm)]">
-      <div className="flex h-[6px] rounded-sm overflow-hidden">
+      <div className="flex h-[8px] rounded-sm overflow-hidden">
         {data.map((d, i) => (
           <div
             key={d.entity}
@@ -41,7 +41,7 @@ export function FundingSplit({ data }: { data: { source: string; committed: numb
       <BarChart data={data} layout="vertical" margin={{ top: 0, right: 0, bottom: 0, left: 60 }}>
         <XAxis
           type="number"
-          tick={{ fontSize: 11, fill: AXIS_COLOR }}
+          tick={{ fontSize: 13, fill: AXIS_COLOR }}
           tickFormatter={v => formatCurrency(v)}
           axisLine={false}
           tickLine={false}
@@ -49,15 +49,15 @@ export function FundingSplit({ data }: { data: { source: string; committed: numb
         <YAxis
           type="category"
           dataKey="source"
-          tick={{ fontSize: 11, fill: AXIS_COLOR }}
+          tick={{ fontSize: 13, fill: AXIS_COLOR }}
           axisLine={false}
           tickLine={false}
-          width={55}
+          width={65}
         />
         <Tooltip
           formatter={(value, name) => [formatCurrency(value as number), name === 'committed' ? 'Committed' : 'Disbursed']}
           contentStyle={{
-            fontSize: 12,
+            fontSize: 14,
             borderRadius: 4,
             border: `1px solid ${GRID_COLOR}`,
             fontFamily: 'var(--font-body)',

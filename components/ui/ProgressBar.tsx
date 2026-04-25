@@ -16,7 +16,7 @@ export function ProgressBar({
     red: 'bg-status-off-track',
     gray: 'bg-chart-prior',
   };
-  const heightMap = { sm: 'h-1', md: 'h-2', lg: 'h-3' };
+  const heightMap = { sm: 'h-1.5', md: 'h-2.5', lg: 'h-3' };
 
   return (
     <div className={`w-full bg-border-default/30 rounded-sm overflow-hidden ${heightMap[height]}`}>
