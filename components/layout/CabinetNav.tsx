@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useMockData } from '@/lib/context';
 import { useAuth } from '@/lib/auth-context';
 
@@ -18,9 +19,13 @@ export function CabinetNav({ breadcrumbs }: { breadcrumbs?: BreadcrumbItem[] }) 
       <div className="max-w-7xl mx-auto px-[var(--space-base)] sm:px-[var(--space-lg)] h-14 flex items-center justify-between gap-[var(--space-sm)]">
         <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)] min-w-0">
           <Link href="/dashboard" className="flex items-center gap-[var(--space-sm)] hover:opacity-90 transition-opacity flex-shrink-0">
-            <div className="w-7 h-7 rounded bg-gold flex items-center justify-center">
-              <span className="text-sidebar font-bold text-[length:var(--text-caption)]">JA</span>
-            </div>
+            <Image
+              src="/Coat_of_arms_of_Jamaica.svg.png"
+              alt="Jamaica Coat of Arms"
+              width={28}
+              height={28}
+              className="w-7 h-7"
+            />
             <span className="font-semibold text-[length:var(--text-body)] tracking-wide font-[family-name:var(--font-display)] hidden sm:inline">
               Cabinet Dashboard
             </span>
