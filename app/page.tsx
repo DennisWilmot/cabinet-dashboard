@@ -40,8 +40,10 @@ const PEOPLE = [
 export default function LandingPage() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading) return null;
-  if (isAuthenticated) return null;
+  if (!isLoading && isAuthenticated) {
+    if (typeof window !== 'undefined') window.location.href = '/dashboard';
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
