@@ -1,54 +1,70 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { createContext, useContext, type ReactNode } from 'react';
+import { authClient } from '@/lib/auth-client';
+
+interface AuthUser {
+  name: string;
+  email: string;
+  image: string;
+  role: string;
+}
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { name: string; email: string; role: string } | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  isLoading: boolean;
+  user: AuthUser | null;
+  signIn: () => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
+  isLoading: true,
   user: null,
-  login: async () => false,
+  signIn: () => {},
   logout: () => {},
 });
 
-const STORAGE_KEY = 'cabinet_auth';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthContextType['user']>(null);
-  const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
-    }
-  }, []);
-
-  const login = async (email: string, _password: string): Promise<boolean> => {
-    const mockUser = {
-      name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-      email,
-      role: 'Cabinet Member',
-    };
-    setUser(mockUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(mockUser));
-    return true;
+  const signIn = () => {
+    authClient.signIn.social({
+      provider: 'google',
+      callbackURL: '/dashboard',
+    });
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-    router.push('/');
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = '/';
+        },
+      },
+    });
   };
 
+  const user: AuthUser | null = session?.user
+    ? {
+        name: session.user.name ?? '',
+        email: session.user.email ?? '',
+        image: session.user.image ?? '',
+        role: 'Cabinet Member',
+      }
+    : null;
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: !!session?.user,
+        isLoading: isPending,
+        user,
+        signIn,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

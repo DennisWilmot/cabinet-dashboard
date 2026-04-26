@@ -54,16 +54,26 @@ export function CabinetNav({ breadcrumbs }: { breadcrumbs?: BreadcrumbItem[] }) 
           </button>
 
           {user && (
-            <button
-              onClick={logout}
-              className="flex items-center gap-[6px] text-[length:var(--text-caption)] text-text-inverse/60 hover:text-gold transition-colors flex-shrink-0 cursor-pointer"
-              title={`Signed in as ${user.name}`}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-              </svg>
-              <span className="hidden sm:inline">Sign Out</span>
-            </button>
+            <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)]">
+              {user.image && (
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="w-7 h-7 rounded-full object-cover hidden sm:block"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              <button
+                onClick={logout}
+                className="flex items-center gap-[6px] text-[length:var(--text-caption)] text-text-inverse/60 hover:text-gold transition-colors flex-shrink-0 cursor-pointer"
+                title={`Signed in as ${user.name}`}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                </svg>
+                <span className="hidden sm:inline">Sign Out</span>
+              </button>
+            </div>
           )}
         </div>
       </div>
