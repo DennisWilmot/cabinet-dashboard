@@ -44,8 +44,11 @@ const PEOPLE = [
 
 export default function LandingPage() {
   useEffect(() => {
-    const hasCookie = document.cookie.includes('better-auth.session_token');
-    if (hasCookie) {
+    const c = document.cookie;
+    const hasSession =
+      c.includes('better-auth.session_token') ||
+      c.includes('better-auth.session_data');
+    if (hasSession) {
       window.location.href = '/dashboard';
     }
   }, []);
