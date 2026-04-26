@@ -41,6 +41,7 @@ export interface MinistryOverview {
   totalSpent: number;
   recurrentTotal: number;
   capitalTotal: number;
+  lastUpdated: string;
   actuals: MonthlySnapshot[];
   priorYearActuals: MonthlySnapshot[];
 }

@@ -8,8 +8,14 @@ export const industryLeadership: SeniorOfficer[] = [
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, MIIC',
+    name: 'Hon. Delano Seiveright, MP',
+    title: 'Minister of State, Industry, Investment & Commerce',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mrs. Sancia Bennett Templer',
+    title: 'Permanent Secretary',
     role: 'ps',
     headCode: '53000',
     avatarUrl: '/avatars/placeholder.svg',

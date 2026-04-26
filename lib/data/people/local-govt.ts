@@ -2,14 +2,20 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const localGovtLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Desmond McKenzie, MP',
-    title: 'Minister of Local Government & Community Development',
+    name: 'Hon. Desmond McKenzie, CD, MP',
+    title: 'Minister of Local Government and Rural Development',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, MLGCD',
+    name: 'Hon. Delroy Williams, MP',
+    title: 'Minister of State, Local Government and Community Development',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mrs. Marsha Henry-Martin',
+    title: 'Permanent Secretary',
     role: 'ps',
     headCode: '72000',
     avatarUrl: '/avatars/placeholder.svg',

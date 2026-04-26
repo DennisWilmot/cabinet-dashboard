@@ -40,7 +40,7 @@ export function DebtServiceDonut({ data }: { data: DebtServiceSummary }) {
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
               contentStyle={{
-                fontSize: 14,
+                fontSize: 15,
                 borderRadius: 4,
                 border: `1px solid ${CHART_COLORS.grid}`,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06)',

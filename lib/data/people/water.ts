@@ -2,14 +2,14 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const waterLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Robert Nesta Morgan, MP',
+    name: 'Hon. Matthew Samuda, MP',
     title: 'Minister of Water, Environment & Climate Change',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
     name: 'Permanent Secretary',
-    title: 'Permanent Secretary, MWEC',
+    title: 'Permanent Secretary, MWECC',
     role: 'ps',
     headCode: '22000',
     avatarUrl: '/avatars/placeholder.svg',

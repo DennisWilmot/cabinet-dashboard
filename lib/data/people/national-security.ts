@@ -2,14 +2,14 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const nationalSecurityLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Dr. Horace Chang, CD, OJ, MP',
+    name: 'Hon. Dr. Horace Chang, OJ, CD, MP',
     title: 'Deputy PM & Minister of National Security and Peace',
     role: 'minister',
-    avatarUrl: '/avatars/horace-chang.jpg',
+    avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Sen. Hon. Matthew Samuda',
-    title: 'State Minister, National Security and Peace',
+    name: 'Hon. Juliet Cuthbert-Flynn, MP',
+    title: 'Minister of State, National Security and Peace',
     role: 'state_minister',
     avatarUrl: '/avatars/placeholder.svg',
   },

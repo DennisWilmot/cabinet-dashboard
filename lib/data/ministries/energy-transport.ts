@@ -289,6 +289,7 @@ export const energyTransportData: MinistryData = {
     totalSpent: 12856,
     recurrentTotal: 21512,
     capitalTotal: 4200,
+    lastUpdated: '2026-03-28',
     actuals: snap([2057, 4228, 6340, 8565, 10700, 12856]),
     priorYearActuals: pySnap(22772, W_LIN),
   },

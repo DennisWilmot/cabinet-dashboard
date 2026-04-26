@@ -278,6 +278,7 @@ export const nationalSecurityData: MinistryData = {
     totalSpent: 61900,
     recurrentTotal: 122293,
     capitalTotal: 1621,
+    lastUpdated: '2026-04-17',
     actuals: snap([9900, 20400, 30700, 41300, 51600, 61900]),
     priorYearActuals: pySnap(134023, W_LIN),
   },

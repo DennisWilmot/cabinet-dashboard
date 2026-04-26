@@ -3,13 +3,13 @@ import type { SeniorOfficer } from '@/lib/types';
 export const energyTransportLeadership: SeniorOfficer[] = [
   {
     name: 'Hon. Daryl Vaz, MP',
-    title: 'Minister of Energy, Transport & Telecommunications',
+    title: 'Minister of Transport, Telecommunications & Energy',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, METT',
+    name: 'Mrs. Carol Palmer, CD, JP',
+    title: 'Permanent Secretary',
     role: 'ps',
     headCode: '69000',
     avatarUrl: '/avatars/placeholder.svg',

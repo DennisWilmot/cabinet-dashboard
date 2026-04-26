@@ -2,14 +2,8 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const cabinetLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Desmond McKenzie, MP',
-    title: 'Minister without Portfolio, Office of the Cabinet',
-    role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
-  },
-  {
-    name: 'Cabinet Secretary',
-    title: 'Cabinet Secretary',
+    name: 'Hon. Audrey Sewell, OJ, CD, JP',
+    title: 'Cabinet Secretary & Head of the Public Service',
     role: 'ps',
     headCode: '16000',
     avatarUrl: '/avatars/placeholder.svg',

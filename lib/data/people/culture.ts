@@ -2,14 +2,20 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const cultureLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Olivia Grange, MP',
+    name: 'Hon. Olivia Grange, CD, MP',
     title: 'Minister of Culture, Gender, Entertainment & Sport',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, MCGES',
+    name: 'Hon. Kerensia Morrison, MP',
+    title: 'Minister of State, Culture, Gender, Entertainment & Sport',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mr. Denzil Thorpe',
+    title: 'Permanent Secretary',
     role: 'ps',
     headCode: '46000',
     avatarUrl: '/avatars/placeholder.svg',

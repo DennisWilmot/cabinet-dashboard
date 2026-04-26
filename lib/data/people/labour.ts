@@ -2,19 +2,19 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const labourLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Karl Samuda, MP',
+    name: 'Hon. Pearnel Charles Jr., MP, JP',
     title: 'Minister of Labour & Social Security',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Hon. Zavia Mayne, MP',
-    title: 'State Minister, Labour',
+    name: 'Hon. Donovan Williams, MP',
+    title: 'Minister of State, Labour & Social Security',
     role: 'state_minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Colette Roberts-Risden',
+    name: 'Mrs. Colette Roberts Risden, CD',
     title: 'Permanent Secretary',
     role: 'ps',
     headCode: '40000',

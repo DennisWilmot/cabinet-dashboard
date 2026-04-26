@@ -401,6 +401,7 @@ export const agricultureData: MinistryData = {
     totalSpent: 10088,
     recurrentTotal: 17684,
     capitalTotal: 4330,
+    lastUpdated: '2026-04-12',
     actuals: snap([1660, 3380, 5150, 6920, 8500, 10088]),
     priorYearActuals: pySnap(13647, W_LIN),
   },

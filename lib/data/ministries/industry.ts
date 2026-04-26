@@ -315,6 +315,7 @@ export const industryData: MinistryData = {
     totalSpent: 4377,
     recurrentTotal: 8569,
     capitalTotal: 650,
+    lastUpdated: '2026-03-31',
     actuals: snap([694, 1402, 2120, 2839, 3557, 4377]),
     priorYearActuals: pySnap(6049, W_LIN),
   },

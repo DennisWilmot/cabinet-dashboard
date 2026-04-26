@@ -318,6 +318,7 @@ export const cultureData: MinistryData = {
     totalSpent: 3921,
     recurrentTotal: 7690,
     capitalTotal: 550,
+    lastUpdated: '2026-03-20',
     actuals: snap([608, 1238, 1878, 2515, 3149, 3921]),
     priorYearActuals: pySnap(5866, W_LIN),
   },

@@ -285,6 +285,7 @@ export const localGovtData: MinistryData = {
     totalSpent: 14401,
     recurrentTotal: 27977,
     capitalTotal: 2400,
+    lastUpdated: '2026-04-10',
     actuals: snap([2300, 4730, 7200, 9650, 12050, 14401]),
     priorYearActuals: pySnap(23200, W_LIN),
   },

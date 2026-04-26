@@ -334,6 +334,7 @@ export const foreignAffairsData: MinistryData = {
     totalSpent: 4958,
     recurrentTotal: 8683,
     capitalTotal: 268,
+    lastUpdated: '2026-03-15',
     actuals: snap([820, 1650, 2490, 3320, 4140, 4958]),
     priorYearActuals: pySnap(7200, W_LIN),
   },

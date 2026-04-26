@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bitter, Figtree } from 'next/font/google';
 import './globals.css';
 import { MockDataProvider } from '@/lib/context';
+import { AuthProvider } from '@/lib/auth-context';
 
 const bitter = Bitter({
   variable: '--font-display',
@@ -31,9 +32,11 @@ export default function RootLayout({
       className={`${bitter.variable} ${figtree.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-page text-text-primary">
-        <MockDataProvider>
-          {children}
-        </MockDataProvider>
+        <AuthProvider>
+          <MockDataProvider>
+            {children}
+          </MockDataProvider>
+        </AuthProvider>
       </body>
     </html>
   );

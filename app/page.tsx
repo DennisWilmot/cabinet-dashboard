@@ -1,316 +1,420 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import Image from 'next/image';
-import { CabinetNav } from '@/components/layout/CabinetNav';
-import { DashboardShell } from '@/components/layout/DashboardShell';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { useMockData } from '@/lib/context';
-import { ministryRegistry, ministryOrder } from '@/lib/data';
-import { stripActuals } from '@/lib/strip-actuals';
-import { formatCurrency, formatPct, EXPECTED_UTILIZATION } from '@/lib/utils';
-import { deriveUtilizationStatus, deriveMinistryStatus } from '@/lib/status';
-import type { MinistryData } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 
-interface SearchHit {
-  ministrySlug: string;
-  type: 'ministry' | 'person' | 'project' | 'entity' | 'obligation';
-  label: string;
-  detail: string;
-  href: string;
+function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!email || !password) {
+      setError('Please enter your email and password.');
+      return;
+    }
+    setLoading(true);
+    const ok = await login(email, password);
+    if (ok) {
+      router.push('/dashboard');
+    } else {
+      setError('Those credentials didn\u2019t match. Check your email and password, then try again.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+      <div>
+        <label htmlFor="email" className="block text-[length:var(--text-caption)] font-medium text-text-on-dark-muted mb-1">
+          Email Address
+        </label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="name@gov.jm"
+          className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-text-on-dark placeholder:text-text-on-dark-faint focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/40 transition-colors text-[length:var(--text-body)]"
+          aria-describedby={error ? 'login-error' : undefined}
+        />
+      </div>
+      <div>
+        <label htmlFor="password" className="block text-[length:var(--text-caption)] font-medium text-text-on-dark-muted mb-1">
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="••••••••"
+          className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-text-on-dark placeholder:text-text-on-dark-faint focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/40 transition-colors text-[length:var(--text-body)]"
+        />
+      </div>
+      {error && (
+        <p id="login-error" role="alert" className="text-red-300 text-[length:var(--text-caption)]">{error}</p>
+      )}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-3 px-6 rounded-lg bg-gold text-sidebar font-bold text-[length:var(--text-body)] hover:bg-gold-dark hover:text-white transition-all disabled:opacity-60 cursor-pointer"
+      >
+        {loading ? 'Signing in...' : 'Sign In'}
+      </button>
+      <p className="text-text-on-dark-faint text-[length:var(--text-micro)] text-center mt-2">
+        Prototype — any email/password will grant access
+      </p>
+    </form>
+  );
 }
 
-function buildSearchIndex(allData: MinistryData[]): SearchHit[] {
-  const hits: SearchHit[] = [];
 
-  for (const d of allData) {
-    const slug = d.overview.id;
-    const base = `/ministry/${slug}`;
+const PEOPLE = [
+  { name: 'Hon. Fayval Williams, MP', title: 'Minister of Finance', src: '/avatars/fayval-williams.jpeg' },
+  { name: 'Hon. Zavia Mayne, MP', title: 'State Minister, Finance', src: '/avatars/zavia-mayne.jpg' },
+  { name: 'Ms. Darlene Morrison, CD', title: 'Financial Secretary', src: '/avatars/darlene-morrison.jpg' },
+  { name: 'Ainsley Powell, CD', title: 'Commissioner General, TAJ', src: '/avatars/ainsley-powell.jpg' },
+  { name: 'Dr. Wayne Henry', title: 'Director General, PIOJ', src: '/avatars/wayne-henry.jpg' },
+];
 
-    hits.push({
-      ministrySlug: slug,
-      type: 'ministry',
-      label: d.overview.name,
-      detail: d.overview.shortName,
-      href: base,
-    });
+export default function LandingPage() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
-    for (const person of d.leadership) {
-      hits.push({
-        ministrySlug: slug,
-        type: 'person',
-        label: person.name,
-        detail: `${person.title} · ${d.overview.shortName}`,
-        href: base,
-      });
-    }
-
-    for (const entity of d.operational.entities) {
-      hits.push({
-        ministrySlug: slug,
-        type: 'entity',
-        label: entity.name,
-        detail: `Entity · ${d.overview.shortName}`,
-        href: `${base}/ops`,
-      });
-      if (entity.headOfficer) {
-        hits.push({
-          ministrySlug: slug,
-          type: 'person',
-          label: entity.headOfficer.name,
-          detail: `${entity.headOfficer.title} · ${d.overview.shortName}`,
-          href: `${base}/ops`,
-        });
-      }
-    }
-
-    for (const project of d.capital.projects) {
-      hits.push({
-        ministrySlug: slug,
-        type: 'project',
-        label: project.name,
-        detail: `Capital Project · ${d.overview.shortName}`,
-        href: `${base}/capital`,
-      });
-    }
-
-    for (const ob of d.fixedObligations.obligations) {
-      hits.push({
-        ministrySlug: slug,
-        type: 'obligation',
-        label: ob.name,
-        detail: `Recurring Expenditure · ${d.overview.shortName}`,
-        href: `${base}/fixed`,
-      });
-    }
+  if (isAuthenticated) {
+    router.push('/dashboard');
+    return null;
   }
 
-  return hits;
-}
-
-const TYPE_LABELS: Record<SearchHit['type'], string> = {
-  ministry: 'Ministry',
-  person: 'Person',
-  project: 'Project',
-  entity: 'Entity',
-  obligation: 'Obligation',
-};
-
-const TYPE_COLORS: Record<SearchHit['type'], string> = {
-  ministry: 'bg-green/15 text-green-dark',
-  person: 'bg-gold/20 text-gold-dark',
-  project: 'bg-green-dark/15 text-green-dark',
-  entity: 'bg-gold-light/40 text-text-primary',
-  obligation: 'bg-border-default/50 text-text-secondary',
-};
-
-function SearchBar({ allData }: { allData: MinistryData[] }) {
-  const [query, setQuery] = useState('');
-  const [focused, setFocused] = useState(false);
-  const index = useMemo(() => buildSearchIndex(allData), [allData]);
-
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 2) return [];
-    return index
-      .filter(h => h.label.toLowerCase().includes(q) || h.detail.toLowerCase().includes(q))
-      .slice(0, 12);
-  }, [query, index]);
-
-  const showDropdown = focused && query.trim().length >= 2;
-
   return (
-    <div className="relative w-full max-w-2xl">
-      <div className="relative">
-        <svg
-          className="absolute left-[var(--space-md)] top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-        </svg>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setTimeout(() => setFocused(false), 200)}
-          placeholder="Search ministries, projects, people..."
-          className="w-full pl-[var(--space-2xl)] pr-[var(--space-md)] py-[var(--space-sm)] sm:py-[var(--space-md)] text-[length:var(--text-body)] bg-surface border border-border-default rounded-sm placeholder:text-text-secondary/60 focus:outline-none focus:border-green focus:ring-1 focus:ring-green/30 transition-colors"
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className="absolute right-[var(--space-md)] top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </div>
-
-      {showDropdown && (
-        <div className="absolute z-50 top-full mt-[var(--space-xs)] left-0 right-0 bg-page border border-border-default rounded-sm shadow-lg max-h-[360px] overflow-y-auto">
-          {results.length === 0 ? (
-            <div className="px-[var(--space-lg)] py-[var(--space-lg)] text-text-secondary text-[length:var(--text-body)]">
-              No results for &ldquo;{query}&rdquo;
-            </div>
-          ) : (
-            results.map((hit, i) => (
-              <Link
-                key={`${hit.type}-${hit.label}-${i}`}
-                href={hit.href}
-                className="flex items-start gap-[var(--space-md)] px-[var(--space-md)] sm:px-[var(--space-lg)] py-[var(--space-sm)] sm:py-[var(--space-md)] hover:bg-surface transition-colors border-b border-border-default last:border-b-0"
-              >
-                <span className={`mt-[2px] flex-shrink-0 text-[length:var(--text-caption)] font-medium px-[6px] py-[1px] rounded ${TYPE_COLORS[hit.type]}`}>
-                  {TYPE_LABELS[hit.type]}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[length:var(--text-body)] font-medium text-text-primary truncate">{hit.label}</p>
-                  <p className="text-[length:var(--text-caption)] text-text-secondary truncate">{hit.detail}</p>
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MinistryCard({ data, mockDataEnabled }: { data: MinistryData; mockDataEnabled: boolean }) {
-  const { overview, fixedObligations, operational, capital } = data;
-
-  const overallUtil = overview.totalAllocation > 0
-    ? (overview.totalSpent / overview.totalAllocation) * 100 : 0;
-  const fixedUtil = fixedObligations.totalAllocation > 0
-    ? (fixedObligations.totalPaid / fixedObligations.totalAllocation) * 100 : 0;
-  const opsUtil = operational.utilizationPct;
-  const capUtil = capital.totalAllocation > 0
-    ? (capital.totalSpent / capital.totalAllocation) * 100 : 0;
-
-  const fixedStatus = deriveUtilizationStatus(fixedUtil, EXPECTED_UTILIZATION);
-  const opsStatus = deriveUtilizationStatus(opsUtil, EXPECTED_UTILIZATION);
-  const capitalStatus = deriveUtilizationStatus(capUtil, EXPECTED_UTILIZATION);
-  const ministryStatus = deriveMinistryStatus([fixedStatus.status, opsStatus.status, capitalStatus.status]);
-  const utilStatus = deriveUtilizationStatus(overallUtil, EXPECTED_UTILIZATION);
-
-  return (
-    <Link href={`/ministry/${overview.id}`} className="group block">
-      <div className="flex items-start gap-[var(--space-md)] sm:gap-[var(--space-lg)]">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <Image
-          src={overview.minister.avatarUrl}
-          alt={overview.minister.name}
-          width={56}
-          height={56}
-          className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-border-default flex-shrink-0 mt-1 object-cover"
+          src="/kingstonjm.jpg"
+          alt="Kingston, Jamaica"
+          fill
+          className="object-cover"
+          priority
         />
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-[var(--space-xs)] sm:gap-[var(--space-base)]">
-            <div className="min-w-0">
-              <h2 className="text-[length:var(--text-body)] sm:text-[length:var(--text-h2)] font-bold text-text-primary group-hover:text-gold-dark transition-colors leading-tight">
-                {overview.shortName}
-              </h2>
-              <p className="text-[length:var(--text-caption)] text-text-secondary mt-[2px] truncate">
-                {overview.minister.name}
-              </p>
-            </div>
-            {mockDataEnabled && (
-              <StatusBadge status={ministryStatus.status} tooltip={ministryStatus.tooltip} />
-            )}
-          </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40" />
 
-          <div className="grid grid-cols-3 gap-[var(--space-sm)] sm:gap-[var(--space-md)] mt-[var(--space-sm)] sm:mt-[var(--space-md)]">
-            <div>
-              <p className="text-[length:var(--text-caption)] text-text-secondary">Allocation</p>
-              <p className="text-[length:var(--text-body)] sm:text-[length:var(--text-h3)] font-bold mt-[1px]">{formatCurrency(overview.totalAllocation)}</p>
-            </div>
-            <div>
-              <p className="text-[length:var(--text-caption)] text-text-secondary">Spent</p>
-              <p className="text-[length:var(--text-body)] sm:text-[length:var(--text-h3)] font-bold mt-[1px]">
-                {mockDataEnabled ? formatCurrency(overview.totalSpent) : '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-[length:var(--text-caption)] text-text-secondary">Utilization</p>
-              <p className="text-[length:var(--text-body)] sm:text-[length:var(--text-h3)] font-bold mt-[1px]">
-                {mockDataEnabled ? formatPct(overallUtil) : '—'}
-              </p>
-            </div>
-          </div>
-
-          {mockDataEnabled && (
-            <div className="mt-[var(--space-sm)] sm:mt-[var(--space-md)]">
-              <ProgressBar
-                value={overallUtil}
-                color={utilStatus.status === 'on_track' ? 'green' : utilStatus.status === 'at_risk' ? 'gold' : 'red'}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 py-16 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          {/* Left: copy */}
+          <div className="flex-1 text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
+              <Image
+                src="/Coat_of_arms_of_Jamaica.svg.png"
+                alt="Jamaica Coat of Arms"
+                width={64}
+                height={64}
+                className="w-14 h-14 sm:w-16 sm:h-16"
               />
+              <div>
+                <p className="text-gold font-semibold text-[length:var(--text-caption)] tracking-widest uppercase">Government of Jamaica</p>
+                <p className="text-text-on-dark-muted text-[length:var(--text-micro)] tracking-wide">Ministry of Finance &amp; the Public Service</p>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
 
-export default function CabinetOverview() {
-  const { mockDataEnabled } = useMockData();
-
-  const ministries = useMemo(() =>
-    ministryOrder.map(slug => {
-      const raw = ministryRegistry[slug];
-      return mockDataEnabled ? raw : stripActuals(raw);
-    }),
-    [mockDataEnabled]
-  );
-
-  return (
-    <>
-      <CabinetNav />
-      <DashboardShell>
-        <div className="animate-fade-up">
-          <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
-            <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
-              All Ministries
+            <h1 className="text-[length:var(--text-display)] sm:text-[length:clamp(2.625rem,5vw+1rem,4rem)] font-bold text-text-on-dark leading-[1.1] tracking-tight font-[family-name:var(--font-display)]">
+              Track how Jamaica&rsquo;s budget is being spent
             </h1>
-            <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
-              Budget execution overview · Fiscal Year 2026-27 · {ministries.length} ministries
-              {mockDataEnabled && ' · Reporting period: September 2026'}
-            </p>
-          </header>
 
-          <div className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
-            <SearchBar allData={ministries} />
+            <p className="mt-6 text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] text-text-on-dark-muted max-w-xl mx-auto lg:mx-0 leading-[1.65]">
+              Real-time budget execution data for every ministry, department, and agency &mdash; built for transparency and accountability.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-[length:var(--text-caption)] text-text-on-dark-faint">
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-jm-green" />
+                18 ministries
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-gold" />
+                FY 2026-27
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-text-on-dark-faint" />
+                Updated monthly
+              </span>
+            </div>
+
+            <a
+              href="#features"
+              className="inline-flex items-center gap-2 mt-10 text-gold hover:text-white transition-colors text-[length:var(--text-caption)] font-medium"
+            >
+              Learn more
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+              </svg>
+            </a>
           </div>
 
-          {!mockDataEnabled && (
-            <div className="mb-[var(--space-lg)] sm:mb-[var(--space-2xl)] py-[var(--space-base)] px-[var(--space-base)] sm:px-[var(--space-lg)] border border-gold/30 bg-gold-light/30 rounded-sm max-w-3xl">
-              <p className="text-[length:var(--text-body)] text-gold-dark font-medium">
-                Mock expenditure data is off.
-              </p>
-              <p className="text-[length:var(--text-caption)] text-text-secondary mt-[2px]">
-                Allocation and prior-year estimates are still visible. Toggle mock data on to see simulated 6-month spend progression.
-              </p>
+          {/* Right: login */}
+          <div className="w-full max-w-sm flex-shrink-0">
+            <div className="bg-surface-dark-raised border border-border-dark rounded-2xl p-8">
+              <h2 className="text-[length:var(--text-h2)] font-bold text-text-on-dark mb-1">Sign in</h2>
+              <p className="text-text-on-dark-muted text-[length:var(--text-caption)] mb-6">Access the Cabinet Dashboard</p>
+              <LoginForm />
             </div>
-          )}
-
-          <section>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-[var(--space-xl)] sm:gap-[var(--space-2xl)]">
-              {ministries.map((data, i) => (
-                <div
-                  key={data.overview.id}
-                  className="animate-fade-up border-t border-border-default pt-[var(--space-lg)]"
-                  style={{ animationDelay: `${(i + 1) * 40}ms` }}
-                >
-                  <MinistryCard data={data} mockDataEnabled={mockDataEnabled} />
-                </div>
-              ))}
-            </div>
-          </section>
+          </div>
         </div>
-      </DashboardShell>
-    </>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <svg className="w-5 h-5 text-text-on-dark-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Features — alternating image/text rows */}
+      <section id="features" className="bg-page">
+        {/* Feature 1 */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[420px]">
+            <div className="relative overflow-hidden bg-sidebar min-h-[280px] lg:min-h-0">
+              <Image
+                src="/kingstonjm.jpg"
+                alt="Kingston skyline"
+                fill
+                className="object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 lg:bg-gradient-to-l" />
+              <div className="absolute bottom-6 left-6 right-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sidebar/90 text-gold text-[length:var(--text-micro)] font-semibold tracking-wider uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold" />
+                  18 Ministries
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center px-8 sm:px-14 py-14 lg:py-20">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-jm-green/10 text-jm-green flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                  </svg>
+                </div>
+                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
+                  Budget at a Glance
+                </h2>
+                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
+                  See how <strong className="text-text-primary">$1.4 trillion</strong> in public funds flows across 18 ministries &mdash; from allocation to expenditure, in a single view.
+                </p>
+                <div className="mt-6 flex items-center gap-6 text-[length:var(--text-caption)] text-text-secondary">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-jm-green" />
+                    Recurrent
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-gold" />
+                    Capital
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-sidebar" />
+                    Debt Service
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature 2 — reversed */}
+        <div className="max-w-7xl mx-auto border-t border-border-default">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[420px]">
+            <div className="flex items-center px-8 sm:px-14 py-14 lg:py-20 order-2 lg:order-1">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-gold/15 text-gold-dark flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+                  </svg>
+                </div>
+                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
+                  Drill Down to Detail
+                </h2>
+                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
+                  From the full Cabinet overview, drill into individual ministries, operational programmes, recurring obligations, and capital projects.
+                </p>
+                <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[length:var(--text-caption)] text-text-secondary">
+                  <span><strong className="text-[length:var(--text-h2)] font-bold text-text-primary">3</strong> levels deep</span>
+                  <span className="text-border-strong">/</span>
+                  <span><strong className="text-[length:var(--text-h2)] font-bold text-text-primary">100+</strong> budget heads</span>
+                  <span className="text-border-strong">/</span>
+                  <span><strong className="text-[length:var(--text-h2)] font-bold text-text-primary">6</strong> months data</span>
+                </div>
+              </div>
+            </div>
+            <div className="relative overflow-hidden bg-sidebar min-h-[280px] lg:min-h-0 order-1 lg:order-2">
+              <div className="absolute inset-0 bg-sidebar flex items-center justify-center p-10">
+                <div className="w-full max-w-sm space-y-3">
+                  {['Cabinet Overview', 'Ministry of Finance', 'Tax Administration Jamaica', 'Revenue Collection Programme'].map((label, i) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg border transition-all"
+                      style={{
+                        marginLeft: `${i * 16}px`,
+                        borderColor: i === 3 ? 'oklch(83% 0.17 85)' : 'oklch(32% 0.015 155)',
+                        background: i === 3 ? 'oklch(24% 0.015 155)' : 'oklch(18% 0.01 155)',
+                      }}
+                    >
+                      <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold"
+                        style={{
+                          background: i === 3 ? 'oklch(83% 0.17 85)' : 'oklch(32% 0.015 155)',
+                          color: i === 3 ? 'oklch(16% 0.01 155)' : 'oklch(55% 0.01 155)',
+                        }}
+                      >
+                        L{i}
+                      </div>
+                      <span className="text-sm text-text-on-dark-muted font-medium">{label}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-2 ml-12 mt-1">
+                    <svg className="w-4 h-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                    <span className="text-xs text-text-on-dark-faint">Keep drilling</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature 3 */}
+        <div className="max-w-7xl mx-auto border-t border-border-default">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[420px]">
+            <div className="relative overflow-hidden min-h-[280px] lg:min-h-0">
+              <div className="absolute inset-0 bg-sidebar flex items-center justify-center p-10">
+                <div className="w-full max-w-xs space-y-5">
+                  {[
+                    { label: 'On Track', pct: 72, color: 'oklch(56% 0.16 155)', bg: 'rgba(34,139,34,0.15)' },
+                    { label: 'At Risk', pct: 45, color: 'oklch(83% 0.17 85)', bg: 'rgba(218,165,32,0.15)' },
+                    { label: 'Off Track', pct: 18, color: 'oklch(55% 0.22 27)', bg: 'rgba(178,34,34,0.15)' },
+                  ].map(s => (
+                    <div key={s.label}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full" style={{ background: s.color }} />
+                          <span className="text-sm font-semibold text-text-on-dark-muted">{s.label}</span>
+                        </span>
+                        <span className="text-sm font-bold text-text-on-dark-faint">{s.pct}%</span>
+                      </div>
+                      <div className="h-2.5 rounded-full overflow-hidden" style={{ background: s.bg }}>
+                        <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, background: s.color }} />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-3 border-t border-border-dark flex items-center gap-2 text-xs text-text-on-dark-faint">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Updated monthly &middot; Status auto-derived
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center px-8 sm:px-14 py-14 lg:py-20">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-status-off-track/10 text-status-off-track flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </div>
+                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
+                  Track Progress Monthly
+                </h2>
+                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
+                  Every ministry gets an automatic status assessment. Clear thresholds determine whether spending is <strong className="text-jm-green-dark">on track</strong>, <strong className="text-gold-dark">at risk</strong>, or <strong className="text-status-off-track">off track</strong> &mdash; with tooltips explaining exactly why.
+                </p>
+                <p className="mt-4 text-text-secondary text-[length:var(--text-caption)]">
+                  No subjective ratings. Status is derived from data using transparent rules tied to the fiscal calendar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* People */}
+      <section className="relative py-20 sm:py-28 overflow-hidden">
+        <Image
+          src="/kingstonjm.jpg"
+          alt="Kingston backdrop"
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/85" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10">
+          <div className="text-center mb-14">
+            <p className="text-gold text-[length:var(--text-caption)] font-semibold tracking-widest uppercase mb-4">Accountable Leadership</p>
+            <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-on-dark tracking-tight font-[family-name:var(--font-display)]">
+              The people behind the numbers
+            </h2>
+            <p className="mt-4 text-text-on-dark-muted text-[length:var(--text-h3)] max-w-2xl mx-auto leading-[1.65]">
+              Jamaica&rsquo;s cabinet ministers and permanent secretaries are accountable for delivering results. This dashboard helps citizens and officials track progress at every level.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
+            {PEOPLE.map(p => (
+              <div key={p.name} className="flex flex-col items-center text-center group">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 mb-4 shimmer-hover rounded-full">
+                  <Image
+                    src={p.src}
+                    alt={p.name}
+                    fill
+                    className="rounded-full object-cover border-2 border-gold/30 group-hover:border-gold transition-colors"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gold flex items-center justify-center">
+                    <svg className="w-3.5 h-3.5 text-sidebar" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-text-on-dark text-[length:var(--text-caption)] font-semibold leading-tight">{p.name}</p>
+                <p className="text-gold text-[length:var(--text-micro)] mt-1.5 leading-snug">{p.title}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-text-on-dark-faint text-[length:var(--text-caption)]">
+              Tracking leadership across <strong className="text-text-on-dark-muted">18 ministries</strong> and <strong className="text-text-on-dark-muted">90+ entities</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Source / Trust */}
+      <section className="bg-page py-12 border-t border-border-default">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <Image
+              src="/Coat_of_arms_of_Jamaica.svg.png"
+              alt="Jamaica Coat of Arms"
+              width={40}
+              height={40}
+              className="w-10 h-10 opacity-60"
+            />
+            <div className="text-[length:var(--text-caption)] text-text-secondary">
+              <p>Data sourced from the <strong className="text-text-primary">Estimates of Expenditure 2026-27</strong></p>
+              <p className="text-[length:var(--text-micro)] mt-0.5">As Passed in the House of Representatives, 24 March 2026</p>
+            </div>
+          </div>
+          <p className="text-[length:var(--text-micro)] text-text-secondary/60">
+            &copy; {new Date().getFullYear()} Government of Jamaica &middot; Cabinet Dashboard Prototype
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }

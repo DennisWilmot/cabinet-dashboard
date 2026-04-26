@@ -165,6 +165,7 @@ export const cabinetData: MinistryData = {
     totalSpent: 1391,
     recurrentTotal: 2727,
     capitalTotal: 150,
+    lastUpdated: '2026-03-10',
     actuals: snap([220, 460, 695, 930, 1160, 1391]),
     priorYearActuals: pySnap(800, W_LIN),
   },

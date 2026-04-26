@@ -2,14 +2,20 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const justiceLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Marlene Malahoo Forte, KC, MP',
-    title: 'Minister of Legal & Constitutional Affairs',
+    name: 'Hon. Delroy Chuck, KC, MP',
+    title: 'Minister of Justice and Constitutional Affairs',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, Ministry of Justice',
+    name: 'Hon. Marisa Dalrymple-Philibert, MP',
+    title: 'Minister of State, Justice and Constitutional Affairs',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mrs. Grace Ann Stewart McFarlane',
+    title: 'Permanent Secretary',
     role: 'ps',
     headCode: '28000',
     avatarUrl: '/avatars/placeholder.svg',
@@ -32,8 +38,8 @@ export const justiceEntityOfficers: Record<string, SeniorOfficer> = {
     avatarUrl: '/avatars/placeholder.svg',
   },
   ag: {
-    name: 'Attorney General',
-    title: "Attorney General's Department",
+    name: 'Derrick McKoy',
+    title: 'Attorney General',
     role: 'head_officer',
     headCode: '28031',
     avatarUrl: '/avatars/placeholder.svg',

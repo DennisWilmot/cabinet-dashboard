@@ -519,6 +519,7 @@ export const educationData: MinistryData = {
     totalSpent: 109600,
     recurrentTotal: 218217,
     capitalTotal: 3408,
+    lastUpdated: '2026-04-14',
     actuals: snap([18200, 36500, 55100, 73400, 91600, 109600]),
     priorYearActuals: pySnap(183000, W_SCHOOL),
   },

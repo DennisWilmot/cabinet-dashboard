@@ -633,6 +633,7 @@ export const mofData: MinistryData = {
     totalSpent: 287300,
     recurrentTotal: 565500,
     capitalTotal: 17900,
+    lastUpdated: '2026-04-15',
     actuals: snap([64500, 97400, 150300, 181000, 213600, 287300]),
     priorYearActuals: pySnap(508000, W_LIN),
   },

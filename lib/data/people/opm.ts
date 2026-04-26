@@ -2,19 +2,31 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const opmLeadership: SeniorOfficer[] = [
   {
-    name: 'Most Hon. Andrew Holness, ON, MP',
+    name: 'Most Hon. Andrew Holness, ON, PC, MP',
     title: 'Prime Minister',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Hon. Floyd Green, MP',
-    title: 'Minister without Portfolio, OPM',
+    name: 'Hon. Ambassador Audrey Marks, MP',
+    title: 'Minister w/o Portfolio – Efficiency, Innovation & Digital Transformation',
     role: 'state_minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Ambassador Douglas Saunders',
+    name: 'Hon. Andrew Wheatley, MP',
+    title: 'Minister w/o Portfolio – Science, Technology & Special Projects',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Sen. Abka Fitz-Henley',
+    title: 'Minister of State, Office of the Prime Minister',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Ambassador Rocky Meade, CD, JP, PhD',
     title: 'Permanent Secretary',
     role: 'ps',
     headCode: '15000',

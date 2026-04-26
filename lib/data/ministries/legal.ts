@@ -134,6 +134,7 @@ export const legalData: MinistryData = {
     totalSpent: 820,
     recurrentTotal: 1599,
     capitalTotal: 80,
+    lastUpdated: '2026-02-28',
     actuals: snap([130, 270, 410, 550, 690, 820]),
     priorYearActuals: pySnap(1020, W_LIN),
   },

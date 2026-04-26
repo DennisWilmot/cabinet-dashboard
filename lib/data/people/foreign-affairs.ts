@@ -8,8 +8,14 @@ export const foreignAffairsLeadership: SeniorOfficer[] = [
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Permanent Secretary',
-    title: 'Permanent Secretary, MFAFT',
+    name: 'Hon. Alando Terrelonge, MP',
+    title: 'Minister of State, Foreign Affairs & Foreign Trade',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Ambassador Sheila Sealy Monteith, CD, JP',
+    title: 'Permanent Secretary & Head of the Foreign Service',
     role: 'ps',
     headCode: '30000',
     avatarUrl: '/avatars/placeholder.svg',

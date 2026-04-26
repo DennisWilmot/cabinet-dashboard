@@ -360,6 +360,7 @@ export const economicGrowthData: MinistryData = {
     totalSpent: 26314,
     recurrentTotal: 18580,
     capitalTotal: 34552,
+    lastUpdated: '2026-04-18',
     actuals: snap([4200, 8600, 13100, 17500, 22000, 26314]),
     priorYearActuals: pySnap(63000, W_LIN),
   },

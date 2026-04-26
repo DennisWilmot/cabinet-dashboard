@@ -2,19 +2,25 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const economicGrowthLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Everald Warmington, MP',
-    title: 'Minister of Economic Growth & Infrastructure',
+    name: 'Most Hon. Andrew Holness, ON, PC, MP',
+    title: 'Prime Minister & Minister of Economic Growth and Infrastructure Development',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Hon. Pearnel Charles Jr., MP',
-    title: 'State Minister, Economic Growth',
+    name: 'Hon. Robert Montague, MP',
+    title: 'Minister w/o Portfolio – Land Titling & Settlements',
     role: 'state_minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Audrey Sewell',
+    name: 'Hon. Robert Morgan, MP',
+    title: 'Minister w/o Portfolio – Works',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mrs. Arlene Williams',
     title: 'Permanent Secretary',
     role: 'ps',
     headCode: '19000',

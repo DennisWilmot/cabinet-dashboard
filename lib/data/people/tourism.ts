@@ -2,13 +2,19 @@ import type { SeniorOfficer } from '@/lib/types';
 
 export const tourismLeadership: SeniorOfficer[] = [
   {
-    name: 'Hon. Edmund Bartlett, MP',
+    name: 'Hon. Edmund Bartlett, OJ, CD, MP',
     title: 'Minister of Tourism',
     role: 'minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Jennifer Griffith',
+    name: 'Hon. Tova Hamilton, MP',
+    title: 'Minister of State, Tourism',
+    role: 'state_minister',
+    avatarUrl: '/avatars/placeholder.svg',
+  },
+  {
+    name: 'Mrs. Jennifer Griffith, CD, JP',
     title: 'Permanent Secretary',
     role: 'ps',
     headCode: '17000',

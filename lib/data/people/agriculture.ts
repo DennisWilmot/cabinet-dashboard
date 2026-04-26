@@ -9,12 +9,12 @@ export const agricultureLeadership: SeniorOfficer[] = [
   },
   {
     name: 'Hon. Franklin Witter, MP',
-    title: 'State Minister, Agriculture',
+    title: 'Minister of State, Agriculture, Fisheries & Mining',
     role: 'state_minister',
     avatarUrl: '/avatars/placeholder.svg',
   },
   {
-    name: 'Dermon Spence',
+    name: 'Mr. Dermon Spence, JP',
     title: 'Permanent Secretary',
     role: 'ps',
     headCode: '51000',

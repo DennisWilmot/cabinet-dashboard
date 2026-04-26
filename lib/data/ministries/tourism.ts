@@ -263,6 +263,7 @@ export const tourismData: MinistryData = {
     totalSpent: 8181,
     recurrentTotal: 15611,
     capitalTotal: 1200,
+    lastUpdated: '2026-04-20',
     actuals: snap([1300, 2700, 4100, 5500, 6800, 8181]),
     priorYearActuals: pySnap(15500, W_LIN),
   },

@@ -38,6 +38,14 @@
   --color-status-at-risk: oklch(83% 0.17 85);
   --color-status-off-track: oklch(55% 0.22 27);
 
+  /* Light-on-dark semantic colors (hero / dark sections) */
+  --color-text-on-dark: oklch(95% 0.005 155);
+  --color-text-on-dark-muted: oklch(75% 0.01 155);
+  --color-text-on-dark-faint: oklch(55% 0.01 155);
+  --color-surface-dark: oklch(20% 0.015 155);
+  --color-surface-dark-raised: oklch(24% 0.015 155);
+  --color-border-dark: oklch(32% 0.015 155);
+
   --color-chart-current: oklch(56% 0.16 155);
   --color-chart-prior: oklch(78% 0.015 90);
   --color-chart-target: oklch(83% 0.17 85);
@@ -62,11 +70,57 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  font-kerning: normal;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   line-height: 1.2;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    oklch(95% 0.04 85 / 0.35) 45%,
+    oklch(95% 0.04 85 / 0.15) 50%,
+    transparent 55%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .shimmer-hover:hover::after {
+    animation: shimmer-sweep 600ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
 }
 
 /* Staggered page entrance */
@@ -91,6 +145,14 @@ h1, h2, h3, h4 {
 .stagger-4 { animation-delay: 180ms; }
 .stagger-5 { animation-delay: 240ms; }
 .stagger-6 { animation-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 .scrollbar-none {
   -ms-overflow-style: none;

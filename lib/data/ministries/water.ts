@@ -347,6 +347,7 @@ export const waterData: MinistryData = {
     totalSpent: 2548,
     recurrentTotal: 4599,
     capitalTotal: 1150,
+    lastUpdated: '2026-04-05',
     actuals: snap([410, 840, 1280, 1710, 2135, 2548]),
     priorYearActuals: pySnap(4550, W_LIN),
   },

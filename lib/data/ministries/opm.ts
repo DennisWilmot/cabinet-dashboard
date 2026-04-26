@@ -276,6 +276,7 @@ export const opmData: MinistryData = {
     totalSpent: 35743,
     recurrentTotal: 70000,
     capitalTotal: 3629,
+    lastUpdated: '2026-04-22',
     actuals: snap([5800, 11900, 17900, 23800, 29800, 35743]),
     priorYearActuals: pySnap(19000, W_LIN),
   },

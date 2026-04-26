@@ -40,14 +40,14 @@ export function SpendTimeSeries({
         {!compact && (
           <XAxis
             dataKey="period"
-            tick={{ fontSize: 13, fill: AXIS_COLOR }}
+            tick={{ fontSize: 15, fill: AXIS_COLOR }}
             axisLine={{ stroke: GRID_COLOR }}
             tickLine={false}
           />
         )}
         {!compact && (
           <YAxis
-            tick={{ fontSize: 13, fill: AXIS_COLOR }}
+            tick={{ fontSize: 15, fill: AXIS_COLOR }}
             axisLine={false}
             tickLine={false}
             tickFormatter={v => formatCurrency(v)}
@@ -60,7 +60,7 @@ export function SpendTimeSeries({
             name === 'current' ? 'FY 2026-27' : name === 'prior' ? 'FY 2025-26' : 'Expected Pace',
           ]}
           contentStyle={{
-            fontSize: 14,
+            fontSize: 15,
             borderRadius: 4,
             border: `1px solid ${GRID_COLOR}`,
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -109,7 +109,7 @@ export function SpendTimeSeries({
               value: 'Today',
               position: 'top',
               fill: 'oklch(50% 0.25 25)',
-              fontSize: compact ? 10 : 13,
+              fontSize: compact ? 12 : 15,
               fontWeight: 700,
             }}
           />

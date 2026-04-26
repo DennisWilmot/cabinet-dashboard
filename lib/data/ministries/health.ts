@@ -329,6 +329,7 @@ export const healthData: MinistryData = {
     totalSpent: 94500,
     recurrentTotal: 172701,
     capitalTotal: 16352,
+    lastUpdated: '2026-04-19',
     actuals: snap([15100, 31200, 46800, 63100, 78800, 94500]),
     priorYearActuals: pySnap(130858, W_LIN),
   },

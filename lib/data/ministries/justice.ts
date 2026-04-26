@@ -293,6 +293,7 @@ export const justiceData: MinistryData = {
     totalSpent: 10728,
     recurrentTotal: 21810,
     capitalTotal: 88,
+    lastUpdated: '2026-04-02',
     actuals: snap([1720, 3550, 5400, 7200, 9000, 10728]),
     priorYearActuals: pySnap(19500, W_LIN),
   },

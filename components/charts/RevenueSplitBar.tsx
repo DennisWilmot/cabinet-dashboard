@@ -41,7 +41,7 @@ export function FundingSplit({ data }: { data: { source: string; committed: numb
       <BarChart data={data} layout="vertical" margin={{ top: 0, right: 0, bottom: 0, left: 60 }}>
         <XAxis
           type="number"
-          tick={{ fontSize: 13, fill: AXIS_COLOR }}
+          tick={{ fontSize: 15, fill: AXIS_COLOR }}
           tickFormatter={v => formatCurrency(v)}
           axisLine={false}
           tickLine={false}
@@ -49,7 +49,7 @@ export function FundingSplit({ data }: { data: { source: string; committed: numb
         <YAxis
           type="category"
           dataKey="source"
-          tick={{ fontSize: 13, fill: AXIS_COLOR }}
+          tick={{ fontSize: 15, fill: AXIS_COLOR }}
           axisLine={false}
           tickLine={false}
           width={65}
@@ -57,7 +57,7 @@ export function FundingSplit({ data }: { data: { source: string; committed: numb
         <Tooltip
           formatter={(value, name) => [formatCurrency(value as number), name === 'committed' ? 'Committed' : 'Disbursed']}
           contentStyle={{
-            fontSize: 14,
+            fontSize: 15,
             borderRadius: 4,
             border: `1px solid ${GRID_COLOR}`,
             fontFamily: 'var(--font-body)',

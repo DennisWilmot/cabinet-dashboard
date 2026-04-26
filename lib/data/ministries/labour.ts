@@ -276,6 +276,7 @@ export const labourData: MinistryData = {
     totalSpent: 10727,
     recurrentTotal: 21281,
     capitalTotal: 760,
+    lastUpdated: '2026-04-08',
     actuals: snap([1720, 3530, 5350, 7180, 8960, 10727]),
     priorYearActuals: pySnap(20800, W_LIN),
   },

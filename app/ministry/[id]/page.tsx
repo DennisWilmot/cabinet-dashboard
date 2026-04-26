@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { CabinetNav } from '@/components/layout/CabinetNav';
+import { DataFreshness } from '@/components/layout/DataFreshness';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { MetricCard } from '@/components/cards/MetricCard';
 import { BucketCard } from '@/components/cards/BucketCard';
@@ -48,7 +49,7 @@ export default function MinistryPage() {
     + capital.projects.length;
 
   const breadcrumbs = [
-    { label: 'Cabinet', href: '/' },
+    { label: 'Cabinet', href: '/dashboard' },
     { label: overview.shortName },
   ];
 
@@ -121,12 +122,13 @@ export default function MinistryPage() {
   return (
     <>
       <CabinetNav breadcrumbs={breadcrumbs} />
+      <DataFreshness lastUpdated={overview.lastUpdated} />
       <DashboardShell>
         <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
           <div className="flex-1 min-w-0">
 
             <header className="mb-[var(--space-lg)] sm:mb-[var(--space-2xl)] animate-fade-up">
-              <Link href="/" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
+              <Link href="/dashboard" className="inline-flex items-center gap-[4px] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>

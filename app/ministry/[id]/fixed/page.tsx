@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { CabinetNav } from '@/components/layout/CabinetNav';
+import { DataFreshness } from '@/components/layout/DataFreshness';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { SectionNav } from '@/components/layout/SectionNav';
 import { ObligationCard } from '@/components/cards/ObligationCard';
@@ -23,7 +24,7 @@ export default function FixedObligationsPage() {
   const hasActuals = fixedObligations.actuals.length > 0;
 
   const breadcrumbs = [
-    { label: 'Cabinet', href: '/' },
+    { label: 'Cabinet', href: '/dashboard' },
     { label: overview.shortName, href: `/ministry/${overview.id}` },
     { label: 'Recurring Expenditure' },
   ];
@@ -58,6 +59,7 @@ export default function FixedObligationsPage() {
   return (
     <>
       <CabinetNav breadcrumbs={breadcrumbs} />
+      <DataFreshness lastUpdated={overview.lastUpdated} />
       <SectionNav items={sectionItems} />
       <DashboardShell>
         <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
