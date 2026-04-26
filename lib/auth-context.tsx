@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { authClient } from '@/lib/auth-client';
 
 interface AuthUser {
@@ -27,7 +27,16 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending, error } = authClient.useSession();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!isPending || error) {
+      setReady(true);
+    }
+  }, [isPending, error]);
+
+  const isLoading = !ready;
 
   const signIn = () => {
     authClient.signIn.social({
@@ -59,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         isAuthenticated: !!session?.user,
-        isLoading: isPending,
+        isLoading,
         user,
         signIn,
         logout,
