@@ -2,17 +2,21 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { useAuth } from '@/lib/auth-context';
+import { authClient } from '@/lib/auth-client';
 
 function LoginCard() {
-  const { signIn, isLoading } = useAuth();
+  const handleSignIn = () => {
+    authClient.signIn.social({
+      provider: 'google',
+      callbackURL: '/dashboard',
+    });
+  };
 
   return (
     <div className="w-full space-y-5">
       <button
-        onClick={() => signIn()}
-        disabled={isLoading}
-        className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg bg-text-on-dark text-sidebar font-bold text-[length:var(--text-body)] hover:bg-gold transition-all disabled:opacity-60 cursor-pointer"
+        onClick={handleSignIn}
+        className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg bg-text-on-dark text-sidebar font-bold text-[length:var(--text-body)] hover:bg-gold transition-all cursor-pointer"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -20,7 +24,7 @@ function LoginCard() {
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.97 10.97 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
-        {isLoading ? 'Connecting...' : 'Sign in with Google'}
+        Sign in with Google
       </button>
       <p className="text-text-on-dark-faint text-[length:var(--text-micro)] text-center">
         Use your government Google Workspace account
@@ -39,17 +43,12 @@ const PEOPLE = [
 ];
 
 export default function LandingPage() {
-  const { isAuthenticated, isLoading } = useAuth();
-
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
+    const hasCookie = document.cookie.includes('better-auth.session_token');
+    if (hasCookie) {
       window.location.href = '/dashboard';
     }
-  }, [isLoading, isAuthenticated]);
-
-  if (!isLoading && isAuthenticated) {
-    return null;
-  }
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
