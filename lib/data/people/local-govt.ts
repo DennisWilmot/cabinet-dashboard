@@ -5,7 +5,7 @@ export const localGovtLeadership: SeniorOfficer[] = [
     name: 'Hon. Desmond McKenzie, CD, MP',
     title: 'Minister of Local Government and Rural Development',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/desmond-mckenzie.jpg',
   },
   {
     name: 'Hon. Delroy Williams, MP',

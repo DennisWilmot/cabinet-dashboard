@@ -5,7 +5,7 @@ export const tourismLeadership: SeniorOfficer[] = [
     name: 'Hon. Edmund Bartlett, OJ, CD, MP',
     title: 'Minister of Tourism',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/edmund-bartlett.jpg',
   },
   {
     name: 'Hon. Tova Hamilton, MP',

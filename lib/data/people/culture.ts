@@ -5,7 +5,7 @@ export const cultureLeadership: SeniorOfficer[] = [
     name: 'Hon. Olivia Grange, CD, MP',
     title: 'Minister of Culture, Gender, Entertainment & Sport',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/olivia-grange.jpg',
   },
   {
     name: 'Hon. Kerensia Morrison, MP',

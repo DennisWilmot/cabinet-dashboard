@@ -5,7 +5,7 @@ export const opmLeadership: SeniorOfficer[] = [
     name: 'Most Hon. Andrew Holness, ON, PC, MP',
     title: 'Prime Minister',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/andrew-holness.jpg',
   },
   {
     name: 'Hon. Ambassador Audrey Marks, MP',

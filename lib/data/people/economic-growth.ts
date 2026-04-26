@@ -5,7 +5,7 @@ export const economicGrowthLeadership: SeniorOfficer[] = [
     name: 'Most Hon. Andrew Holness, ON, PC, MP',
     title: 'Prime Minister & Minister of Economic Growth and Infrastructure Development',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/andrew-holness.jpg',
   },
   {
     name: 'Hon. Robert Montague, MP',

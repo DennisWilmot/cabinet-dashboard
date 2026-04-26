@@ -6,7 +6,7 @@ export const cabinetLeadership: SeniorOfficer[] = [
     title: 'Cabinet Secretary & Head of the Public Service',
     role: 'ps',
     headCode: '16000',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/audrey-sewell.jpg',
   },
 ];
 

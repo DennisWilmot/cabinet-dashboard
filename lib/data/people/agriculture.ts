@@ -5,7 +5,7 @@ export const agricultureLeadership: SeniorOfficer[] = [
     name: 'Hon. Floyd Green, MP',
     title: 'Minister of Agriculture, Fisheries & Mining',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/floyd-green.jpg',
   },
   {
     name: 'Hon. Franklin Witter, MP',

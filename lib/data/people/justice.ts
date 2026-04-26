@@ -5,7 +5,7 @@ export const justiceLeadership: SeniorOfficer[] = [
     name: 'Hon. Delroy Chuck, KC, MP',
     title: 'Minister of Justice and Constitutional Affairs',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/delroy-chuck.png',
   },
   {
     name: 'Hon. Marisa Dalrymple-Philibert, MP',

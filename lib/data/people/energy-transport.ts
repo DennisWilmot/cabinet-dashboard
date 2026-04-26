@@ -5,7 +5,7 @@ export const energyTransportLeadership: SeniorOfficer[] = [
     name: 'Hon. Daryl Vaz, MP',
     title: 'Minister of Transport, Telecommunications & Energy',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/daryl-vaz.jpeg',
   },
   {
     name: 'Mrs. Carol Palmer, CD, JP',

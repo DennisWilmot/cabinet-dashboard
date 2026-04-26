@@ -5,7 +5,7 @@ export const healthLeadership: SeniorOfficer[] = [
     name: 'Dr. the Hon. Christopher Tufton, CD, MP',
     title: 'Minister of Health and Wellness',
     role: 'minister',
-    avatarUrl: '/avatars/christopher-tufton.jpeg',
+    avatarUrl: '/avatars/christopher-tufton.jpg',
   },
   {
     name: 'Hon. Krystal Lee, MP',

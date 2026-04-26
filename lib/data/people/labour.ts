@@ -5,7 +5,7 @@ export const labourLeadership: SeniorOfficer[] = [
     name: 'Hon. Pearnel Charles Jr., MP, JP',
     title: 'Minister of Labour & Social Security',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/pearnel-charles-jr.jpeg',
   },
   {
     name: 'Hon. Donovan Williams, MP',

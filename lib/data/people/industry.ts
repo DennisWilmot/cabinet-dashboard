@@ -5,7 +5,7 @@ export const industryLeadership: SeniorOfficer[] = [
     name: 'Senator Hon. Aubyn Hill',
     title: 'Minister of Industry, Investment & Commerce',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/aubyn-hill.jpg',
   },
   {
     name: 'Hon. Delano Seiveright, MP',

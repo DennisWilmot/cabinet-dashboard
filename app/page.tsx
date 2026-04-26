@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 
@@ -40,8 +41,13 @@ const PEOPLE = [
 export default function LandingPage() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      window.location.href = '/dashboard';
+    }
+  }, [isLoading, isAuthenticated]);
+
   if (!isLoading && isAuthenticated) {
-    if (typeof window !== 'undefined') window.location.href = '/dashboard';
     return null;
   }
 

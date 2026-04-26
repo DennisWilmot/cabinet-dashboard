@@ -5,7 +5,7 @@ export const waterLeadership: SeniorOfficer[] = [
     name: 'Hon. Matthew Samuda, MP',
     title: 'Minister of Water, Environment & Climate Change',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/matthew-samuda.jpg',
   },
   {
     name: 'Permanent Secretary',

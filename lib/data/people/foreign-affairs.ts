@@ -5,7 +5,7 @@ export const foreignAffairsLeadership: SeniorOfficer[] = [
     name: 'Senator Hon. Kamina Johnson Smith',
     title: 'Minister of Foreign Affairs & Foreign Trade',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/kamina-johnson-smith.jpeg',
   },
   {
     name: 'Hon. Alando Terrelonge, MP',

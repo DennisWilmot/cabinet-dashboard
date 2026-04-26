@@ -5,7 +5,7 @@ export const nationalSecurityLeadership: SeniorOfficer[] = [
     name: 'Hon. Dr. Horace Chang, OJ, CD, MP',
     title: 'Deputy PM & Minister of National Security and Peace',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/horace-chang.jpeg',
   },
   {
     name: 'Hon. Juliet Cuthbert-Flynn, MP',

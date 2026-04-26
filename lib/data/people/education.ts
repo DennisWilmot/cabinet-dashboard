@@ -5,7 +5,7 @@ export const educationLeadership: SeniorOfficer[] = [
     name: 'Sen. Dr. the Hon. Dana Morris Dixon',
     title: 'Minister of Education, Skills, Youth and Information',
     role: 'minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/dana-morris-dixon.jpg',
   },
   {
     name: 'Hon. Rhoda Moy Crawford, MP',
