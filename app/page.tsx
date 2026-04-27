@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
+import { ministryRegistry, ministryOrder } from '@/lib/data';
 
 function LoginCard() {
   const handleSignIn = () => {
@@ -34,13 +35,65 @@ function LoginCard() {
 }
 
 
-const PEOPLE = [
-  { name: 'Hon. Fayval Williams, MP', title: 'Minister of Finance', src: '/avatars/fayval-williams.jpeg' },
-  { name: 'Hon. Zavia Mayne, MP', title: 'State Minister, Finance', src: '/avatars/zavia-mayne.jpg' },
-  { name: 'Ms. Darlene Morrison, CD', title: 'Financial Secretary', src: '/avatars/darlene-morrison.jpg' },
-  { name: 'Ainsley Powell, CD', title: 'Commissioner General, TAJ', src: '/avatars/ainsley-powell.jpg' },
-  { name: 'Dr. Wayne Henry', title: 'Director General, PIOJ', src: '/avatars/wayne-henry.jpg' },
-];
+function MinistryCarousel() {
+  const ministers = ministryOrder.map(slug => {
+    const d = ministryRegistry[slug];
+    return {
+      name: d.overview.minister.name,
+      title: d.overview.shortName,
+      src: d.overview.minister.avatarUrl,
+      slug,
+    };
+  });
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let raf: number;
+    let speed = 0.5;
+
+    const step = () => {
+      if (!paused && el) {
+        el.scrollLeft += speed;
+        if (el.scrollLeft >= el.scrollWidth / 2) {
+          el.scrollLeft = 0;
+        }
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [paused]);
+
+  const doubled = [...ministers, ...ministers];
+
+  return (
+    <div
+      ref={scrollRef}
+      className="flex gap-6 sm:gap-8 overflow-x-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {doubled.map((m, i) => (
+        <div key={`${m.slug}-${i}`} className="flex-shrink-0 flex flex-col items-center text-center w-28 sm:w-32 group">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 mb-3 shimmer-hover rounded-full">
+            <Image
+              src={m.src}
+              alt={m.name}
+              fill
+              className="rounded-full object-cover border-2 border-gold/30 group-hover:border-gold transition-colors"
+            />
+          </div>
+          <p className="text-text-on-dark text-[length:var(--text-micro)] sm:text-[length:var(--text-caption)] font-semibold leading-tight">{m.name.replace(/^(Most Hon\.|Hon\.|Sen\.|Senator Hon\.|Dr\. the Hon\.) /, '')}</p>
+          <p className="text-gold text-[length:var(--text-micro)] mt-1 leading-snug">{m.title}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function LandingPage() {
   useEffect(() => {
@@ -84,11 +137,11 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-[length:clamp(1.75rem,6vw,2.625rem)] sm:text-[length:clamp(2.625rem,5vw+1rem,4rem)] font-bold text-text-on-dark leading-[1.1] tracking-tight font-[family-name:var(--font-display)]">
-              Track how Jamaica&rsquo;s budget is being spent
+              What Gets Measured Gets Done
             </h1>
 
             <p className="mt-6 text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] text-text-on-dark-muted max-w-xl mx-auto lg:mx-0 leading-[1.65]">
-              Real-time budget execution data for every ministry, department, and agency &mdash; built for transparency and accountability.
+              The GoJ Budget Tracker gives Cabinet Ministers vital leading performance indicators across ministries, departments and agencies for accountability and accelerated outcomes.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-[length:var(--text-caption)] text-text-on-dark-faint">
@@ -135,73 +188,87 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features — alternating image/text rows */}
+      {/* Features */}
       <section id="features" className="bg-page">
         {/* Feature 1 */}
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[320px] lg:min-h-[420px]">
-            <div className="relative overflow-hidden bg-sidebar min-h-[220px] lg:min-h-0">
-              <Image
-                src="/kingstonjm.jpg"
-                alt="Kingston skyline"
-                fill
-                className="object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 lg:bg-gradient-to-l" />
-              <div className="absolute bottom-6 left-6 right-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sidebar/90 text-gold text-[length:var(--text-micro)] font-semibold tracking-wider uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-                  18 Ministries
-                </div>
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-24 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
+                Your Spending at a Glance
+              </h2>
+              <p className="mt-5 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-lg">
+                See how <strong className="text-text-primary">$1.4 trillion</strong> in public funds flows across 18 ministries, from allocation to expenditure, in a single view.
+              </p>
+              <div className="mt-6 flex items-center gap-6 text-[length:var(--text-caption)] text-text-secondary">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-jm-green" />
+                  Recurrent
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gold" />
+                  Capital
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-sidebar" />
+                  Debt Service
+                </span>
               </div>
             </div>
-            <div className="flex items-center px-6 sm:px-14 py-10 sm:py-14 lg:py-20">
-              <div>
-                <div className="w-12 h-12 rounded-lg bg-jm-green/10 text-jm-green flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-                  </svg>
-                </div>
-                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
-                  Budget at a Glance
-                </h2>
-                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
-                  See how <strong className="text-text-primary">$1.4 trillion</strong> in public funds flows across 18 ministries &mdash; from allocation to expenditure, in a single view.
-                </p>
-                <div className="mt-6 flex items-center gap-6 text-[length:var(--text-caption)] text-text-secondary">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-jm-green" />
-                    Recurrent
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-gold" />
-                    Capital
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-sidebar" />
-                    Debt Service
-                  </span>
-                </div>
+            <div className="order-1 lg:order-2">
+              <div className="bg-sidebar rounded-xl p-3 sm:p-4 shadow-2xl shadow-black/20">
+                <Image
+                  src="/feature-spending.png"
+                  alt="Budget spending overview showing allocation across ministries"
+                  width={1200}
+                  height={800}
+                  className="rounded-lg w-full h-auto"
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Feature 2 — reversed */}
-        <div className="max-w-7xl mx-auto border-t border-border-default">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[320px] lg:min-h-[420px]">
-            <div className="flex items-center px-6 sm:px-14 py-10 sm:py-14 lg:py-20 order-2 lg:order-1">
+        {/* Feature 2 — Early Indicators */}
+        <div className="border-t border-border-default">
+          <div className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-24 lg:py-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-gold/15 text-gold-dark flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
-                  </svg>
+                <div className="bg-sidebar rounded-xl p-3 sm:p-4 shadow-2xl shadow-black/20">
+                  <Image
+                    src="/feature-indicators.png"
+                    alt="Early progress indicators showing on track, at risk, and off track statuses"
+                    width={1200}
+                    height={800}
+                    className="rounded-lg w-full h-auto"
+                  />
                 </div>
+              </div>
+              <div>
                 <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
-                  Drill Down to Detail
+                  See Early Progress Indicators
                 </h2>
-                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
-                  From the full Cabinet overview, drill into individual ministries, operational programmes, recurring obligations, and capital projects.
+                <p className="mt-5 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-lg">
+                  Your near-real time automated status assessment shows whether spending is <strong className="text-jm-green-dark">on track</strong>, <strong className="text-gold-dark">at risk</strong>, or <strong className="text-status-off-track">off track</strong>, with reasons why.
+                </p>
+                <p className="mt-4 text-text-secondary text-[length:var(--text-caption)] max-w-lg">
+                  No subjective ratings. Status is derived from data using transparent rules tied to the fiscal calendar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature 3 — Blockers */}
+        <div className="border-t border-border-default">
+          <div className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-24 lg:py-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              <div className="order-2 lg:order-1">
+                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
+                  Your Blockers Made Visible
+                </h2>
+                <p className="mt-5 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-lg">
+                  See critical issues ahead of time, and use AI to drill down for new insights.
                 </p>
                 <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[length:var(--text-caption)] text-text-secondary">
                   <span><strong className="text-[length:var(--text-h2)] font-bold text-text-primary">3</strong> levels deep</span>
@@ -211,99 +278,23 @@ export default function LandingPage() {
                   <span><strong className="text-[length:var(--text-h2)] font-bold text-text-primary">6</strong> months data</span>
                 </div>
               </div>
-            </div>
-            <div className="relative overflow-hidden bg-sidebar min-h-[220px] lg:min-h-0 order-1 lg:order-2">
-              <div className="absolute inset-0 bg-sidebar flex items-center justify-center p-6 sm:p-10">
-                <div className="w-full max-w-sm space-y-3">
-                  {['Cabinet Overview', 'Ministry of Finance', 'Tax Administration Jamaica', 'Revenue Collection Programme'].map((label, i) => (
-                    <div
-                      key={label}
-                      className="flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border transition-all"
-                      style={{
-                        marginLeft: `${i * 12}px`,
-                        borderColor: i === 3 ? 'oklch(83% 0.17 85)' : 'oklch(32% 0.015 155)',
-                        background: i === 3 ? 'oklch(24% 0.015 155)' : 'oklch(18% 0.01 155)',
-                      }}
-                    >
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center text-[length:var(--text-micro)] font-bold"
-                        style={{
-                          background: i === 3 ? 'oklch(83% 0.17 85)' : 'oklch(32% 0.015 155)',
-                          color: i === 3 ? 'oklch(16% 0.01 155)' : 'oklch(55% 0.01 155)',
-                        }}
-                      >
-                        L{i}
-                      </div>
-                      <span className="text-[length:var(--text-caption)] text-text-on-dark-muted font-medium">{label}</span>
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-2 ml-12 mt-1">
-                    <svg className="w-4 h-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
-                    <span className="text-[length:var(--text-micro)] text-text-on-dark-faint">Keep drilling</span>
-                  </div>
+              <div className="order-1 lg:order-2">
+                <div className="bg-sidebar rounded-xl p-3 sm:p-4 shadow-2xl shadow-black/20">
+                  <Image
+                    src="/feature-blockers.png"
+                    alt="Blockers and critical issues visibility with AI drill-down"
+                    width={1200}
+                    height={800}
+                    className="rounded-lg w-full h-auto"
+                  />
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Feature 3 */}
-        <div className="max-w-7xl mx-auto border-t border-border-default">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[320px] lg:min-h-[420px]">
-            <div className="relative overflow-hidden min-h-[220px] lg:min-h-0">
-              <div className="absolute inset-0 bg-sidebar flex items-center justify-center p-6 sm:p-10">
-                <div className="w-full max-w-xs space-y-5">
-                  {[
-                    { label: 'On Track', pct: 72, color: 'oklch(56% 0.16 155)', bg: 'rgba(34,139,34,0.15)' },
-                    { label: 'At Risk', pct: 45, color: 'oklch(83% 0.17 85)', bg: 'rgba(218,165,32,0.15)' },
-                    { label: 'Off Track', pct: 18, color: 'oklch(55% 0.22 27)', bg: 'rgba(178,34,34,0.15)' },
-                  ].map(s => (
-                    <div key={s.label}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ background: s.color }} />
-                          <span className="text-[length:var(--text-caption)] font-semibold text-text-on-dark-muted">{s.label}</span>
-                        </span>
-                        <span className="text-[length:var(--text-caption)] font-bold text-text-on-dark-faint">{s.pct}%</span>
-                      </div>
-                      <div className="h-2.5 rounded-full overflow-hidden" style={{ background: s.bg }}>
-                        <div className="h-full rounded-full transition-all" style={{ width: `${s.pct}%`, background: s.color }} />
-                      </div>
-                    </div>
-                  ))}
-                  <div className="pt-3 border-t border-border-dark flex items-center gap-2 text-[length:var(--text-micro)] text-text-on-dark-faint">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    Updated monthly &middot; Status auto-derived
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center px-6 sm:px-14 py-10 sm:py-14 lg:py-20">
-              <div>
-                <div className="w-12 h-12 rounded-lg bg-status-off-track/10 text-status-off-track flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                </div>
-                <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight font-[family-name:var(--font-display)] leading-tight">
-                  Track Progress Monthly
-                </h2>
-                <p className="mt-4 text-text-secondary text-[length:var(--text-h3)] leading-relaxed max-w-md">
-                  Every ministry gets an automatic status assessment. Clear thresholds determine whether spending is <strong className="text-jm-green-dark">on track</strong>, <strong className="text-gold-dark">at risk</strong>, or <strong className="text-status-off-track">off track</strong> &mdash; with tooltips explaining exactly why.
-                </p>
-                <p className="mt-4 text-text-secondary text-[length:var(--text-caption)]">
-                  No subjective ratings. Status is derived from data using transparent rules tied to the fiscal calendar.
-                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* People */}
+      {/* Ministry Breakdown */}
       <section className="relative py-14 sm:py-20 md:py-28 overflow-hidden">
         <Image
           src="/kingstonjm.jpg"
@@ -313,41 +304,21 @@ export default function LandingPage() {
         />
         <div className="absolute inset-0 bg-black/85" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10">
-          <div className="text-center mb-14">
-            <p className="text-gold text-[length:var(--text-caption)] font-semibold tracking-widest uppercase mb-4">Accountable Leadership</p>
+          <div className="text-center mb-10 sm:mb-14">
+            <p className="text-gold text-[length:var(--text-caption)] font-semibold tracking-widest uppercase mb-4">Across Government</p>
             <h2 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-on-dark tracking-tight font-[family-name:var(--font-display)]">
-              The people behind the numbers
+              Ministry by Ministry Breakdown
             </h2>
             <p className="mt-4 text-text-on-dark-muted text-[length:var(--text-h3)] max-w-2xl mx-auto leading-[1.65]">
-              Jamaica&rsquo;s cabinet ministers and permanent secretaries are accountable for delivering results. This dashboard helps citizens and officials track progress at every level.
+              Every ministry has a dedicated dashboard with budget execution data, staffing, KPIs, and project tracking &mdash; led by the ministers accountable for results.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
-            {PEOPLE.map(p => (
-              <div key={p.name} className="flex flex-col items-center text-center group">
-                <div className="relative w-20 h-20 sm:w-28 sm:h-28 mb-3 sm:mb-4 shimmer-hover rounded-full">
-                  <Image
-                    src={p.src}
-                    alt={p.name}
-                    fill
-                    className="rounded-full object-cover border-2 border-gold/30 group-hover:border-gold transition-colors"
-                  />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gold flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-sidebar" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                    </svg>
-                  </div>
-                </div>
-                <p className="text-text-on-dark text-[length:var(--text-caption)] font-semibold leading-tight">{p.name}</p>
-                <p className="text-gold text-[length:var(--text-micro)] mt-1.5 leading-snug">{p.title}</p>
-              </div>
-            ))}
-          </div>
+          <MinistryCarousel />
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-10 sm:mt-12">
             <p className="text-text-on-dark-faint text-[length:var(--text-caption)]">
-              Tracking leadership across <strong className="text-text-on-dark-muted">18 ministries</strong> and <strong className="text-text-on-dark-muted">90+ entities</strong>
+              <strong className="text-text-on-dark-muted">18 ministries</strong> &middot; <strong className="text-text-on-dark-muted">90+ entities</strong> &middot; <strong className="text-text-on-dark-muted">Updated monthly</strong>
             </p>
           </div>
         </div>
