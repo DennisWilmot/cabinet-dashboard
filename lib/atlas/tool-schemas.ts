@@ -212,4 +212,63 @@ export const TOOL_SCHEMAS = [
       required: ['topic'],
     },
   },
+  {
+    name: 'rankEntities',
+    description: 'Rank ministries or capital projects by any metric. Returns sorted results with computed values. Use for "top 5 by spend", "worst performing", "highest allocation" questions.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        entityType: { type: 'string', description: 'What to rank: "ministry" or "project"' },
+        metric: { type: 'string', description: 'Sort metric. For ministry: allocation, spent, utilization, capital_allocation, capital_spent, ops_utilization, vacancy_rate, blockers, overdue_actions. For project: allocation, spent, total_cost, physical_progress, financial_progress' },
+        order: { type: 'string', description: '"desc" (default, highest first) or "asc" (lowest first)' },
+        limit: { type: 'number', description: 'Number of results (default 10)' },
+      },
+      required: ['entityType', 'metric'],
+    },
+  },
+  {
+    name: 'computeTrends',
+    description: 'Compute month-over-month spending trends for a ministry. Returns monthly/cumulative spend, MoM changes, trajectory (accelerating/decelerating/steady), and prior-year comparison.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        slug: { type: 'string', description: 'Ministry slug' },
+        bucket: { type: 'string', description: 'Budget bucket: "total" (default), "fixed", "operational", or "capital"' },
+      },
+      required: ['slug'],
+    },
+  },
+  {
+    name: 'forecastSpending',
+    description: 'Project end-of-year spending for a ministry based on current burn rate. Answers "will they exhaust their allocation?" and "when?".',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        slug: { type: 'string', description: 'Ministry slug' },
+      },
+      required: ['slug'],
+    },
+  },
+  {
+    name: 'computeRiskScore',
+    description: 'Calculate composite risk scores for ministries combining: spend deviation, project delays, blocker count, and overdue actions. Higher score = higher risk. Use for "which ministry needs the most attention?" or "worst performing" questions.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        slugs: { type: 'array', items: { type: 'string' }, description: 'Ministry slugs to score (optional, defaults to all)' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'crossMinistryAnalysis',
+    description: 'Statistical analysis across all ministries for a given metric. Returns average, median, std deviation, min/max, outliers, and full ranked list. Use for distribution analysis and comparisons.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        metric: { type: 'string', description: 'Metric to analyze: utilization, vacancy_rate, allocation, capital_allocation' },
+      },
+      required: ['metric'],
+    },
+  },
 ];

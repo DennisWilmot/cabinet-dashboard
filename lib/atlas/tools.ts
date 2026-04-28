@@ -548,4 +548,331 @@ export const toolExecutors: Record<string, (params: Record<string, unknown>) => 
       atRiskItems: toolExecutors.identifyAtRiskItems({ type: 'all' }),
     };
   },
+
+  rankEntities: (params) => {
+    const entityType = (params.entityType as string) || 'ministry';
+    const metric = (params.metric as string) || 'allocation';
+    const order = (params.order as string) || 'desc';
+    const limit = (params.limit as number) || 10;
+
+    if (entityType === 'ministry') {
+      const rows = ministryOrder.map(slug => {
+        const m = ministryRegistry[slug];
+        const alloc = m.overview.totalAllocation;
+        const spent = m.overview.totalSpent;
+        const util = alloc > 0 ? (spent / alloc) * 100 : 0;
+        const capAlloc = m.capital.totalAllocation;
+        const capSpent = m.capital.totalSpent;
+        const opsUtil = m.operational.utilizationPct;
+        const vacRate = m.operational.vacancyRate;
+        const blockerCount = mockBlockers.filter(b => b.assignedMinistrySlug === slug && b.status !== 'resolved').length;
+        const actions = getActionItemsByMinistry(slug);
+        const overdue = actions.filter(a => a.status !== 'completed' && a.dueDate < new Date().toISOString().slice(0, 10)).length;
+
+        let sortVal = alloc;
+        if (metric === 'spent') sortVal = spent;
+        else if (metric === 'utilization') sortVal = util;
+        else if (metric === 'capital_allocation') sortVal = capAlloc;
+        else if (metric === 'capital_spent') sortVal = capSpent;
+        else if (metric === 'ops_utilization') sortVal = opsUtil;
+        else if (metric === 'vacancy_rate') sortVal = vacRate;
+        else if (metric === 'blockers') sortVal = blockerCount;
+        else if (metric === 'overdue_actions') sortVal = overdue;
+
+        return {
+          slug,
+          name: m.overview.shortName,
+          fullName: m.overview.name,
+          allocation: alloc,
+          allocationFmt: fmt(alloc),
+          spent: spent,
+          spentFmt: fmt(spent),
+          utilizationPct: Math.round(util * 10) / 10,
+          capitalAllocation: capAlloc,
+          capitalSpent: capSpent,
+          opsUtilizationPct: opsUtil,
+          vacancyRate: vacRate,
+          openBlockers: blockerCount,
+          overdueActions: overdue,
+          status: ministryStatus(m),
+          _sortVal: sortVal,
+        };
+      });
+
+      rows.sort((a, b) => order === 'asc' ? a._sortVal - b._sortVal : b._sortVal - a._sortVal);
+      return {
+        metric,
+        order,
+        results: rows.slice(0, limit).map(({ _sortVal, ...r }, i) => ({ rank: i + 1, ...r })),
+        total: rows.length,
+      };
+    }
+
+    if (entityType === 'project') {
+      const allProjects: Array<{ ministry: string; ministryName: string; project: CapitalProject; sortVal: number }> = [];
+      for (const slug of ministryOrder) {
+        const m = ministryRegistry[slug];
+        for (const p of m.capital.projects) {
+          let sortVal = p.currentYearBudget;
+          if (metric === 'spent') sortVal = p.currentYearSpent;
+          else if (metric === 'total_cost') sortVal = p.totalProjectCost;
+          else if (metric === 'physical_progress') sortVal = p.physicalProgressPct;
+          else if (metric === 'financial_progress') sortVal = p.financialProgressPct;
+          allProjects.push({ ministry: slug, ministryName: m.overview.shortName, project: p, sortVal });
+        }
+      }
+      allProjects.sort((a, b) => order === 'asc' ? a.sortVal - b.sortVal : b.sortVal - a.sortVal);
+      return {
+        metric,
+        order,
+        results: allProjects.slice(0, limit).map((r, i) => ({
+          rank: i + 1,
+          ministry: r.ministry,
+          ministryName: r.ministryName,
+          name: r.project.name,
+          budget: r.project.currentYearBudget,
+          budgetFmt: fmt(r.project.currentYearBudget),
+          spent: r.project.currentYearSpent,
+          spentFmt: fmt(r.project.currentYearSpent),
+          totalCost: r.project.totalProjectCost,
+          totalCostFmt: fmt(r.project.totalProjectCost),
+          physicalProgress: r.project.physicalProgressPct,
+          financialProgress: r.project.financialProgressPct,
+          status: r.project.status,
+          riskLevel: r.project.riskLevel,
+        })),
+        total: allProjects.length,
+      };
+    }
+
+    return { error: 'Supported entityTypes: ministry, project' };
+  },
+
+  computeTrends: (params) => {
+    const slug = params.slug as string;
+    const bucket = (params.bucket as string) || 'total';
+    const m = getMinistryData(slug);
+    if (!m) return { error: `Ministry "${slug}" not found. Available: ${ministryOrder.join(', ')}` };
+
+    let actuals: { period: string; cumulative: number; monthly: number }[] = [];
+    let pyActuals: { period: string; cumulative: number; monthly: number }[] = [];
+    let allocation = 0;
+
+    if (bucket === 'total') {
+      actuals = m.overview.actuals;
+      pyActuals = m.overview.priorYearActuals;
+      allocation = m.overview.totalAllocation;
+    } else if (bucket === 'fixed') {
+      actuals = m.fixedObligations.actuals;
+      pyActuals = m.fixedObligations.priorYearActuals;
+      allocation = m.fixedObligations.totalAllocation;
+    } else if (bucket === 'operational') {
+      actuals = m.operational.actuals;
+      pyActuals = m.operational.priorYearActuals;
+      allocation = m.operational.totalAllocation;
+    } else if (bucket === 'capital') {
+      actuals = m.capital.actuals;
+      pyActuals = m.capital.priorYearActuals;
+      allocation = m.capital.totalAllocation;
+    }
+
+    const monthlyChanges = actuals.map((s, i) => {
+      const prev = i > 0 ? actuals[i - 1].monthly : 0;
+      const change = prev > 0 ? ((s.monthly - prev) / prev) * 100 : 0;
+      return { period: s.period, monthly: s.monthly, monthlyFmt: fmt(s.monthly), cumulative: s.cumulative, cumulativeFmt: fmt(s.cumulative), momChangePct: Math.round(change * 10) / 10 };
+    });
+
+    const latestCum = actuals.length > 0 ? actuals[actuals.length - 1].cumulative : 0;
+    const utilizationSoFar = allocation > 0 ? Math.round((latestCum / allocation) * 1000) / 10 : 0;
+
+    const avgMonthly = actuals.length > 0 ? actuals.reduce((s, a) => s + a.monthly, 0) / actuals.length : 0;
+    const isAccelerating = actuals.length >= 3 && actuals[actuals.length - 1].monthly > actuals[actuals.length - 2].monthly && actuals[actuals.length - 2].monthly > actuals[actuals.length - 3].monthly;
+    const isDecelerating = actuals.length >= 3 && actuals[actuals.length - 1].monthly < actuals[actuals.length - 2].monthly && actuals[actuals.length - 2].monthly < actuals[actuals.length - 3].monthly;
+
+    return {
+      ministry: m.overview.shortName,
+      bucket,
+      allocation: allocation,
+      allocationFmt: fmt(allocation),
+      utilizationSoFar: utilizationSoFar + '%',
+      avgMonthlySpend: fmt(Math.round(avgMonthly)),
+      trajectory: isAccelerating ? 'accelerating' : isDecelerating ? 'decelerating' : 'steady',
+      months: monthlyChanges,
+      priorYearComparison: {
+        totalPY: pyActuals.length > 0 ? pyActuals[pyActuals.length - 1].cumulative : 0,
+        totalPYFmt: pyActuals.length > 0 ? fmt(pyActuals[pyActuals.length - 1].cumulative) : 'N/A',
+        yoyChangePct: pyActuals.length > 0 && pyActuals[pyActuals.length - 1].cumulative > 0
+          ? Math.round(((latestCum - pyActuals[pyActuals.length - 1].cumulative) / pyActuals[pyActuals.length - 1].cumulative) * 1000) / 10 + '%'
+          : 'N/A (new ministry/entity)',
+      },
+    };
+  },
+
+  forecastSpending: (params) => {
+    const slug = params.slug as string;
+    const m = getMinistryData(slug);
+    if (!m) return { error: `Ministry "${slug}" not found` };
+
+    const actuals = m.overview.actuals;
+    const allocation = m.overview.totalAllocation;
+    const totalSpent = m.overview.totalSpent;
+    const monthsElapsed = actuals.length;
+    const remainingMonths = 12 - monthsElapsed;
+
+    if (monthsElapsed === 0) return { error: 'No spending data available yet' };
+
+    const avgMonthly = totalSpent / monthsElapsed;
+    const projected = totalSpent + (avgMonthly * remainingMonths);
+    const projectedUtil = allocation > 0 ? Math.round((projected / allocation) * 1000) / 10 : 0;
+    const willExhaust = projected >= allocation;
+    const monthsToExhaust = avgMonthly > 0 ? Math.ceil((allocation - totalSpent) / avgMonthly) : Infinity;
+    const exhaustDate = monthsToExhaust <= remainingMonths && monthsToExhaust < Infinity
+      ? (() => { const d = new Date(); d.setMonth(d.getMonth() + monthsToExhaust); return d.toISOString().slice(0, 7); })()
+      : null;
+
+    const recentAvg = actuals.length >= 3
+      ? (actuals[actuals.length - 1].monthly + actuals[actuals.length - 2].monthly + actuals[actuals.length - 3].monthly) / 3
+      : avgMonthly;
+    const projectedRecent = totalSpent + (recentAvg * remainingMonths);
+
+    const buckets = [
+      { name: 'Fixed Obligations', alloc: m.fixedObligations.totalAllocation, spent: m.fixedObligations.totalPaid },
+      { name: 'Operational', alloc: m.operational.totalAllocation, spent: m.operational.totalSpent },
+      { name: 'Capital', alloc: m.capital.totalAllocation, spent: m.capital.totalSpent },
+    ].map(b => ({
+      ...b,
+      allocFmt: fmt(b.alloc),
+      spentFmt: fmt(b.spent),
+      utilPct: b.alloc > 0 ? Math.round((b.spent / b.alloc) * 1000) / 10 : 0,
+      projectedEOY: b.alloc > 0 ? fmt(Math.round(b.spent + (b.spent / monthsElapsed) * remainingMonths)) : 'N/A',
+    }));
+
+    return {
+      ministry: m.overview.shortName,
+      fullName: m.overview.name,
+      allocation: allocation,
+      allocationFmt: fmt(allocation),
+      spent: totalSpent,
+      spentFmt: fmt(totalSpent),
+      monthsElapsed,
+      remainingMonths,
+      avgMonthlySpend: fmt(Math.round(avgMonthly)),
+      recentAvgMonthlySpend: fmt(Math.round(recentAvg)),
+      projectedEOYSpend: fmt(Math.round(projected)),
+      projectedEOYUtilization: projectedUtil + '%',
+      projectedRecentTrend: fmt(Math.round(projectedRecent)),
+      willExhaustAllocation: willExhaust,
+      monthsUntilExhaustion: monthsToExhaust === Infinity ? 'N/A' : monthsToExhaust,
+      exhaustionDate: exhaustDate,
+      bucketBreakdown: buckets,
+    };
+  },
+
+  computeRiskScore: (params) => {
+    const slugs = params.slugs as string[] | undefined;
+    const targetSlugs = slugs && slugs.length > 0 ? slugs : ministryOrder;
+
+    const results = targetSlugs.map(slug => {
+      const m = getMinistryData(slug);
+      if (!m) return { slug, error: 'not found' };
+
+      const alloc = m.overview.totalAllocation;
+      const spent = m.overview.totalSpent;
+      const util = alloc > 0 ? (spent / alloc) * 100 : 0;
+      const monthsElapsed = m.overview.actuals.length;
+      const expectedUtil = monthsElapsed > 0 ? (monthsElapsed / 12) * 100 : 0;
+
+      const spendDeviation = Math.abs(util - expectedUtil);
+      const spendScore = spendDeviation > 20 ? 30 : spendDeviation > 10 ? 20 : spendDeviation > 5 ? 10 : 0;
+
+      const delayedProjects = m.capital.projects.filter(p => p.status === 'delayed' || p.status === 'at_risk').length;
+      const totalProjects = m.capital.projects.length;
+      const projectScore = totalProjects > 0 ? Math.round((delayedProjects / totalProjects) * 30) : 0;
+
+      const ministryBlockers = mockBlockers.filter(b => b.assignedMinistrySlug === slug && b.status !== 'resolved');
+      const pmBlockers = ministryBlockers.filter(b => b.escalationLevel === 'pm').length;
+      const blockerScore = Math.min(pmBlockers * 10 + (ministryBlockers.length - pmBlockers) * 5, 20);
+
+      const actions = getActionItemsByMinistry(slug);
+      const overdue = actions.filter(a => a.status !== 'completed' && a.dueDate < new Date().toISOString().slice(0, 10)).length;
+      const actionScore = Math.min(overdue * 5, 20);
+
+      const totalScore = spendScore + projectScore + blockerScore + actionScore;
+      const riskLevel = totalScore >= 50 ? 'high' : totalScore >= 25 ? 'moderate' : 'low';
+
+      return {
+        slug,
+        name: m.overview.shortName,
+        fullName: m.overview.name,
+        compositeScore: totalScore,
+        riskLevel,
+        breakdown: {
+          spendDeviation: { score: spendScore, detail: `Utilization ${Math.round(util)}% vs expected ${Math.round(expectedUtil)}%` },
+          projectRisk: { score: projectScore, detail: `${delayedProjects}/${totalProjects} projects delayed or at risk` },
+          blockers: { score: blockerScore, detail: `${ministryBlockers.length} open (${pmBlockers} PM-level)` },
+          overdueActions: { score: actionScore, detail: `${overdue} overdue action items` },
+        },
+      };
+    });
+
+    results.sort((a, b) => ('compositeScore' in a && 'compositeScore' in b) ? (b as { compositeScore: number }).compositeScore - (a as { compositeScore: number }).compositeScore : 0);
+    return { results, scoringMethodology: 'Composite of: spend deviation (0-30), project delays (0-30), blockers (0-20), overdue actions (0-20). Max score: 100.' };
+  },
+
+  crossMinistryAnalysis: (params) => {
+    const metric = (params.metric as string) || 'utilization';
+    const allData = ministryOrder.map(slug => {
+      const m = ministryRegistry[slug];
+      const alloc = m.overview.totalAllocation;
+      const spent = m.overview.totalSpent;
+      return {
+        slug,
+        name: m.overview.shortName,
+        allocation: alloc,
+        spent,
+        utilization: alloc > 0 ? Math.round((spent / alloc) * 1000) / 10 : 0,
+        capitalAllocation: m.capital.totalAllocation,
+        capitalSpent: m.capital.totalSpent,
+        opsUtilization: m.operational.utilizationPct,
+        vacancyRate: m.operational.vacancyRate,
+        projectCount: m.capital.projects.length,
+        delayedProjects: m.capital.projects.filter(p => p.status === 'delayed' || p.status === 'at_risk').length,
+        openBlockers: mockBlockers.filter(b => b.assignedMinistrySlug === slug && b.status !== 'resolved').length,
+      };
+    });
+
+    const values = allData.map(d => {
+      if (metric === 'utilization') return d.utilization;
+      if (metric === 'vacancy_rate') return d.vacancyRate;
+      if (metric === 'allocation') return d.allocation;
+      if (metric === 'capital_allocation') return d.capitalAllocation;
+      return d.utilization;
+    });
+
+    const avg = values.reduce((s, v) => s + v, 0) / values.length;
+    const sorted = [...values].sort((a, b) => a - b);
+    const median = sorted.length % 2 === 0 ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2 : sorted[Math.floor(sorted.length / 2)];
+    const stdDev = Math.sqrt(values.reduce((s, v) => s + (v - avg) ** 2, 0) / values.length);
+
+    const outliers = allData.filter((d, i) => Math.abs(values[i] - avg) > stdDev * 1.5).map(d => ({
+      name: d.name,
+      slug: d.slug,
+      value: values[allData.indexOf(d)],
+      direction: values[allData.indexOf(d)] > avg ? 'above' : 'below',
+    }));
+
+    return {
+      metric,
+      summary: {
+        average: Math.round(avg * 10) / 10,
+        median: Math.round(median * 10) / 10,
+        stdDev: Math.round(stdDev * 10) / 10,
+        min: Math.round(Math.min(...values) * 10) / 10,
+        max: Math.round(Math.max(...values) * 10) / 10,
+      },
+      outliers,
+      all: allData.map((d, i) => ({ name: d.name, slug: d.slug, value: Math.round(values[i] * 10) / 10 }))
+        .sort((a, b) => b.value - a.value),
+    };
+  },
 };

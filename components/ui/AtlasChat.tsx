@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import type { AtlasBlock, AtlasMessage } from '@/lib/atlas/types';
+import type { AtlasBlock, AtlasMessage, ChartBlock } from '@/lib/atlas/types';
 
 const SUGGESTED_PROMPTS: Record<string, string[]> = {
   '/dashboard': ['Which ministries are off track?', 'Compare the top 3 spenders', 'Show overdue action items', 'Give me a PM briefing'],
@@ -17,6 +17,95 @@ function getSuggestions(path: string): string[] {
   if (path.startsWith('/minister/')) return ['How is this minister doing on action items?', 'Show OKR progress', "What's their attendance rate?"];
   if (path.startsWith('/meetings/')) return ['Summarize this meeting', 'What action items came out of this meeting?', 'Who attended?'];
   return ['Give me a system overview', 'Which ministries need attention?', 'Show overdue action items'];
+}
+
+function ChartRenderer({ block }: { block: ChartBlock }) {
+  const max = Math.max(...block.data.map(x => Math.max(x.value, x.value2 ?? 0)));
+  const h = 96;
+
+  if (block.chartType === 'line') {
+    const points = block.data.map((d, i) => {
+      const x = block.data.length > 1 ? (i / (block.data.length - 1)) * 280 + 10 : 150;
+      const y = max > 0 ? h - (d.value / max) * (h - 16) : h - 8;
+      return { x, y, d };
+    });
+    const points2 = block.data[0]?.value2 != null ? block.data.map((d, i) => {
+      const x = block.data.length > 1 ? (i / (block.data.length - 1)) * 280 + 10 : 150;
+      const y = max > 0 ? h - ((d.value2 ?? 0) / max) * (h - 16) : h - 8;
+      return { x, y };
+    }) : null;
+    const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+    const pathD2 = points2?.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+
+    return (
+      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+        {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
+        {block.series && (
+          <div className="flex items-center gap-3 mb-1.5">
+            <span className="flex items-center gap-1 text-[8px] text-text-secondary"><span className="w-2.5 h-0.5 rounded bg-jm-green inline-block" />{block.series[0]}</span>
+            {block.series[1] && <span className="flex items-center gap-1 text-[8px] text-text-secondary"><span className="w-2.5 h-0.5 rounded bg-gold inline-block" />{block.series[1]}</span>}
+          </div>
+        )}
+        <svg viewBox={`0 0 300 ${h + 16}`} className="w-full h-28">
+          <path d={pathD} fill="none" stroke="var(--color-jm-green)" strokeWidth="2" strokeLinejoin="round" />
+          {pathD2 && <path d={pathD2} fill="none" stroke="var(--color-gold)" strokeWidth="2" strokeLinejoin="round" strokeDasharray="4 2" />}
+          {points.map((p, i) => (
+            <g key={i}>
+              <circle cx={p.x} cy={p.y} r="3" fill="var(--color-jm-green)" />
+              <text x={p.x} y={h + 12} textAnchor="middle" className="fill-text-secondary" style={{ fontSize: '7px' }}>{p.d.name}</text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    );
+  }
+
+  if (block.chartType === 'grouped_bar') {
+    return (
+      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+        {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
+        {block.series && (
+          <div className="flex items-center gap-3 mb-1.5">
+            <span className="flex items-center gap-1 text-[8px] text-text-secondary"><span className="w-2.5 h-2.5 rounded-sm bg-jm-green/60 inline-block" />{block.series[0]}</span>
+            {block.series[1] && <span className="flex items-center gap-1 text-[8px] text-text-secondary"><span className="w-2.5 h-2.5 rounded-sm bg-gold/60 inline-block" />{block.series[1]}</span>}
+          </div>
+        )}
+        <div className="flex items-end gap-2 h-24">
+          {block.data.map((d, i) => {
+            const h1 = max > 0 ? (d.value / max) * 100 : 0;
+            const h2 = max > 0 ? ((d.value2 ?? 0) / max) * 100 : 0;
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div className="flex items-end gap-px w-full h-full">
+                  <div className="flex-1 bg-jm-green/60 rounded-t" style={{ height: `${h1}%` }} title={`${d.label ?? 'Alloc'}: ${d.value}`} />
+                  {d.value2 != null && <div className="flex-1 bg-gold/60 rounded-t" style={{ height: `${h2}%` }} title={`${d.label2 ?? 'Spent'}: ${d.value2}`} />}
+                </div>
+                <span className="text-[7px] text-text-secondary truncate max-w-full">{d.name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Default: simple bar chart
+  return (
+    <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+      {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
+      <div className="flex items-end gap-1 h-24">
+        {block.data.map((d, i) => {
+          const barH = max > 0 ? (d.value / max) * 100 : 0;
+          return (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full bg-jm-green/60 rounded-t" style={{ height: `${barH}%` }} title={`${d.name}: ${d.value}`} />
+              <span className="text-[8px] text-text-secondary truncate max-w-full">{d.name}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function BlockRenderer({ block }: { block: AtlasBlock }) {
@@ -101,23 +190,7 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
       );
 
     case 'chart':
-      return (
-        <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
-          {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
-          <div className="flex items-end gap-1 h-24">
-            {block.data.map((d, i) => {
-              const max = Math.max(...block.data.map(x => x.value));
-              const h = max > 0 ? (d.value / max) * 100 : 0;
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="w-full bg-jm-green/60 rounded-t" style={{ height: `${h}%` }} title={`${d.name}: ${d.value}`} />
-                  <span className="text-[8px] text-text-secondary truncate max-w-full">{d.name}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
+      return <ChartRenderer block={block} />;
 
     case 'callout': {
       const tones = { info: 'bg-jm-green/10 border-jm-green/30 text-jm-green-dark', warning: 'bg-gold/10 border-gold/30 text-gold-dark', danger: 'bg-status-off-track/10 border-status-off-track/30 text-status-off-track' };
