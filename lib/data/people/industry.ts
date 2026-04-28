@@ -6,6 +6,11 @@ export const industryLeadership: SeniorOfficer[] = [
     title: 'Minister of Industry, Investment & Commerce',
     role: 'minister',
     avatarUrl: '/avatars/aubyn-hill.jpg',
+    profile: {
+      bio: 'Minister of Industry, Investment and Commerce since 2020. Senator and experienced private sector executive who served as Chairman of the Economic Growth Council before entering cabinet.',
+      constituency: 'Senator (Appointed)',
+      officeLocation: '4 St. Lucia Avenue, Kingston 5',
+    },
   },
   {
     name: 'Hon. Delano Seiveright, MP',

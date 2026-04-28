@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CabinetNav } from '@/components/layout/CabinetNav';
@@ -10,6 +11,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useMockData } from '@/lib/context';
 import { ministryRegistry, ministryOrder } from '@/lib/data';
+import { opmLeadership } from '@/lib/data/people/opm';
 import { stripActuals } from '@/lib/strip-actuals';
 import { formatCurrency, formatPct, EXPECTED_UTILIZATION } from '@/lib/utils';
 import { deriveUtilizationStatus, deriveMinistryStatus } from '@/lib/status';
@@ -182,6 +184,7 @@ function SearchBar({ allData }: { allData: MinistryData[] }) {
 }
 
 function MinistryCard({ data, mockDataEnabled }: { data: MinistryData; mockDataEnabled: boolean }) {
+  const router = useRouter();
   const { overview, fixedObligations, operational, capital } = data;
 
   const overallUtil = overview.totalAllocation > 0
@@ -199,24 +202,40 @@ function MinistryCard({ data, mockDataEnabled }: { data: MinistryData; mockDataE
   const utilStatus = deriveUtilizationStatus(overallUtil, EXPECTED_UTILIZATION);
 
   return (
-    <Link href={`/ministry/${overview.id}`} className="group block">
+    <div
+      className="group block cursor-pointer"
+      onClick={() => router.push(`/ministry/${overview.id}`)}
+      role="link"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') router.push(`/ministry/${overview.id}`); }}
+    >
       <div className="flex items-start gap-[var(--space-md)] sm:gap-[var(--space-lg)]">
-        <Image
-          src={overview.minister.avatarUrl}
-          alt={overview.minister.name}
-          width={56}
-          height={56}
-          className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-border-default flex-shrink-0 mt-1 object-cover"
-        />
+        <Link
+          href={`/minister/${overview.id}`}
+          className="flex-shrink-0 mt-1"
+          onClick={e => e.stopPropagation()}
+        >
+          <Image
+            src={overview.minister.avatarUrl}
+            alt={overview.minister.name}
+            width={56}
+            height={56}
+            className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-border-default object-cover hover:ring-2 hover:ring-gold/50 transition-shadow"
+          />
+        </Link>
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-[var(--space-xs)] sm:gap-[var(--space-base)]">
             <div className="min-w-0">
               <h2 className="text-[length:var(--text-body)] sm:text-[length:var(--text-h2)] font-bold text-text-primary group-hover:text-gold-dark transition-colors leading-tight">
                 {overview.shortName}
               </h2>
-              <p className="text-[length:var(--text-caption)] text-text-secondary mt-[2px] truncate">
+              <Link
+                href={`/minister/${overview.id}`}
+                className="text-[length:var(--text-caption)] text-text-secondary mt-[2px] truncate block hover:text-gold-dark transition-colors"
+                onClick={e => e.stopPropagation()}
+              >
                 {overview.minister.name}
-              </p>
+              </Link>
             </div>
             {mockDataEnabled && (
               <StatusBadge status={ministryStatus.status} tooltip={ministryStatus.tooltip} />
@@ -252,7 +271,62 @@ function MinistryCard({ data, mockDataEnabled }: { data: MinistryData; mockDataE
           )}
         </div>
       </div>
-    </Link>
+    </div>
+  );
+}
+
+function PortfolioMinisterCard({ officer, parentMinistry, parentSlug }: {
+  officer: { name: string; title: string; avatarUrl: string };
+  parentMinistry: string;
+  parentSlug: string;
+}) {
+  const router = useRouter();
+  return (
+    <div
+      className="group block cursor-pointer"
+      onClick={() => router.push(`/ministry/${parentSlug}`)}
+      role="link"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') router.push(`/ministry/${parentSlug}`); }}
+    >
+      <div className="flex items-start gap-[var(--space-md)] sm:gap-[var(--space-lg)]">
+        <Link
+          href="/minister/audrey-marks"
+          className="flex-shrink-0 mt-1"
+          onClick={e => e.stopPropagation()}
+        >
+          <Image
+            src={officer.avatarUrl}
+            alt={officer.name}
+            width={56}
+            height={56}
+            className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-border-default object-cover hover:ring-2 hover:ring-gold/50 transition-shadow"
+          />
+        </Link>
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-[var(--space-xs)] sm:gap-[var(--space-base)]">
+            <div className="min-w-0">
+              <h2 className="text-[length:var(--text-body)] sm:text-[length:var(--text-h2)] font-bold text-text-primary group-hover:text-gold-dark transition-colors leading-tight">
+                {officer.title.replace(/^Minister w\/o Portfolio – /, '')}
+              </h2>
+              <Link
+                href="/minister/audrey-marks"
+                className="text-[length:var(--text-caption)] text-text-secondary mt-[2px] truncate block hover:text-gold-dark transition-colors"
+                onClick={e => e.stopPropagation()}
+              >
+                {officer.name}
+              </Link>
+            </div>
+            <span className="flex-shrink-0 text-[length:var(--text-micro)] font-semibold tracking-wide uppercase px-2 py-0.5 rounded bg-gold/15 text-gold-dark w-fit">
+              {parentMinistry}
+            </span>
+          </div>
+          <p className="mt-[var(--space-sm)] sm:mt-[var(--space-md)] text-[length:var(--text-caption)] text-text-secondary leading-relaxed max-w-md">
+            Minister without Portfolio — budget captured under {parentMinistry}.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -309,6 +383,16 @@ export default function CabinetOverview() {
                   <MinistryCard data={data} mockDataEnabled={mockDataEnabled} />
                 </div>
               ))}
+              <div
+                className="animate-fade-up border-t border-border-default pt-[var(--space-lg)]"
+                style={{ animationDelay: `${(ministries.length + 1) * 40}ms` }}
+              >
+                <PortfolioMinisterCard
+                  officer={opmLeadership[1]}
+                  parentMinistry="OPM"
+                  parentSlug="opm"
+                />
+              </div>
             </div>
           </section>
         </div>

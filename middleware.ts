@@ -14,7 +14,9 @@ function hasSessionCookie(request: NextRequest): boolean {
 export function middleware(request: NextRequest) {
   const isProtected =
     request.nextUrl.pathname.startsWith('/dashboard') ||
-    request.nextUrl.pathname.startsWith('/ministry');
+    request.nextUrl.pathname.startsWith('/ministry') ||
+    request.nextUrl.pathname.startsWith('/minister') ||
+    request.nextUrl.pathname.startsWith('/meetings');
 
   if (isProtected && !hasSessionCookie(request)) {
     return NextResponse.redirect(new URL('/', request.url));
@@ -24,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/ministry/:path*'],
+  matcher: ['/dashboard/:path*', '/ministry/:path*', '/minister/:path*', '/meetings/:path*'],
 };

@@ -3,9 +3,14 @@ import type { SeniorOfficer } from '@/lib/types';
 export const justiceLeadership: SeniorOfficer[] = [
   {
     name: 'Hon. Delroy Chuck, KC, MP',
-    title: 'Minister of Justice and Constitutional Affairs',
+    title: 'Minister of Legal and Constitutional Affairs',
     role: 'minister',
     avatarUrl: '/avatars/delroy-chuck.png',
+    profile: {
+      bio: 'Minister of Justice and Legal and Constitutional Affairs since 2016. Member of Parliament for St. Andrew North Eastern. King\'s Counsel and veteran legislator with over 30 years in parliament.',
+      constituency: 'St. Andrew North Eastern',
+      officeLocation: '61 Constant Spring Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Marisa Dalrymple-Philibert, MP',

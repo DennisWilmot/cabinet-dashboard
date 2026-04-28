@@ -47,6 +47,15 @@ export function CabinetNav({ breadcrumbs }: { breadcrumbs?: BreadcrumbItem[] }) 
               ))}
             </div>
           )}
+
+          {!breadcrumbs && (
+            <Link
+              href="/meetings"
+              className="ml-[var(--space-sm)] sm:ml-[var(--space-lg)] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
+            >
+              Meetings
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)]">

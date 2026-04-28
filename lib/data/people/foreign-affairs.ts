@@ -6,6 +6,11 @@ export const foreignAffairsLeadership: SeniorOfficer[] = [
     title: 'Minister of Foreign Affairs & Foreign Trade',
     role: 'minister',
     avatarUrl: '/avatars/kamina-johnson-smith.jpeg',
+    profile: {
+      bio: 'Minister of Foreign Affairs and Foreign Trade since 2016. Senator and attorney-at-law. Contested the 2022 Commonwealth Secretary-General election, raising Jamaica\'s diplomatic profile internationally.',
+      constituency: 'Senator (Appointed)',
+      officeLocation: '21 Dominica Drive, Kingston 5',
+    },
   },
   {
     name: 'Hon. Alando Terrelonge, MP',

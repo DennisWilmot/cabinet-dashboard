@@ -23,12 +23,19 @@ export interface MonthlySnapshot {
   monthly: number;
 }
 
+export interface MinisterProfile {
+  bio: string;
+  constituency: string;
+  officeLocation: string;
+}
+
 export interface SeniorOfficer {
   name: string;
   title: string;
   headCode?: string;
   avatarUrl: string;
   role: OfficerRole;
+  profile?: MinisterProfile;
 }
 
 export interface MinistryOverview {

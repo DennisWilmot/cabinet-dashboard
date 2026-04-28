@@ -6,6 +6,11 @@ export const nationalSecurityLeadership: SeniorOfficer[] = [
     title: 'Deputy PM & Minister of National Security and Peace',
     role: 'minister',
     avatarUrl: '/avatars/horace-chang.jpeg',
+    profile: {
+      bio: 'Deputy Prime Minister and Minister of National Security since 2018. Member of Parliament for St. James North Western. Medical doctor by training with decades of public service in both local and national government.',
+      constituency: 'St. James North Western',
+      officeLocation: 'NCB North Tower, 2 Oxford Road, Kingston 5',
+    },
   },
   {
     name: 'Hon. Juliet Cuthbert-Flynn, MP',

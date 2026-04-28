@@ -7,6 +7,11 @@ export const mofLeadership: SeniorOfficer[] = [
     title: 'Minister of Finance & the Public Service',
     role: 'minister',
     avatarUrl: '/avatars/fayval-williams.jpeg',
+    profile: {
+      bio: 'Appointed Minister of Finance and the Public Service in 2020. Member of Parliament for St. Andrew Eastern. Former investment banker with over 25 years of experience in capital markets.',
+      constituency: 'St. Andrew Eastern',
+      officeLocation: '30 National Heroes Circle, Kingston 4',
+    },
   },
   {
     name: 'Hon. Zavia Mayne, MP',

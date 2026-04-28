@@ -7,6 +7,11 @@ export const cabinetLeadership: SeniorOfficer[] = [
     role: 'ps',
     headCode: '16000',
     avatarUrl: '/avatars/audrey-sewell.jpg',
+    profile: {
+      bio: 'Cabinet Secretary and Head of the Public Service. Career public servant who previously served as Permanent Secretary in multiple ministries. Leads whole-of-government coordination and public service reform.',
+      constituency: 'N/A — Public Service',
+      officeLocation: '1 Devon Road, Kingston 10',
+    },
   },
 ];
 

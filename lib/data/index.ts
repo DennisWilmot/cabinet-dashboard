@@ -9,7 +9,6 @@ import { tourismData } from './ministries/tourism';
 import { economicGrowthData } from './ministries/economic-growth';
 import { waterData } from './ministries/water';
 import { justiceData } from './ministries/justice';
-import { legalData } from './ministries/legal';
 import { foreignAffairsData } from './ministries/foreign-affairs';
 import { labourData } from './ministries/labour';
 import { cultureData } from './ministries/culture';
@@ -36,7 +35,6 @@ export const ministryRegistry: Record<string, MinistryData> = {
   culture: cultureData,
   water: waterData,
   cabinet: cabinetData,
-  legal: legalData,
 };
 
 export const ministryOrder: string[] = [
@@ -57,7 +55,6 @@ export const ministryOrder: string[] = [
   'culture',
   'water',
   'cabinet',
-  'legal',
 ];
 
 export function getMinistryData(slug: string): MinistryData | undefined {

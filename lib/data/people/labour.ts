@@ -6,6 +6,11 @@ export const labourLeadership: SeniorOfficer[] = [
     title: 'Minister of Labour & Social Security',
     role: 'minister',
     avatarUrl: '/avatars/pearnel-charles-jr.jpeg',
+    profile: {
+      bio: 'Minister of Labour and Social Security since 2022. Member of Parliament for Clarendon South Eastern. Attorney-at-law who previously served as Minister of Housing and Minister of Foreign Affairs.',
+      constituency: 'Clarendon South Eastern',
+      officeLocation: '1F North Street, Kingston',
+    },
   },
   {
     name: 'Hon. Donovan Williams, MP',

@@ -6,6 +6,11 @@ export const educationLeadership: SeniorOfficer[] = [
     title: 'Minister of Education, Skills, Youth and Information',
     role: 'minister',
     avatarUrl: '/avatars/dana-morris-dixon.jpg',
+    profile: {
+      bio: 'Appointed Minister of Education, Skills, Youth and Information in 2024. Senator and educator with deep experience in curriculum development and youth empowerment.',
+      constituency: 'Senator (Appointed)',
+      officeLocation: '2 National Heroes Circle, Kingston 4',
+    },
   },
   {
     name: 'Hon. Rhoda Moy Crawford, MP',

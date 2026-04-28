@@ -6,6 +6,11 @@ export const healthLeadership: SeniorOfficer[] = [
     title: 'Minister of Health and Wellness',
     role: 'minister',
     avatarUrl: '/avatars/christopher-tufton.jpg',
+    profile: {
+      bio: 'Appointed Minister of Health and Wellness in 2016. Member of Parliament for St. Catherine West Central. Holds a PhD in Political Economy and has served in multiple cabinet portfolios.',
+      constituency: 'St. Catherine West Central',
+      officeLocation: '10-16 Grenada Crescent, Kingston 5',
+    },
   },
   {
     name: 'Hon. Krystal Lee, MP',

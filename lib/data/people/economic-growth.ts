@@ -6,6 +6,11 @@ export const economicGrowthLeadership: SeniorOfficer[] = [
     title: 'Prime Minister & Minister of Economic Growth and Infrastructure Development',
     role: 'minister',
     avatarUrl: '/avatars/andrew-holness.jpg',
+    profile: {
+      bio: 'Prime Minister of Jamaica since 2016, concurrently holding the Economic Growth and Infrastructure Development portfolio. Member of Parliament for St. Andrew West Central.',
+      constituency: 'St. Andrew West Central',
+      officeLocation: '1 Devon Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Robert Montague, MP',

@@ -6,6 +6,11 @@ export const tourismLeadership: SeniorOfficer[] = [
     title: 'Minister of Tourism',
     role: 'minister',
     avatarUrl: '/avatars/edmund-bartlett.jpg',
+    profile: {
+      bio: 'Minister of Tourism since 2016. Member of Parliament for East Portland. Globally recognised tourism leader who established the Global Tourism Resilience & Crisis Management Centre.',
+      constituency: 'East Portland',
+      officeLocation: '64 Knutsford Boulevard, Kingston 5',
+    },
   },
   {
     name: 'Hon. Tova Hamilton, MP',

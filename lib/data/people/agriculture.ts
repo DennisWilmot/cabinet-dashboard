@@ -6,6 +6,11 @@ export const agricultureLeadership: SeniorOfficer[] = [
     title: 'Minister of Agriculture, Fisheries & Mining',
     role: 'minister',
     avatarUrl: '/avatars/floyd-green.jpg',
+    profile: {
+      bio: 'Minister of Agriculture, Fisheries and Mining since 2020. Member of Parliament for St. Elizabeth South Western. Attorney-at-law and former State Minister in the Ministry of Education.',
+      constituency: 'St. Elizabeth South Western',
+      officeLocation: '188 Spanish Town Road, Kingston 11',
+    },
   },
   {
     name: 'Hon. Franklin Witter, MP',

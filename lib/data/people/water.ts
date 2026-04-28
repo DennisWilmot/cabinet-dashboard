@@ -6,6 +6,11 @@ export const waterLeadership: SeniorOfficer[] = [
     title: 'Minister of Water, Environment & Climate Change',
     role: 'minister',
     avatarUrl: '/avatars/matthew-samuda.jpg',
+    profile: {
+      bio: 'Minister without Portfolio in the Ministry of Economic Growth (Water, Environment & Climate Change) since 2020. Member of Parliament for St. Andrew North Western. Business executive and former Senator.',
+      constituency: 'St. Andrew North Western',
+      officeLocation: '16A Half Way Tree Road, Kingston 5',
+    },
   },
   {
     name: 'Permanent Secretary',

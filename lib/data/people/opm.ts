@@ -6,12 +6,22 @@ export const opmLeadership: SeniorOfficer[] = [
     title: 'Prime Minister',
     role: 'minister',
     avatarUrl: '/avatars/andrew-holness.jpg',
+    profile: {
+      bio: 'Prime Minister of Jamaica since 2016. Member of Parliament for St. Andrew West Central. Youngest ever Prime Minister of Jamaica, first elected to the post in 2011.',
+      constituency: 'St. Andrew West Central',
+      officeLocation: '1 Devon Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Ambassador Audrey Marks, MP',
     title: 'Minister w/o Portfolio – Efficiency, Innovation & Digital Transformation',
     role: 'state_minister',
-    avatarUrl: '/avatars/placeholder.svg',
+    avatarUrl: '/avatars/audrey-marks.jpg',
+    profile: {
+      bio: 'Minister without Portfolio responsible for Efficiency, Innovation and Digital Transformation in the Office of the Prime Minister. Former Ambassador to the United States. Accomplished entrepreneur and business leader.',
+      constituency: 'Senator (Appointed)',
+      officeLocation: '1 Devon Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Andrew Wheatley, MP',

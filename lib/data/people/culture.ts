@@ -6,6 +6,11 @@ export const cultureLeadership: SeniorOfficer[] = [
     title: 'Minister of Culture, Gender, Entertainment & Sport',
     role: 'minister',
     avatarUrl: '/avatars/olivia-grange.jpg',
+    profile: {
+      bio: 'Minister of Culture, Gender, Entertainment and Sport since 2016. Member of Parliament for St. Catherine Central. One of Jamaica\'s longest-serving female parliamentarians with extensive arts and culture advocacy.',
+      constituency: 'St. Catherine Central',
+      officeLocation: '4-6 Trafalgar Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Kerensia Morrison, MP',

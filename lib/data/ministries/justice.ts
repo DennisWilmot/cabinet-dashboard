@@ -8,7 +8,7 @@ import { snap, pySnap, sumSnaps, W_LIN, W_BACK, EMPTY_REVENUE } from '../helpers
 import { justiceLeadership, justiceEntityOfficers } from '../people/justice';
 
 /* ------------------------------------------------------------------ */
-/*  Fixed Obligations (3)                                              */
+/*  Fixed Obligations (4)                                              */
 /* ------------------------------------------------------------------ */
 
 const legalAidFund: Obligation = {
@@ -73,7 +73,26 @@ const judgesPension: Obligation = {
   },
 };
 
-const allObligations: Obligation[] = [legalAidFund, judicialAllowances, judgesPension];
+const statutoryLegislative: Obligation = {
+  id: 'statutory_legislative',
+  type: 'statutory',
+  name: 'Statutory Legislative Provisions',
+  headCode: '27000',
+  allocation: 480,
+  priorYearAllocation: 310,
+  paid: 240,
+  paymentStatus: 'current',
+  actuals: snap([40, 80, 120, 160, 200, 240]),
+  priorYearActuals: pySnap(300, W_LIN),
+  details: {
+    components: [
+      { name: 'Legislative Drafting Retainers', budget: 280, paid: 140, status: 'current' },
+      { name: 'Constitutional Review Provisions', budget: 200, paid: 100, status: 'current' },
+    ],
+  },
+};
+
+const allObligations: Obligation[] = [legalAidFund, judicialAllowances, judgesPension, statutoryLegislative];
 
 /* ------------------------------------------------------------------ */
 /*  Operational Entities (6)                                           */
@@ -189,8 +208,44 @@ const justiceCoreMinistry: OperationalEntity = {
   priorYearActuals: pySnap(960, W_LIN),
 };
 
+const legalAffairsOps: OperationalEntity = {
+  id: 'legal_affairs_ops',
+  name: 'Legal Affairs Operations',
+  headCode: '27000',
+  allocation: 850,
+  priorYearAllocation: 560,
+  spent: 420,
+  utilizationPct: 49.4,
+  staffing: { approvedPosts: 120, filledPosts: 105, vacantPosts: 15, vacancyRate: 12.5 },
+  kpis: [
+    { name: 'Legal Opinions Turnaround', type: 'output', unit: 'days', target: 14, actual: 22, priorYearActual: 25 },
+    { name: 'FOI Requests Processed', type: 'output', unit: 'count', target: 200, actual: 90, priorYearActual: 175 },
+    { name: 'Treaties & Agreements Reviewed', type: 'output', unit: 'count', target: 20, actual: 8, priorYearActual: 17 },
+  ],
+  actuals: snap([68, 138, 210, 280, 350, 420]),
+  priorYearActuals: pySnap(540, W_LIN),
+};
+
+const legislativeDrafting: OperationalEntity = {
+  id: 'legislative_drafting',
+  name: 'Legislative Drafting & Review',
+  headCode: '27000',
+  allocation: 269,
+  priorYearAllocation: 165,
+  spent: 130,
+  utilizationPct: 48.3,
+  staffing: { approvedPosts: 45, filledPosts: 38, vacantPosts: 7, vacancyRate: 15.6 },
+  kpis: [
+    { name: 'Bills Drafted On Time', type: 'output', unit: '%', target: 90, actual: 72, priorYearActual: 78 },
+    { name: 'Legislative Review Completion', type: 'output', unit: '%', target: 100, actual: 85, priorYearActual: 80 },
+  ],
+  actuals: snap([21, 43, 65, 87, 109, 130]),
+  priorYearActuals: pySnap(158, W_LIN),
+};
+
 const allEntities: OperationalEntity[] = [
   judiciary, dpp, ag, adminGeneral, legalAffairs, justiceCoreMinistry,
+  legalAffairsOps, legislativeDrafting,
 ];
 
 /* ------------------------------------------------------------------ */
@@ -251,30 +306,59 @@ const courtInfrastructure: CapitalProject = {
   actuals: snap([1.0, 2.5, 4.5, 7.2, 10.2, 13.2]),
 };
 
-const allProjects: CapitalProject[] = [courtDigitization, courtInfrastructure];
+const legalDatabase: CapitalProject = {
+  id: 'legal_database',
+  code: '27601',
+  name: 'Legal Database Modernisation',
+  currentYearBudget: 80,
+  currentYearSpent: 30,
+  totalProjectCost: 180,
+  cumulativeSpend: 72,
+  financialProgressPct: 40.0,
+  physicalProgressPct: 35,
+  startDate: '2025-10-01',
+  originalEndDate: '2027-09-30',
+  status: 'on_track',
+  riskLevel: 'moderate',
+  narrative: 'Data migration from legacy system 40% complete. New search interface in UAT. Vendor contract amendment pending for expanded scope.',
+  milestones: [
+    { name: 'Legacy data audit & cleansing', plannedDate: '2026-06-30', actualDate: '2026-06-22', status: 'completed', weightPct: 25 },
+    { name: 'Data migration & validation', plannedDate: '2027-03-31', status: 'in_progress', weightPct: 35 },
+    { name: 'Search interface & API', plannedDate: '2027-06-30', status: 'upcoming', weightPct: 25 },
+    { name: 'Training & go-live', plannedDate: '2027-09-30', status: 'upcoming', weightPct: 15 },
+  ],
+  funding: [
+    { source: 'GOJ', committed: 180, disbursed: 72 },
+  ],
+  actuals: snap([2, 6, 12, 18, 24, 30]),
+};
+
+const allProjects: CapitalProject[] = [courtDigitization, courtInfrastructure, legalDatabase];
 
 /* ------------------------------------------------------------------ */
 /*  Bucket Aggregates                                                  */
 /* ------------------------------------------------------------------ */
 
 const fixedActuals = sumSnaps(
-  legalAidFund.actuals, judicialAllowances.actuals, judgesPension.actuals,
+  legalAidFund.actuals, judicialAllowances.actuals, judgesPension.actuals, statutoryLegislative.actuals,
 );
 const fixedPY = sumSnaps(
-  legalAidFund.priorYearActuals, judicialAllowances.priorYearActuals, judgesPension.priorYearActuals,
+  legalAidFund.priorYearActuals, judicialAllowances.priorYearActuals, judgesPension.priorYearActuals, statutoryLegislative.priorYearActuals,
 );
 
 const opsActuals = sumSnaps(
   judiciary.actuals, dpp.actuals, ag.actuals,
   adminGeneral.actuals, legalAffairs.actuals, justiceCoreMinistry.actuals,
+  legalAffairsOps.actuals, legislativeDrafting.actuals,
 );
 const opsPY = sumSnaps(
   judiciary.priorYearActuals, dpp.priorYearActuals, ag.priorYearActuals,
   adminGeneral.priorYearActuals, legalAffairs.priorYearActuals, justiceCoreMinistry.priorYearActuals,
+  legalAffairsOps.priorYearActuals, legislativeDrafting.priorYearActuals,
 );
 
 const capActuals = sumSnaps(
-  courtDigitization.actuals, courtInfrastructure.actuals,
+  courtDigitization.actuals, courtInfrastructure.actuals, legalDatabase.actuals,
 );
 const capPY = pySnap(80, W_BACK);
 
@@ -285,48 +369,48 @@ const capPY = pySnap(80, W_BACK);
 export const justiceData: MinistryData = {
   overview: {
     id: 'justice',
-    name: 'Ministry of Justice & Constitutional Affairs',
-    shortName: 'Justice',
+    name: 'Ministry of Legal & Constitutional Affairs',
+    shortName: 'Legal & Constitutional Affairs',
     minister: justiceLeadership[0],
-    totalAllocation: 21898,
-    priorYearAllocation: 20177,
-    totalSpent: 10728,
-    recurrentTotal: 21810,
-    capitalTotal: 88,
+    totalAllocation: 23577,
+    priorYearAllocation: 21262,
+    totalSpent: 11548,
+    recurrentTotal: 23409,
+    capitalTotal: 168,
     lastUpdated: '2026-04-02',
-    actuals: snap([1720, 3550, 5400, 7200, 9000, 10728]),
-    priorYearActuals: pySnap(19500, W_LIN),
+    actuals: snap([1850, 3820, 5810, 7750, 9690, 11548]),
+    priorYearActuals: pySnap(20520, W_LIN),
   },
 
   revenue: EMPTY_REVENUE,
 
   fixedObligations: {
-    totalAllocation: 2700,
-    priorYearAllocation: 2500,
-    totalPaid: 1368,
-    pctOfMinistry: 12.3,
+    totalAllocation: 3180,
+    priorYearAllocation: 2810,
+    totalPaid: 1608,
+    pctOfMinistry: 13.5,
     obligations: allObligations,
     actuals: fixedActuals,
     priorYearActuals: fixedPY,
   },
 
   operational: {
-    totalAllocation: 19110,
-    priorYearAllocation: 17597,
-    totalSpent: 9360,
+    totalAllocation: 20229,
+    priorYearAllocation: 18322,
+    totalSpent: 9910,
     utilizationPct: 49.0,
     entities: allEntities,
-    totalFilledPosts: 2903,
-    totalApprovedPosts: 3250,
-    vacancyRate: 10.7,
+    totalFilledPosts: 3046,
+    totalApprovedPosts: 3415,
+    vacancyRate: 10.8,
     actuals: opsActuals,
     priorYearActuals: opsPY,
   },
 
   capital: {
-    totalAllocation: 88,
-    priorYearAllocation: 80,
-    totalSpent: 41.8,
+    totalAllocation: 168,
+    priorYearAllocation: 130,
+    totalSpent: 71.8,
     projects: allProjects,
     actuals: capActuals,
     priorYearActuals: capPY,

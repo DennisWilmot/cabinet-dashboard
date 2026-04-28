@@ -6,6 +6,11 @@ export const localGovtLeadership: SeniorOfficer[] = [
     title: 'Minister of Local Government and Rural Development',
     role: 'minister',
     avatarUrl: '/avatars/desmond-mckenzie.jpg',
+    profile: {
+      bio: 'Minister of Local Government and Rural Development since 2016. Member of Parliament for Kingston Western. Former Mayor of Kingston and St. Andrew with extensive municipal governance experience.',
+      constituency: 'Kingston Western',
+      officeLocation: '85 Hagley Park Road, Kingston 10',
+    },
   },
   {
     name: 'Hon. Delroy Williams, MP',
