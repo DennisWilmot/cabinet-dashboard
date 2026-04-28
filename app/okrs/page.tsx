@@ -136,11 +136,24 @@ export default function OKRsPage() {
   const allOKRs = useMemo(buildAllOKRs, []);
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
-    if (statusFilter === 'all') return allOKRs;
-    return allOKRs.filter(m => m.overallStatus === statusFilter);
-  }, [allOKRs, statusFilter]);
+    let list = allOKRs;
+    if (statusFilter !== 'all') list = list.filter(m => m.overallStatus === statusFilter);
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter(m =>
+        m.ministerName.toLowerCase().includes(q) ||
+        m.ministryName.toLowerCase().includes(q) ||
+        m.objectives.some(o =>
+          o.name.toLowerCase().includes(q) ||
+          o.keyResults.some(kr => kr.name.toLowerCase().includes(q))
+        )
+      );
+    }
+    return list;
+  }, [allOKRs, statusFilter, search]);
 
   const stats = useMemo(() => {
     const onTrack = allOKRs.filter(m => m.overallStatus === 'on_track').length;
@@ -174,16 +187,35 @@ export default function OKRsPage() {
             <SummaryCard label="Ministers" value={String(stats.total)} sub="with active OKRs" />
           </div>
 
-          {/* Filter pills */}
-          <div className="flex gap-1 p-1 bg-surface border border-border-default rounded-lg mb-[var(--space-lg)] sm:mb-[var(--space-xl)] w-fit">
-            {(['all', 'on_track', 'at_risk', 'off_track'] as FilterStatus[]).map(fs => (
-              <button key={fs} onClick={() => setStatusFilter(fs)}
-                className={`px-3 py-1.5 rounded-md text-[length:var(--text-caption)] font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                  statusFilter === fs ? 'bg-sidebar text-text-on-dark' : 'text-text-secondary hover:text-text-primary'
-                }`}>
-                {fs === 'all' ? 'All' : statusLabel(fs as StatusType).text}
-              </button>
-            ))}
+          {/* Search + Filter */}
+          <div className="flex flex-col sm:flex-row gap-[var(--space-md)] sm:items-center mb-[var(--space-lg)] sm:mb-[var(--space-xl)]">
+            <div className="relative flex-1 max-w-sm">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search ministers, objectives, key results..."
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-default bg-surface text-[length:var(--text-caption)] text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold/60 transition-all"
+              />
+              {search && (
+                <button onClick={() => setSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-text-secondary hover:text-text-primary hover:bg-border-default/50 transition-colors cursor-pointer">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                </button>
+              )}
+            </div>
+            <div className="flex gap-1 p-1 bg-surface border border-border-default rounded-lg w-fit">
+              {(['all', 'on_track', 'at_risk', 'off_track'] as FilterStatus[]).map(fs => (
+                <button key={fs} onClick={() => setStatusFilter(fs)}
+                  className={`px-3 py-1.5 rounded-md text-[length:var(--text-caption)] font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                    statusFilter === fs ? 'bg-sidebar text-text-on-dark' : 'text-text-secondary hover:text-text-primary'
+                  }`}>
+                  {fs === 'all' ? 'All' : statusLabel(fs as StatusType).text}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Minister OKR cards */}

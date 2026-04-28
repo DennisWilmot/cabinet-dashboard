@@ -338,9 +338,14 @@ export function AtlasChat() {
       {/* FAB */}
       {!open && (
         <button onClick={() => setOpen(true)}
-          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-sidebar shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group overflow-hidden"
+          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-sidebar shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group"
           aria-label="Open Atlas assistant">
-          <img src="/intellibus-logo.png" alt="Atlas" className="w-10 h-10 rounded-full object-cover transition-transform group-hover:scale-110" />
+          <svg className="w-7 h-7 text-gold transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 5.58 2 10c0 2.24 1.12 4.27 2.94 5.72L4 20l4.28-2.14C9.46 18.28 10.69 18.5 12 18.5c5.52 0 10-3.58 10-8S17.52 2 12 2Z" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+            <circle cx="8.5" cy="10" r="1.25" fill="currentColor"/>
+            <circle cx="12" cy="10" r="1.25" fill="currentColor"/>
+            <circle cx="15.5" cy="10" r="1.25" fill="currentColor"/>
+          </svg>
         </button>
       )}
     </>
