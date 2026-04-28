@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       content: 'Something went wrong.',
-      blocks: [{ type: 'callout', tone: 'danger', content: process.env.NODE_ENV === 'development' ? `Atlas error: ${message}` : 'Atlas is temporarily unavailable. Try again in a moment.' }],
+      blocks: [{ type: 'callout', tone: 'danger', content: `Atlas error: ${message}` }],
       toolsUsed: [],
     }, { status: 500 });
   }
