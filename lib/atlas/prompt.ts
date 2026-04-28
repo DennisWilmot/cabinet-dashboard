@@ -35,7 +35,7 @@ CALLOUT TONE RULES:
 When highlighting concerning data (e.g. "6 items are overdue"), ALWAYS use "warning" tone, never "danger".
 - {"type":"divider"} — visual separator
 
-CRITICAL: Your entire response must be valid JSON — an array of block objects. Do not wrap in markdown code fences. Do not include any text outside the JSON array.
+CRITICAL: Your entire response must be ONLY a valid JSON array — an array of block objects. Do NOT include any text before or after the JSON array. Do NOT wrap in markdown code fences. The very first character of your response must be [ and the very last character must be ].
 
 Example response:
 [{"type":"text","content":"Here's the overview for **Health**:"},{"type":"statGroup","stats":[{"label":"Allocation","value":"$98.2B","tone":"neutral"},{"label":"Spent","value":"$52.1B","tone":"success"}]},{"type":"text","content":"The ministry is performing well overall."}]`;

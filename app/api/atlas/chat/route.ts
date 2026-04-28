@@ -73,14 +73,38 @@ async function callOpenRouter(messages: OpenRouterMessage[]): Promise<{
 function parseBlocks(content: string): AtlasBlock[] {
   try {
     let cleaned = content.trim();
+
     if (cleaned.startsWith('```')) {
       cleaned = cleaned.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     }
-    const parsed = JSON.parse(cleaned);
-    if (Array.isArray(parsed)) {
-      return parsed.filter((b: Record<string, unknown>) => b && typeof b.type === 'string');
+
+    // Try direct parse first
+    try {
+      const parsed = JSON.parse(cleaned);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((b: Record<string, unknown>) => b && typeof b.type === 'string');
+      }
+    } catch { /* fall through */ }
+
+    // Extract JSON array from mixed content (model sometimes adds text before/after the array)
+    const firstBracket = cleaned.indexOf('[');
+    const lastBracket = cleaned.lastIndexOf(']');
+    if (firstBracket !== -1 && lastBracket > firstBracket) {
+      const jsonStr = cleaned.slice(firstBracket, lastBracket + 1);
+      const parsed = JSON.parse(jsonStr);
+      if (Array.isArray(parsed)) {
+        const blocks: AtlasBlock[] = [];
+        // Preserve any leading text as a text block
+        const leadingText = cleaned.slice(0, firstBracket).trim();
+        if (leadingText) {
+          blocks.push({ type: 'text', content: leadingText });
+        }
+        blocks.push(...parsed.filter((b: Record<string, unknown>) => b && typeof b.type === 'string'));
+        return blocks;
+      }
     }
-    return [{ type: 'text', content: cleaned }];
+
+    return [{ type: 'text', content }];
   } catch {
     return [{ type: 'text', content }];
   }
