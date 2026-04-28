@@ -318,3 +318,16 @@ export function getActionItemsByMinistry(slug: string): (ActionItem & { meetingI
   }
   return items.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
 }
+
+export type ActionItemWithMeeting = ActionItem & { meetingId: string; meetingDate: string };
+
+export function getAllActionItems(): ActionItemWithMeeting[] {
+  const items: ActionItemWithMeeting[] = [];
+  for (const meeting of mockMeetings) {
+    if (!meeting.actionItems) continue;
+    for (const item of meeting.actionItems) {
+      items.push({ ...item, meetingId: meeting.id, meetingDate: meeting.date });
+    }
+  }
+  return items.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+}

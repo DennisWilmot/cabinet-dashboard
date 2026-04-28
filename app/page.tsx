@@ -138,7 +138,7 @@ export default function LandingPage() {
 
             <h1 className="text-[length:clamp(1.75rem,6vw,2.625rem)] sm:text-[length:clamp(2.625rem,5vw+1rem,4rem)] font-bold text-text-on-dark leading-[1.1] tracking-tight font-[family-name:var(--font-display)]">
               What Gets Measured Gets Done
-            </h1>
+          </h1>
 
             <p className="mt-6 text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] text-text-on-dark-muted max-w-xl mx-auto lg:mx-0 leading-[1.65]">
               The GoJ Budget Tracker gives Cabinet Ministers vital leading performance indicators across ministries, departments and agencies for accountability and accelerated outcomes.
