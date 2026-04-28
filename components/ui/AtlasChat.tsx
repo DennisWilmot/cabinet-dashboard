@@ -234,11 +234,7 @@ export function AtlasChat() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-default flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-jm-green/15 flex items-center justify-center">
-              <svg className="w-4 h-4 text-jm-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
-              </svg>
-            </div>
+            <img src="/intellibus-logo.png" alt="Atlas" className="w-8 h-8 rounded-full object-cover" />
             <div>
               <p className="text-[length:var(--text-body)] font-bold text-text-primary leading-tight">Atlas</p>
               <p className="text-[length:var(--text-micro)] text-text-secondary">Budget intelligence assistant</p>
@@ -260,11 +256,7 @@ export function AtlasChat() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {messages.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <div className="w-12 h-12 rounded-full bg-jm-green/10 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-jm-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
-                </svg>
-              </div>
+              <img src="/intellibus-logo.png" alt="Atlas" className="w-12 h-12 rounded-full object-cover mb-4" />
               <p className="text-[length:var(--text-h3)] font-semibold text-text-primary mb-1">Ask Atlas anything</p>
               <p className="text-[length:var(--text-caption)] text-text-secondary mb-6 max-w-[280px] leading-relaxed">
                 Budget analysis, ministry comparisons, accountability tracking — powered by your data.
@@ -346,11 +338,9 @@ export function AtlasChat() {
       {/* FAB */}
       {!open && (
         <button onClick={() => setOpen(true)}
-          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-sidebar text-gold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group"
+          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-sidebar shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group overflow-hidden"
           aria-label="Open Atlas assistant">
-          <svg className="w-6 h-6 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
-          </svg>
+          <img src="/intellibus-logo.png" alt="Atlas" className="w-10 h-10 rounded-full object-cover transition-transform group-hover:scale-110" />
         </button>
       )}
     </>

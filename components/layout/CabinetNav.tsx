@@ -68,6 +68,12 @@ export function CabinetNav({ breadcrumbs }: { breadcrumbs?: BreadcrumbItem[] }) 
               >
                 Blockers
               </Link>
+              <Link
+                href="/okrs"
+                className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
+              >
+                OKRs
+              </Link>
             </div>
           )}
         </div>

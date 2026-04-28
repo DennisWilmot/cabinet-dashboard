@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/minister') ||
     request.nextUrl.pathname.startsWith('/meetings') ||
     request.nextUrl.pathname.startsWith('/actions') ||
-    request.nextUrl.pathname.startsWith('/blockers');
+    request.nextUrl.pathname.startsWith('/blockers') ||
+    request.nextUrl.pathname.startsWith('/okrs');
 
   if (isProtected && !hasSessionCookie(request)) {
     return NextResponse.redirect(new URL('/', request.url));
@@ -28,5 +29,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/ministry/:path*', '/minister/:path*', '/meetings/:path*', '/actions/:path*', '/blockers/:path*'],
+  matcher: ['/dashboard/:path*', '/ministry/:path*', '/minister/:path*', '/meetings/:path*', '/actions/:path*', '/blockers/:path*', '/okrs/:path*'],
 };
