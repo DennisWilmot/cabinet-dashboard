@@ -1,116 +1,46 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { useMockData } from '@/lib/context';
-import { useAuth } from '@/lib/auth-context';
 
 interface BreadcrumbItem {
   label: string;
   href?: string;
 }
 
-export function CabinetNav({ breadcrumbs }: { breadcrumbs?: BreadcrumbItem[] }) {
-  const { mockDataEnabled, toggleMockData } = useMockData();
-  const { logout, user } = useAuth();
+interface PageBarProps {
+  breadcrumbs?: BreadcrumbItem[];
+  freshness?: React.ReactNode;
+}
+
+export function PageBar({ breadcrumbs, freshness }: PageBarProps) {
+  if (!breadcrumbs?.length && !freshness) return null;
 
   return (
-    <nav className="bg-sidebar text-text-inverse sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-[var(--space-base)] sm:px-[var(--space-lg)] h-14 flex items-center justify-between gap-[var(--space-sm)]">
-        <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)] min-w-0">
-          <Link href="/dashboard" className="flex items-center gap-[var(--space-sm)] hover:opacity-90 transition-opacity flex-shrink-0">
-            <Image
-              src="/Coat_of_arms_of_Jamaica.svg.png"
-              alt="Jamaica Coat of Arms"
-              width={28}
-              height={28}
-              className="w-7 h-7"
-            />
-            <span className="font-semibold text-[length:var(--text-body)] tracking-wide font-[family-name:var(--font-display)] hidden sm:inline">
-              Cabinet Dashboard
-            </span>
-          </Link>
-
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            <div className="flex items-center gap-[4px] sm:gap-[6px] ml-[var(--space-xs)] sm:ml-[var(--space-base)] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 min-w-0">
-              {breadcrumbs.map((crumb, i) => (
-                <span key={i} className="flex items-center gap-[4px] sm:gap-[6px] min-w-0">
-                  <span className="text-text-inverse/25">/</span>
-                  {crumb.href ? (
-                    <Link href={crumb.href} className="hover:text-gold transition-colors truncate">
-                      {crumb.label}
-                    </Link>
-                  ) : (
-                    <span className="text-text-inverse/90 truncate">{crumb.label}</span>
-                  )}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {!breadcrumbs && (
-            <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-lg)] ml-[var(--space-sm)] sm:ml-[var(--space-lg)]">
-              <Link
-                href="/meetings"
-                className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
-              >
-                Meetings
-              </Link>
-              <Link
-                href="/actions"
-                className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
-              >
-                Actions
-              </Link>
-              <Link
-                href="/blockers"
-                className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
-              >
-                Blockers
-              </Link>
-              <Link
-                href="/okrs"
-                className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-inverse/60 hover:text-gold transition-colors font-medium"
-              >
-                OKRs
-              </Link>
-            </div>
-          )}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[var(--space-xs)] py-[var(--space-sm)]">
+      {breadcrumbs && breadcrumbs.length > 0 && (
+        <nav aria-label="Breadcrumb" className="min-w-0 pl-10 lg:pl-0">
+          <ol className="flex items-center gap-[var(--space-xs)] text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] text-text-secondary">
+            <li><Link href="/dashboard" className="hover:text-text-primary transition-colors">Dashboard</Link></li>
+            {breadcrumbs.map((crumb, i) => (
+              <li key={i} className="flex items-center gap-[var(--space-xs)] min-w-0">
+                <span className="text-text-secondary/40" aria-hidden>/</span>
+                {crumb.href ? (
+                  <Link href={crumb.href} className="hover:text-text-primary transition-colors truncate">
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className="text-text-primary font-medium truncate" aria-current="page">{crumb.label}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      {freshness && (
+        <div className="text-[length:var(--text-caption)] text-text-secondary pl-10 lg:pl-0">
+          {freshness}
         </div>
-
-        <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)]">
-          <button
-            onClick={toggleMockData}
-            className="flex items-center gap-[var(--space-sm)] text-[length:var(--text-caption)] font-medium px-[var(--space-sm)] sm:px-[var(--space-md)] py-[6px] rounded-full transition-all border border-text-inverse/20 hover:border-gold/50 flex-shrink-0"
-          >
-            <span className={`w-2 h-2 rounded-full ${mockDataEnabled ? 'bg-jm-green' : 'bg-status-off-track'}`} />
-            <span className="hidden sm:inline">Mock Data</span> {mockDataEnabled ? 'ON' : 'OFF'}
-          </button>
-
-          {user && (
-            <div className="flex items-center gap-[var(--space-sm)] sm:gap-[var(--space-md)]">
-              {user.image && (
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-7 h-7 rounded-full object-cover hidden sm:block"
-                  referrerPolicy="no-referrer"
-                />
-              )}
-              <button
-                onClick={logout}
-                className="flex items-center gap-[6px] text-[length:var(--text-caption)] text-text-inverse/60 hover:text-gold transition-colors flex-shrink-0 cursor-pointer"
-                title={`Signed in as ${user.name}`}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-                </svg>
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </nav>
+      )}
+    </div>
   );
 }

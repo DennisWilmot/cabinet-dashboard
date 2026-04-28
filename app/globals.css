@@ -152,6 +152,14 @@ h1, h2, h3, h4 {
   animation: slide-in-right 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-left {
+  animation: slide-in-left 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .stagger-1 { animation-delay: 0ms; }
 .stagger-2 { animation-delay: 60ms; }
 .stagger-3 { animation-delay: 120ms; }

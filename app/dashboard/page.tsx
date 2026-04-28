@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DataFreshness } from '@/components/layout/DataFreshness';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -343,9 +342,7 @@ export default function CabinetOverview() {
 
   return (
     <>
-      <CabinetNav />
-      <DataFreshness />
-      <DashboardShell>
+      <DashboardShell freshness={<DataFreshness inline />}>
         <div className="animate-fade-up">
           <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
             <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">

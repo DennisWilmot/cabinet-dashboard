@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { SectionNav } from '@/components/layout/SectionNav';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -89,8 +88,7 @@ export default function MinisterProfilePage() {
   if (!ctx) {
     return (
       <>
-        <CabinetNav breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Not Found' }]} />
-        <DashboardShell>
+        <DashboardShell breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Not Found' }]}>
           <div className="py-20 text-center">
             <h1 className="text-[length:var(--text-h1)] font-bold text-text-primary">Minister not found</h1>
             <Link href="/dashboard" className="mt-4 inline-block text-gold hover:text-gold-dark transition-colors">
@@ -153,9 +151,7 @@ export default function MinisterProfilePage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: minister.name }]} />
-      <SectionNav items={SECTION_NAV_ITEMS} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: minister.name }]} sectionNav={<SectionNav items={SECTION_NAV_ITEMS} />}>
         <div className="animate-fade-up">
 
           {/* ── Section 1: Hero / Bio ── */}

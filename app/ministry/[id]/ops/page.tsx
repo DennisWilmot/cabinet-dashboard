@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DataFreshness } from '@/components/layout/DataFreshness';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { SectionNav } from '@/components/layout/SectionNav';
@@ -53,10 +52,7 @@ export default function OperationalPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={breadcrumbs} />
-      <DataFreshness lastUpdated={overview.lastUpdated} />
-      <SectionNav items={sectionItems} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={breadcrumbs} freshness={<DataFreshness inline lastUpdated={overview.lastUpdated} />} sectionNav={<SectionNav items={sectionItems} />}>
         <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
           <div className="flex-1 min-w-0">
           <div id="overview" className="animate-fade-up scroll-mt-28">

@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { AttendanceEditor } from '@/components/ui/AttendanceEditor';
 import { getMeeting } from '@/lib/meetings/data';
@@ -246,8 +245,7 @@ export default function MeetingDetailPage() {
   if (!meeting) {
     return (
       <>
-        <CabinetNav breadcrumbs={[{ label: 'Meetings', href: '/meetings' }, { label: 'Not Found' }]} />
-        <DashboardShell>
+        <DashboardShell breadcrumbs={[{ label: 'Meetings', href: '/meetings' }, { label: 'Not Found' }]}>
           <div className="py-20 text-center">
             <h1 className="text-[length:var(--text-h1)] font-bold text-text-primary">Meeting not found</h1>
             <Link href="/meetings" className="mt-4 inline-block text-gold hover:text-gold-dark transition-colors">
@@ -263,8 +261,7 @@ export default function MeetingDetailPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={[{ label: 'Meetings', href: '/meetings' }, { label: dateLabel }]} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={[{ label: 'Meetings', href: '/meetings' }, { label: dateLabel }]}>
         <div className="animate-fade-up">
           <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
             <Link href="/meetings" className="inline-flex items-center gap-1 text-[length:var(--text-caption)] text-text-secondary hover:text-gold-dark transition-colors mb-[var(--space-md)]">

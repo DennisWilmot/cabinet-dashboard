@@ -226,7 +226,11 @@ export function AtlasChat() {
     <>
       {open && <div className="fixed inset-0 z-40 bg-black/40 transition-opacity" onClick={close} aria-hidden />}
 
-      <div className={`fixed z-50 bottom-0 right-0 sm:right-6 sm:bottom-6 flex flex-col bg-page border border-border-default shadow-2xl transition-all duration-300 ease-out origin-bottom-right ${
+      <div
+        role="dialog"
+        aria-modal={open}
+        aria-label="Atlas budget assistant"
+        className={`fixed z-50 bottom-0 right-0 sm:right-6 sm:bottom-6 flex flex-col bg-page border border-border-default shadow-2xl transition-all duration-300 ease-out origin-bottom-right ${
         open
           ? 'w-full sm:w-[440px] h-dvh sm:h-[calc(100dvh-48px)] sm:rounded-xl opacity-100 scale-100'
           : 'w-0 h-0 opacity-0 scale-95 pointer-events-none'
@@ -246,7 +250,7 @@ export function AtlasChat() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" /></svg>
               </button>
             )}
-            <button onClick={close} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer" aria-label="Close Atlas">
+            <button onClick={close} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none" aria-label="Close Atlas">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -322,11 +326,13 @@ export function AtlasChat() {
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Ask a question..."
+              aria-label="Message to Atlas"
               disabled={loading}
               className="flex-1 bg-surface border border-border-default rounded-lg px-4 py-2.5 text-[length:var(--text-body)] placeholder:text-text-secondary/50 outline-none focus:border-jm-green focus:ring-1 focus:ring-jm-green/30 disabled:opacity-50"
             />
             <button type="submit" disabled={!input.trim() || loading}
-              className="w-9 h-9 rounded-lg bg-jm-green/20 flex items-center justify-center flex-shrink-0 hover:bg-jm-green/30 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+              aria-label="Send message"
+              className="w-9 h-9 rounded-lg bg-jm-green/20 flex items-center justify-center flex-shrink-0 hover:bg-jm-green/30 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none">
               <svg className="w-4 h-4 text-jm-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
               </svg>
@@ -338,13 +344,13 @@ export function AtlasChat() {
       {/* FAB */}
       {!open && (
         <button onClick={() => setOpen(true)}
-          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-sidebar shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group"
+          className="fixed z-50 bottom-6 right-6 w-14 h-14 rounded-full bg-surface border border-border-default shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer group focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2"
           aria-label="Open Atlas assistant">
-          <svg className="w-7 h-7 text-gold transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2C6.48 2 2 5.58 2 10c0 2.24 1.12 4.27 2.94 5.72L4 20l4.28-2.14C9.46 18.28 10.69 18.5 12 18.5c5.52 0 10-3.58 10-8S17.52 2 12 2Z" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-            <circle cx="8.5" cy="10" r="1.25" fill="currentColor"/>
-            <circle cx="12" cy="10" r="1.25" fill="currentColor"/>
-            <circle cx="15.5" cy="10" r="1.25" fill="currentColor"/>
+          <svg className="w-7 h-7 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 5.58 2 10c0 2.24 1.12 4.27 2.94 5.72L4 20l4.28-2.14C9.46 18.28 10.69 18.5 12 18.5c5.52 0 10-3.58 10-8S17.52 2 12 2Z" fill="oklch(0.99 0 0)" stroke="oklch(0.25 0 0)" strokeWidth="1.5" strokeLinejoin="round"/>
+            <circle cx="8.5" cy="10" r="1.25" fill="oklch(0.25 0 0)"/>
+            <circle cx="12" cy="10" r="1.25" fill="oklch(0.25 0 0)"/>
+            <circle cx="15.5" cy="10" r="1.25" fill="oklch(0.25 0 0)"/>
           </svg>
         </button>
       )}

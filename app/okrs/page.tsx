@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { ministryRegistry, ministryOrder } from '@/lib/data';
 import { opmLeadership } from '@/lib/data/people/opm';
@@ -166,8 +165,7 @@ export default function OKRsPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={[{ label: 'OKRs' }]} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={[{ label: 'OKRs' }]}>
         <div className="animate-fade-up">
           <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
             <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
@@ -184,7 +182,7 @@ export default function OKRsPage() {
             <SummaryCard label="On Track" value={String(stats.onTrack)} color="green" onClick={() => setStatusFilter(statusFilter === 'on_track' ? 'all' : 'on_track')} active={statusFilter === 'on_track'} />
             <SummaryCard label="At Risk" value={String(stats.atRisk)} color="gold" onClick={() => setStatusFilter(statusFilter === 'at_risk' ? 'all' : 'at_risk')} active={statusFilter === 'at_risk'} />
             <SummaryCard label="Off Track" value={String(stats.offTrack)} color="red" onClick={() => setStatusFilter(statusFilter === 'off_track' ? 'all' : 'off_track')} active={statusFilter === 'off_track'} />
-            <SummaryCard label="Ministers" value={String(stats.total)} sub="with active OKRs" />
+            <SummaryCard label="Total OKRs" value={String(stats.totalKRs)} sub={`across ${stats.total} ministers`} />
           </div>
 
           {/* Search + Filter */}
@@ -198,6 +196,7 @@ export default function OKRsPage() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search ministers, objectives, key results..."
+                aria-label="Search OKRs"
                 className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-default bg-surface text-[length:var(--text-caption)] text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold/60 transition-all"
               />
               {search && (
@@ -229,7 +228,8 @@ export default function OKRsPage() {
                   {/* Minister header row */}
                   <button
                     onClick={() => setExpandedSlug(isExpanded ? null : minister.slug)}
-                    className="w-full text-left px-[var(--space-md)] sm:px-[var(--space-lg)] py-[var(--space-md)] flex items-center gap-[var(--space-md)] hover:bg-page/50 transition-colors cursor-pointer"
+                    aria-expanded={isExpanded}
+                    className="w-full text-left px-[var(--space-md)] sm:px-[var(--space-lg)] py-[var(--space-md)] flex items-center gap-[var(--space-md)] hover:bg-page/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-inset focus-visible:outline-none"
                   >
                     <Link href={`/minister/${minister.slug}`} onClick={e => e.stopPropagation()} className="flex-shrink-0">
                       <img
@@ -270,8 +270,8 @@ export default function OKRsPage() {
                     <div className="border-t border-border-default">
                       {minister.objectives.map((obj, oi) => (
                         <div key={oi} className={oi > 0 ? 'border-t border-border-default' : ''}>
-                          <div className="px-[var(--space-md)] sm:px-[var(--space-lg)] py-[var(--space-sm)] sm:py-[var(--space-md)] bg-page">
-                            <h4 className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] font-bold text-text-primary">{obj.name}</h4>
+                          <div className="px-[var(--space-md)] sm:px-[var(--space-lg)] pt-[var(--space-md)] pb-[var(--space-xs)]">
+                            <h4 className="text-[length:var(--text-body)] font-bold text-text-primary tracking-tight">{obj.name}</h4>
                           </div>
                           <div className="divide-y divide-border-default/50">
                             {obj.keyResults.map((kr) => {

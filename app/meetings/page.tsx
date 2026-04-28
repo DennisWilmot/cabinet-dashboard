@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { mockMeetings } from '@/lib/meetings/data';
 import type { CabinetMeeting } from '@/lib/meetings/types';
@@ -235,8 +234,7 @@ export default function MeetingsPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={[{ label: 'Meetings' }]} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={[{ label: 'Meetings' }]}>
         <div className="animate-fade-up">
           <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)] flex flex-col sm:flex-row sm:items-end sm:justify-between gap-[var(--space-md)]">
             <div>

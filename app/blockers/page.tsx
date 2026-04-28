@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { mockBlockers } from '@/lib/blockers/data';
 import type { Blocker, BlockerStatus, EscalationLevel, ActivityEntry } from '@/lib/blockers/types';
@@ -124,8 +123,7 @@ export default function BlockersPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={[{ label: 'Blockers' }]} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={[{ label: 'Blockers' }]}>
         <div className="animate-fade-up">
           <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
             <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
@@ -243,8 +241,13 @@ export default function BlockersPage() {
       {/* ── Slide-over panel ── */}
       {selected && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/30" onClick={closePanel} />
-          <aside className="fixed z-50 top-0 right-0 h-dvh w-full sm:w-[520px] bg-page border-l border-border-default shadow-2xl flex flex-col overflow-hidden animate-slide-in-right">
+          <div className="fixed inset-0 z-40 bg-black/30" onClick={closePanel} aria-hidden="true" />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="blocker-panel-title"
+            className="fixed z-50 top-0 right-0 h-dvh w-full sm:w-[520px] bg-page border-l border-border-default shadow-2xl flex flex-col overflow-hidden animate-slide-in-right"
+          >
             {/* Panel header */}
             <div className="flex items-start justify-between gap-[var(--space-md)] px-5 py-4 border-b border-border-default flex-shrink-0">
               <div className="min-w-0 flex-1">
@@ -254,9 +257,9 @@ export default function BlockersPage() {
                   </span>
                   <span className="text-[length:var(--text-caption)] text-text-secondary">{daysSince(selected.createdDate)}d old</span>
                 </div>
-                <h2 className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold text-text-primary leading-snug">{selected.title}</h2>
+                <h2 id="blocker-panel-title" className="text-[length:var(--text-h3)] sm:text-[length:var(--text-h2)] font-bold text-text-primary leading-snug">{selected.title}</h2>
               </div>
-              <button onClick={closePanel} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer flex-shrink-0 mt-1">
+              <button onClick={closePanel} aria-label="Close panel" className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer flex-shrink-0 mt-1 focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -358,7 +361,8 @@ export default function BlockersPage() {
                   onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') addComment(); }}
                   placeholder="Add a comment..."
-                  className="flex-1 px-4 py-2.5 bg-surface border border-border-default rounded-lg text-[length:var(--text-body)] placeholder:text-text-secondary/50 focus:outline-none focus:border-green focus:ring-1 focus:ring-green/30"
+                  aria-label="Blocker comment"
+                  className="flex-1 px-4 py-2.5 bg-surface border border-border-default rounded-lg text-[length:var(--text-body)] placeholder:text-text-secondary/50 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/30"
                 />
                 <button onClick={addComment} disabled={!draft.trim()}
                   className="px-4 py-2.5 rounded-lg bg-sidebar text-text-on-dark text-[length:var(--text-caption)] font-semibold hover:bg-sidebar/90 transition-colors cursor-pointer disabled:opacity-40">

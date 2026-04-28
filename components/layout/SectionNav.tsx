@@ -20,7 +20,7 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
           setActiveId(visible[0].target.id);
         }
       },
-      { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+      { rootMargin: '-60px 0px -60% 0px', threshold: 0 }
     );
 
     items.forEach(({ id }) => {
@@ -34,33 +34,29 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - 56;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   };
 
   return (
-    <nav className="sticky top-14 z-40 bg-page/95 backdrop-blur-sm border-b border-border-default">
-      <div className="max-w-7xl mx-auto px-[var(--space-base)] sm:px-[var(--space-lg)]">
-        <div className="flex gap-[var(--space-xs)] overflow-x-auto py-[var(--space-sm)] -mb-px scrollbar-none">
-          {items.map(({ id, label }) => (
-            <button
-              key={id}
-              onClick={() => handleClick(id)}
-              className={`
-                flex-shrink-0 px-[var(--space-sm)] sm:px-[var(--space-md)] py-[var(--space-sm)] text-[length:var(--text-caption)] font-medium
-                rounded-sm transition-colors whitespace-nowrap
-                ${activeId === id
-                  ? 'bg-sidebar text-text-inverse'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-border-default/40'
-                }
-              `}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </nav>
+    <div className="flex gap-[var(--space-xs)] overflow-x-auto py-[6px] scrollbar-none">
+      {items.map(({ id, label }) => (
+        <button
+          key={id}
+          onClick={() => handleClick(id)}
+          className={`
+            flex-shrink-0 px-[var(--space-sm)] sm:px-[var(--space-md)] py-[6px] text-[length:var(--text-caption)] font-medium
+            rounded-sm transition-colors whitespace-nowrap cursor-pointer
+            ${activeId === id
+              ? 'bg-sidebar text-text-inverse'
+              : 'text-text-secondary hover:text-text-primary hover:bg-border-default/40'
+            }
+          `}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }

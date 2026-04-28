@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { CabinetNav } from '@/components/layout/CabinetNav';
 import { DataFreshness } from '@/components/layout/DataFreshness';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { MetricCard } from '@/components/cards/MetricCard';
@@ -121,9 +120,7 @@ export default function MinistryPage() {
 
   return (
     <>
-      <CabinetNav breadcrumbs={breadcrumbs} />
-      <DataFreshness lastUpdated={overview.lastUpdated} />
-      <DashboardShell>
+      <DashboardShell breadcrumbs={breadcrumbs} freshness={<DataFreshness inline lastUpdated={overview.lastUpdated} />}>
         <div className="flex flex-col lg:flex-row gap-[var(--space-2xl)] lg:gap-[var(--space-3xl)]">
           <div className="flex-1 min-w-0">
 
