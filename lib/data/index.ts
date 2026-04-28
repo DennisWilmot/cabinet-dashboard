@@ -18,11 +18,11 @@ import { energyTransportData } from './ministries/energy-transport';
 import { localGovtData } from './ministries/local-govt';
 
 export const ministryRegistry: Record<string, MinistryData> = {
+  opm: opmData,
   mof: mofData,
   education: educationData,
   health: healthData,
   'national-security': nationalSecurityData,
-  opm: opmData,
   'energy-transport': energyTransportData,
   'local-govt': localGovtData,
   labour: labourData,
@@ -38,11 +38,11 @@ export const ministryRegistry: Record<string, MinistryData> = {
 };
 
 export const ministryOrder: string[] = [
+  'opm',
   'mof',
   'education',
   'health',
   'national-security',
-  'opm',
   'energy-transport',
   'local-govt',
   'labour',

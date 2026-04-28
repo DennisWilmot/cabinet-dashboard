@@ -42,7 +42,7 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
             <tbody>
               {block.rows.map((row, ri) => (
                 <tr key={ri} className="border-b border-border-default/50">
-                  {row.map((cell, ci) => <td key={ci} className="py-1.5 px-2 text-text-primary">{cell}</td>)}
+                  {row.map((cell, ci) => <td key={ci} className="py-1.5 px-2 text-text-primary" dangerouslySetInnerHTML={{ __html: simpleMarkdown(cell) }} />)}
                 </tr>
               ))}
             </tbody>
@@ -74,7 +74,7 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
       const Tag = block.ordered ? 'ol' : 'ul';
       return (
         <Tag className={`my-1 text-[length:var(--text-caption)] text-text-primary space-y-0.5 ${block.ordered ? 'list-decimal' : 'list-disc'} pl-4`}>
-          {block.items.map((item, i) => <li key={i}>{item}</li>)}
+          {block.items.map((item, i) => <li key={i} dangerouslySetInnerHTML={{ __html: simpleMarkdown(item) }} />)}
         </Tag>
       );
 
@@ -121,7 +121,7 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
 
     case 'callout': {
       const tones = { info: 'bg-jm-green/10 border-jm-green/30 text-jm-green-dark', warning: 'bg-gold/10 border-gold/30 text-gold-dark', danger: 'bg-status-off-track/10 border-status-off-track/30 text-status-off-track' };
-      return <div className={`my-2 p-3 rounded-lg border text-[length:var(--text-caption)] ${tones[block.tone] || tones.info}`}>{block.content}</div>;
+      return <div className={`my-2 p-3 rounded-lg border text-[length:var(--text-caption)] ${tones[block.tone] || tones.info}`} dangerouslySetInnerHTML={{ __html: simpleMarkdown(block.content) }} />;
     }
 
     case 'divider':
@@ -286,7 +286,7 @@ export function AtlasChat() {
                 <div className="max-w-[95%] space-y-1">
                   {msg.blocks && msg.blocks.length > 0
                     ? msg.blocks.map((block, i) => <BlockRenderer key={i} block={block} />)
-                    : <div className="text-[length:var(--text-caption)] text-text-primary">{msg.content}</div>
+                    : <div className="text-[length:var(--text-caption)] text-text-primary atlas-prose" dangerouslySetInnerHTML={{ __html: simpleMarkdown(msg.content) }} />
                   }
                   {msg.toolsUsed && msg.toolsUsed.length > 0 && (
                     <details className="mt-2">
