@@ -3,6 +3,7 @@ import { mockMeetings, getAllActionItems, getActionItemsByMinistry, getMinisterA
 import { mockBlockers } from '@/lib/blockers/data';
 import { deriveUtilizationStatus, deriveMinistryStatus } from '@/lib/status';
 import { getNationalMetricsByCategory, getDisasterById, getDisasterEvents, filterMetricHistory } from '@/lib/data/national';
+import { vision2030Goals, allOutcomes, getOutcomeById, getGoalForOutcome, getOutcomeSummary, deriveIndicatorStatus, getStatusTooltip } from '@/lib/data/vision2030';
 import type { MinistryData, CapitalProject, OperationalEntity, Obligation } from '@/lib/types';
 import type { ActionItem, CabinetMeeting } from '@/lib/meetings/types';
 import type { Blocker } from '@/lib/blockers/types';
@@ -954,6 +955,81 @@ export const toolExecutors: Record<string, (params: Record<string, unknown>) => 
       } : null,
       source: disaster.source,
       asOf: disaster.asOf,
+    };
+  },
+
+  getVision2030Outcomes: (params) => {
+    const goalIdFilter = params.goalId as number | undefined;
+    const goals = goalIdFilter
+      ? vision2030Goals.filter(g => g.id === goalIdFilter)
+      : vision2030Goals;
+
+    if (goalIdFilter && goals.length === 0) {
+      return { error: `Goal ${goalIdFilter} not found. Valid IDs: 1-4.` };
+    }
+
+    return goals.map(goal => ({
+      goalId: goal.id,
+      goalName: goal.name,
+      outcomes: goal.outcomes.map(outcome => {
+        const summary = getOutcomeSummary(outcome);
+        return {
+          id: outcome.id,
+          name: outcome.name,
+          sdgs: outcome.sdgs,
+          indicatorCount: summary.total,
+          statusBreakdown: {
+            onTrack: summary.onTrack,
+            atRisk: summary.atRisk,
+            offTrack: summary.offTrack,
+            noData: summary.noData,
+          },
+        };
+      }),
+    }));
+  },
+
+  getOutcomeIndicators: (params) => {
+    const outcomeId = params.outcomeId as number;
+    const ministrySlug = params.ministrySlug as string | undefined;
+    const outcome = getOutcomeById(outcomeId);
+
+    if (!outcome) {
+      return { error: `Outcome ${outcomeId} not found. Valid IDs: 1-15.` };
+    }
+
+    const goal = getGoalForOutcome(outcomeId);
+    let indicators = outcome.indicators;
+    if (ministrySlug) {
+      indicators = indicators.filter(ind => ind.responsibleMinistries.includes(ministrySlug));
+    }
+
+    return {
+      outcomeId: outcome.id,
+      outcomeName: outcome.name,
+      goalId: goal?.id,
+      goalName: goal?.name,
+      sdgs: outcome.sdgs,
+      indicators: indicators.map(ind => {
+        const status = deriveIndicatorStatus(ind);
+        return {
+          id: ind.id,
+          name: ind.name,
+          unit: ind.unit,
+          direction: ind.direction,
+          baseline2007: ind.baseline2007,
+          target2027: ind.target2027,
+          target2030: ind.target2030,
+          latestActual: ind.latestActual,
+          latestPeriod: ind.latestPeriod,
+          status,
+          statusExplanation: getStatusTooltip(status, ind),
+          source: ind.source,
+          responsibleMinistries: ind.responsibleMinistries,
+          discontinued: ind.discontinued || false,
+          note: ind.note || null,
+        };
+      }),
     };
   },
 };

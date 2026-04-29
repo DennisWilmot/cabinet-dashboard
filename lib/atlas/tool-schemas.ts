@@ -315,4 +315,27 @@ export const TOOL_SCHEMAS = [
       required: [],
     },
   },
+  {
+    name: 'getVision2030Outcomes',
+    description: 'Get Vision 2030 Jamaica national outcomes scorecard. Returns all 4 goals, 15 outcomes, and summary status counts. Use for questions about national development, Vision 2030, MTF targets, outcomes scorecard, or Jamaica\'s long-term planning framework.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        goalId: { type: 'number', description: 'Filter by goal ID (1-4). Omit for all goals.' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'getOutcomeIndicators',
+    description: 'Get detailed indicators for a specific Vision 2030 national outcome. Returns all indicators with baseline, targets, actuals, and status. Use when the user asks about a specific outcome (e.g. "how is education performing?", "what are the health indicators?").',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        outcomeId: { type: 'number', description: 'Outcome ID (1-15). E.g. 1=Health, 2=Education, 3=Social Protection, 4=Culture, 5=Security, 6=Governance, 7=Macroeconomy, 8=Business Environment, 9=Infrastructure, 10=Energy, 11=Technology, 12=Industry, 13=Environment, 14=Hazard Risk, 15=Urban/Rural Development.' },
+        ministrySlug: { type: 'string', description: 'Filter indicators by responsible ministry slug (e.g. "health", "education", "mof")' },
+      },
+      required: ['outcomeId'],
+    },
+  },
 ];

@@ -298,3 +298,38 @@ export interface NationalPulseData {
   disasters: DisasterEvent[];
   lastUpdated: string;
 }
+
+/* ─── Vision 2030 National Outcomes ─── */
+
+export type IndicatorStatus = 'on_track' | 'at_risk' | 'off_track' | 'no_data';
+export type IndicatorDirection = 'higher_is_better' | 'lower_is_better';
+
+export interface Vision2030Indicator {
+  id: string;
+  name: string;
+  unit: string;
+  direction: IndicatorDirection;
+  baseline2007: number | null;
+  target2027: number | string | null;
+  target2030: number | string | null;
+  latestActual: number | null;
+  latestPeriod: string | null;
+  source: string | null;
+  responsibleMinistries: string[];
+  discontinued?: boolean;
+  note?: string;
+}
+
+export interface NationalOutcome {
+  id: number;
+  name: string;
+  goalId: number;
+  indicators: Vision2030Indicator[];
+  sdgs: number[];
+}
+
+export interface NationalGoal {
+  id: number;
+  name: string;
+  outcomes: NationalOutcome[];
+}

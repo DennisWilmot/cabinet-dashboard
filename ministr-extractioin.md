@@ -1139,3 +1139,83 @@ CREATE TABLE disaster_sector_impacts (
 - **Poverty rate**: Annual (JSLC). Next: 2025 data expected late 2026.
 - **Fiscal balance**: Quarterly (MOF fiscal reports). Updated when official figures published.
 - **Disaster data**: Ad-hoc (DaLA assessments). Melissa figure is from March 2026 PIOJ/ECLAC report.
+
+---
+
+## Vision 2030 National Outcomes Data Layer
+
+### Current state (hardcoded, April 2026)
+- File: `lib/data/vision2030.ts`
+- Types: `lib/types.ts` (`NationalGoal`, `NationalOutcome`, `Vision2030Indicator`)
+- 4 goals, 15 outcomes, ~50 indicators (subset of full 75, many share the same measurement)
+- Only ~6 indicators have `latestActual` populated (those with publicly available 2024-2026 data)
+- Status derived algorithmically: `on_track` / `at_risk` / `off_track` / `no_data` based on 2027 target proximity
+
+### Proposed DB schema for migration
+
+```sql
+CREATE TABLE vision2030_goals (
+  id INTEGER PRIMARY KEY,          -- 1-4
+  name TEXT NOT NULL
+);
+
+CREATE TABLE vision2030_outcomes (
+  id INTEGER PRIMARY KEY,          -- 1-15
+  goal_id INTEGER NOT NULL REFERENCES vision2030_goals(id),
+  name TEXT NOT NULL,
+  sdgs INTEGER[] NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE vision2030_indicators (
+  id TEXT PRIMARY KEY,              -- e.g. '1-1', '7-5'
+  outcome_id INTEGER NOT NULL REFERENCES vision2030_outcomes(id),
+  name TEXT NOT NULL,
+  unit TEXT NOT NULL,
+  direction TEXT NOT NULL CHECK (direction IN ('higher_is_better', 'lower_is_better')),
+  baseline_2007 NUMERIC,
+  target_2027 TEXT,                 -- TEXT to handle range targets like '4.0-6.0'
+  target_2030 TEXT,
+  source TEXT,
+  responsible_ministries TEXT[] NOT NULL DEFAULT '{}',
+  discontinued BOOLEAN DEFAULT FALSE,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE vision2030_actuals (
+  id SERIAL PRIMARY KEY,
+  indicator_id TEXT NOT NULL REFERENCES vision2030_indicators(id),
+  period TEXT NOT NULL,             -- e.g. '2024', 'January 2026', 'FY 2025/26'
+  value NUMERIC NOT NULL,
+  provisional BOOLEAN DEFAULT FALSE,
+  source TEXT,
+  recorded_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(indicator_id, period)
+);
+```
+
+### Backfill plan
+1. **Phase 1 (done)**: Hardcoded data from MTF 2024-2027 document. Targets and baselines complete.
+2. **Phase 2**: Populate `latestActual` for all indicators with publicly available data from PIOJ, STATIN, World Bank WGI, UNDP HDI, WEF indices. Priority: Goal 3 (economy) and Goal 2 (security/governance).
+3. **Phase 3**: Migrate to DB. Seed from hardcoded data. Add admin UI for PIOJ staff to update actuals quarterly.
+4. **Phase 4**: Historical time-series — backfill actuals from 2009-2025 using Vision 2030 Jamaica Monitoring Dashboard (data4development.gov.jm) and PIOJ quarterly/annual reports.
+
+### Atlas tools for Vision 2030
+
+| Tool | Description | Filters |
+|---|---|---|
+| `getVision2030Outcomes` | All goals/outcomes with status summary | `goalId` (1-4) |
+| `getOutcomeIndicators` | Detailed indicators for one outcome | `outcomeId` (1-15), `ministrySlug` |
+
+### Data sources for backfill
+- PIOJ Quarterly GDP Estimates / Economic & Social Survey of Jamaica (ESSJ)
+- STATIN Labour Force Survey, Consumer Price Index, National Accounts
+- World Bank Worldwide Governance Indicators (WGI) — updated annually
+- UNDP Human Development Report — updated annually
+- WEF Global Innovation Index / Travel & Tourism Development Index
+- MOH Health Information Unit — maternal/child mortality, NCD data
+- MOE Education Statistics — literacy rates, Grade 4 assessment
+- Jamaica Constabulary Force (JCF) — crime statistics
+- Yale/Columbia Environmental Performance Index (EPI)
+- JIPO patent data, SCImago publication data
