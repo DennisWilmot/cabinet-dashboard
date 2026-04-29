@@ -53,83 +53,89 @@ function IndicatorCard({ indicator, index }: { indicator: Vision2030Indicator; i
   const status = deriveIndicatorStatus(indicator);
   const cfg = STATUS_CONFIG[status];
   const tooltip = getStatusTooltip(status, indicator);
-  const ministries = indicator.responsibleMinistries.map(slug =>
-    ministryRegistry[slug]?.overview.shortName || slug
-  );
+
+  const hasData = indicator.latestActual !== null;
+  const targetDisplay = indicator.target2027 !== null
+    ? (typeof indicator.target2027 === 'string' ? indicator.target2027 : formatValue(indicator.target2027, indicator.unit))
+    : null;
 
   return (
     <div
-      className={`rounded-lg border ${cfg.border} ${cfg.bg} p-[var(--space-md)] animate-fade-up`}
+      className={`rounded-lg border ${cfg.border} p-[var(--space-md)] sm:p-[var(--space-lg)] animate-fade-up`}
       style={{ animationDelay: `${(index + 1) * 40}ms` }}
     >
-      <div className="flex items-start justify-between gap-[var(--space-md)] mb-[var(--space-sm)]">
-        <div className="min-w-0 flex-1">
-          <h4 className="text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] font-bold text-text-primary leading-snug">
-            {indicator.name}
-          </h4>
-          <p className="text-[length:var(--text-micro)] text-text-secondary/50 mt-0.5">
-            {indicator.unit} · {indicator.source}
-          </p>
-        </div>
+      {/* Row 1: Name + Status badge */}
+      <div className="flex items-start justify-between gap-[var(--space-sm)] mb-[var(--space-md)]">
+        <h4 className="text-[length:var(--text-body)] sm:text-[length:var(--text-h3)] font-bold text-text-primary leading-snug">
+          {indicator.name}
+        </h4>
         <div className="group relative flex-shrink-0">
-          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[length:var(--text-micro)] font-semibold ${cfg.bg} ${cfg.text} border ${cfg.border}`}>
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[length:var(--text-caption)] font-bold ${cfg.bg} ${cfg.text}`}>
             {cfg.label}
           </span>
-          <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-64 rounded-lg border border-border-default bg-page p-2 text-[length:var(--text-micro)] text-text-secondary shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50">
+          <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-64 rounded-lg border border-border-default bg-page p-3 text-[length:var(--text-caption)] text-text-secondary shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50 leading-snug">
             {tooltip}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-[var(--space-sm)] mb-[var(--space-sm)]">
-        <div>
-          <p className="text-[length:var(--text-micro)] text-text-secondary/40">Baseline 2007</p>
-          <p className="text-[length:var(--text-caption)] font-semibold text-text-secondary tabular-nums">
-            {indicator.baseline2007 !== null ? formatValue(indicator.baseline2007, indicator.unit) : '—'}
+      {/* Row 2: The hero number */}
+      {hasData ? (
+        <div className="mb-[var(--space-sm)]">
+          <div className="flex items-baseline gap-[var(--space-sm)]">
+            <span className={`text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold tabular-nums tracking-tight ${cfg.text}`}>
+              {formatValue(indicator.latestActual!, indicator.unit)}
+            </span>
+            {targetDisplay && (
+              <span className="text-[length:var(--text-caption)] text-text-secondary">
+                of {targetDisplay} target
+              </span>
+            )}
+          </div>
+          <p className="text-[length:var(--text-caption)] text-text-secondary mt-0.5">
+            {indicator.latestPeriod} · {indicator.source}
           </p>
         </div>
-        <div>
-          <p className="text-[length:var(--text-micro)] text-text-secondary/40">Target 2027</p>
-          <p className="text-[length:var(--text-caption)] font-semibold text-text-primary tabular-nums">
-            {indicator.target2027 !== null ? (typeof indicator.target2027 === 'string' ? indicator.target2027 : formatValue(indicator.target2027, indicator.unit)) : '—'}
+      ) : (
+        <div className="mb-[var(--space-sm)]">
+          <div className="flex items-baseline gap-[var(--space-sm)]">
+            <span className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold tabular-nums tracking-tight text-text-secondary/20">
+              —
+            </span>
+            {targetDisplay && (
+              <span className="text-[length:var(--text-caption)] text-text-secondary">
+                target: {targetDisplay}
+              </span>
+            )}
+          </div>
+          <p className="text-[length:var(--text-caption)] text-text-secondary/40 mt-0.5">
+            {indicator.discontinued ? 'Index discontinued' : `Awaiting data · ${indicator.source}`}
           </p>
         </div>
-        <div>
-          <p className="text-[length:var(--text-micro)] text-text-secondary/40">Latest</p>
-          {indicator.latestActual !== null ? (
-            <>
-              <p className={`text-[length:var(--text-caption)] font-bold tabular-nums ${cfg.text}`}>
-                {formatValue(indicator.latestActual, indicator.unit)}
-              </p>
-              <p className="text-[length:var(--text-micro)] text-text-secondary/40">
-                {indicator.latestPeriod}
-              </p>
-            </>
-          ) : (
-            <p className="text-[length:var(--text-caption)] text-text-secondary/30">
-              {indicator.discontinued ? 'Disc.' : '—'}
-            </p>
-          )}
-        </div>
-      </div>
+      )}
 
+      {/* Row 3: Progress bar */}
       <ProgressBar indicator={indicator} />
 
+      {/* Row 4: Context line — baseline + direction + ministry */}
       <div className="flex items-center justify-between gap-[var(--space-sm)] mt-[var(--space-sm)]">
-        <div className="flex flex-wrap gap-1">
-          {ministries.map(name => (
-            <span key={name} className="text-[length:var(--text-micro)] font-medium px-1.5 py-0.5 rounded bg-gold/10 text-gold-dark">
-              {name}
+        <span className="text-[length:var(--text-micro)] text-text-secondary/50">
+          {indicator.baseline2007 !== null && `From ${formatValue(indicator.baseline2007, indicator.unit)} in 2007`}
+          {indicator.direction === 'lower_is_better' && (indicator.baseline2007 !== null ? ' · ' : '')}
+          {indicator.direction === 'lower_is_better' && 'lower is better'}
+        </span>
+        <div className="flex flex-wrap gap-1 justify-end">
+          {indicator.responsibleMinistries.slice(0, 2).map(slug => (
+            <span key={slug} className="text-[length:var(--text-micro)] font-medium px-1.5 py-0.5 rounded bg-gold/10 text-gold-dark">
+              {ministryRegistry[slug]?.overview.shortName || slug}
             </span>
           ))}
         </div>
-        {indicator.direction === 'lower_is_better' && (
-          <span className="text-[length:var(--text-micro)] text-text-secondary/30">lower is better</span>
-        )}
       </div>
 
+      {/* Row 5: Note (if any) */}
       {indicator.note && (
-        <p className="text-[length:var(--text-micro)] text-text-secondary/60 italic mt-[var(--space-xs)] leading-tight">
+        <p className={`text-[length:var(--text-caption)] ${cfg.text}/70 mt-[var(--space-sm)] leading-snug`}>
           {indicator.note}
         </p>
       )}
