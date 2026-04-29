@@ -1051,3 +1051,91 @@ See `overview.md` for complete specification. Data file exists at `lib/mock-data
 ### Phase 4: Unique metric refinement
 - For ministries where the unique metric needs custom UI (e.g., Tourism's visitor arrivals chart, Health's drug availability gauge), build ministry-specific L1 Card 3 variants
 - Most ministries can use a generic "Headline KPI" card
+
+---
+
+## National / Government-Wide Data Layer
+
+### Current state (hardcoded, `lib/data/national.ts`)
+Macro-economic and social indicators sourced from PIOJ quarterly briefings, STATIN releases, and official GOJ reports. Updated manually when new data is published.
+
+### DB migration schema (for Phase 2 FMIS/DB migration)
+
+```sql
+CREATE TABLE national_metrics (
+  id TEXT PRIMARY KEY,           -- e.g. 'gdp_growth', 'unemployment_rate'
+  label TEXT NOT NULL,
+  category TEXT NOT NULL,         -- 'macro_economic' | 'social' | 'disaster'
+  unit TEXT NOT NULL,             -- 'percent' | 'currency_jmd' | 'currency_usd' | 'ratio' | 'index' | 'rate' | 'count'
+  format TEXT,                    -- optional display hint e.g. '% of GDP'
+  source TEXT NOT NULL,
+  source_url TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE national_metric_values (
+  id SERIAL PRIMARY KEY,
+  metric_id TEXT REFERENCES national_metrics(id),
+  period TEXT NOT NULL,           -- e.g. 'Oct–Dec 2025', 'January 2026', '2024', 'FY 2025/26'
+  value NUMERIC NOT NULL,
+  provisional BOOLEAN DEFAULT FALSE,
+  as_of DATE NOT NULL,            -- when this value was published
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(metric_id, period)
+);
+
+CREATE TABLE disaster_events (
+  id TEXT PRIMARY KEY,             -- e.g. 'hurricane_melissa'
+  name TEXT NOT NULL,
+  event_date DATE NOT NULL,
+  category TEXT NOT NULL,          -- e.g. 'Category 5 Hurricane'
+  total_damage BIGINT NOT NULL,    -- in JMD
+  damage_unit TEXT DEFAULT 'currency_jmd',
+  gdp_pct_impact NUMERIC,
+  description TEXT,
+  source TEXT NOT NULL,
+  source_url TEXT,
+  as_of DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE disaster_sector_impacts (
+  id SERIAL PRIMARY KEY,
+  disaster_id TEXT REFERENCES disaster_events(id),
+  sector TEXT NOT NULL,
+  damage BIGINT NOT NULL,
+  losses BIGINT NOT NULL,
+  UNIQUE(disaster_id, sector)
+);
+```
+
+### Currently tracked metrics
+
+| ID | Label | Category | Latest Value | Period | Source |
+|---|---|---|---|---|---|
+| `gdp_growth` | Real GDP Growth | macro_economic | -7.1% | Oct–Dec 2025 | STATIN |
+| `fiscal_balance` | Fiscal Balance | macro_economic | -3.5% of GDP | FY 2025/26 (projected) | PIOJ |
+| `unemployment_rate` | Unemployment Rate | social | 3.6% | January 2026 | STATIN LFS |
+| `poverty_rate` | Poverty Rate | social | 7.8% | 2024 | PIOJ/JSLC |
+
+### Currently tracked disasters
+
+| ID | Name | Date | Total Damage | GDP Impact |
+|---|---|---|---|---|
+| `hurricane_melissa` | Hurricane Melissa | 2025-10-28 | J$1.95T | 56.7% of GDP |
+
+### Atlas tools for national data
+
+| Tool | Description | Filters |
+|---|---|---|
+| `getMacroEconomicIndicators` | GDP growth, fiscal balance | `period` (string match against history) |
+| `getSocialIndicators` | Unemployment, poverty rate | `period` (string match against history) |
+| `getDisasterImpact` | Hurricane damage, sector breakdown | `disasterId` |
+
+### Update cadence
+- **GDP growth**: Quarterly (~6 weeks after quarter end). Next: Jan–Mar 2026 data expected mid-May 2026.
+- **Unemployment**: Quarterly (STATIN LFS). Next: April/July 2026 survey.
+- **Poverty rate**: Annual (JSLC). Next: 2025 data expected late 2026.
+- **Fiscal balance**: Quarterly (MOF fiscal reports). Updated when official figures published.
+- **Disaster data**: Ad-hoc (DaLA assessments). Melissa figure is from March 2026 PIOJ/ECLAC report.

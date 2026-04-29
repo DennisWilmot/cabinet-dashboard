@@ -282,4 +282,37 @@ export const TOOL_SCHEMAS = [
       required: [],
     },
   },
+  {
+    name: 'getMacroEconomicIndicators',
+    description: 'Get national macro-economic indicators: real GDP growth and fiscal balance. Returns latest values, trends, historical data, and sources. Use for questions about Jamaica\'s economy, GDP, growth, fiscal deficit, government finances.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        period: { type: 'string', description: 'Filter history to periods containing this string (e.g. "2025", "Oct", "FY 2025/26")' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'getSocialIndicators',
+    description: 'Get national social indicators: unemployment rate and poverty rate. Returns latest values, trends, historical data, and sources. Use for questions about employment, jobs, labour market, poverty, living conditions, welfare.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        period: { type: 'string', description: 'Filter history to periods containing this string (e.g. "2024", "Jan", "Jul 2025")' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'getDisasterImpact',
+    description: 'Get disaster impact data, currently Hurricane Melissa (Oct 2025). Returns total damage, GDP impact, sector breakdown, and comparisons. Use for questions about hurricanes, disaster damage, recovery, reconstruction, Melissa.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        disasterId: { type: 'string', description: 'Disaster ID (default: "hurricane_melissa"). Currently only hurricane_melissa is available.' },
+      },
+      required: [],
+    },
+  },
 ];

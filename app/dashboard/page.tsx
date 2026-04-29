@@ -14,7 +14,8 @@ import { opmLeadership } from '@/lib/data/people/opm';
 import { stripActuals } from '@/lib/strip-actuals';
 import { formatCurrency, formatPct, EXPECTED_UTILIZATION } from '@/lib/utils';
 import { deriveUtilizationStatus, deriveMinistryStatus } from '@/lib/status';
-import type { MinistryData } from '@/lib/types';
+import { nationalPulse } from '@/lib/data/national';
+import type { MinistryData, NationalMetric, DisasterEvent } from '@/lib/types';
 
 interface SearchHit {
   ministrySlug: string;
@@ -329,6 +330,215 @@ function PortfolioMinisterCard({ officer, parentMinistry, parentSlug }: {
   );
 }
 
+/* ─── National Pulse Components ─── */
+
+function trendArrow(trend: NationalMetric['trend'], inverted = false) {
+  const isGood = inverted ? trend === 'declining' : trend === 'improving';
+  const isBad = inverted ? trend === 'improving' : trend === 'declining';
+  if (trend === 'stable') return <span className="text-text-secondary">—</span>;
+  return (
+    <span className={isGood ? 'text-green' : isBad ? 'text-status-off-track' : 'text-text-secondary'}>
+      {trend === 'improving' ? '↑' : '↓'}
+    </span>
+  );
+}
+
+function formatMetricValue(metric: NationalMetric): string {
+  if (metric.unit === 'percent') return `${metric.value}%`;
+  if (metric.unit === 'index') return metric.value.toFixed(3);
+  if (metric.unit === 'rate') return metric.value.toFixed(1);
+  return String(metric.value);
+}
+
+function previousValueLabel(metric: NationalMetric): string | null {
+  if (metric.history.length < 2) return null;
+  const prev = metric.history[metric.history.length - 2];
+  const val = metric.unit === 'percent' ? `${prev.value}%` : String(prev.value);
+  return `${val} (${prev.period})`;
+}
+
+function isInvertedMetric(id: string): boolean {
+  return ['unemployment_rate', 'poverty_rate'].includes(id);
+}
+
+function PulseTooltip({ metric }: { metric: NationalMetric }) {
+  const prev = previousValueLabel(metric);
+  return (
+    <div className="text-[length:var(--text-caption)] leading-relaxed max-w-[260px]">
+      <p className="font-semibold text-text-primary mb-1">{metric.label}</p>
+      {metric.context && <p className="text-text-secondary mb-1.5">{metric.context}</p>}
+      {prev && <p className="text-text-secondary">Prior: {prev}</p>}
+      <div className="mt-2 pt-2 border-t border-border-default space-y-0.5">
+        <p className="text-text-secondary">Source: {metric.source}</p>
+        <p className="text-text-secondary">Period: {metric.period}</p>
+        <p className="text-text-secondary">Published: {new Date(metric.asOf).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+      </div>
+    </div>
+  );
+}
+
+function MelissaTooltip({ disaster }: { disaster: DisasterEvent }) {
+  return (
+    <div className="text-[length:var(--text-caption)] leading-relaxed max-w-[280px]">
+      <p className="font-semibold text-text-primary mb-1">{disaster.name}</p>
+      <p className="text-text-secondary mb-1.5">{disaster.description}</p>
+      {disaster.comparison && (
+        <p className="text-text-secondary mb-1.5">
+          Comparison: {disaster.comparison.event} ({disaster.comparison.year}) cost J${(disaster.comparison.cost / 1e12).toFixed(2)}T
+        </p>
+      )}
+      <div className="mt-2 pt-2 border-t border-border-default space-y-0.5">
+        <p className="text-text-secondary">Source: {disaster.source}</p>
+        <p className="text-text-secondary">Date: {new Date(disaster.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+        <p className="text-text-secondary">Published: {new Date(disaster.asOf).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+      </div>
+    </div>
+  );
+}
+
+function PulseCard({ metric }: { metric: NationalMetric }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const inverted = isInvertedMetric(metric.id);
+  const prev = metric.history.length >= 2 ? metric.history[metric.history.length - 2] : null;
+
+  const trendColor =
+    metric.trend === 'stable' ? 'text-text-secondary'
+    : (inverted ? metric.trend === 'declining' : metric.trend === 'improving') ? 'text-green'
+    : 'text-status-off-track';
+
+  return (
+    <div className="relative flex flex-col gap-1 min-w-0">
+      <div className="flex items-center gap-1.5">
+        <p className="text-[length:var(--text-caption)] text-text-secondary font-medium truncate">
+          {metric.label}
+        </p>
+        <button
+          className="relative flex-shrink-0 w-3.5 h-3.5 text-text-secondary/50 hover:text-text-secondary transition-colors cursor-pointer"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          onFocus={() => setShowTooltip(true)}
+          onBlur={() => setShowTooltip(false)}
+          aria-label={`Info about ${metric.label}`}
+        >
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} className="w-full h-full">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+          {showTooltip && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 bg-page border border-border-default rounded-sm shadow-lg p-3 whitespace-normal">
+              <PulseTooltip metric={metric} />
+            </div>
+          )}
+        </button>
+      </div>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary leading-none tracking-tight">
+          {formatMetricValue(metric)}
+        </span>
+        <span className={`text-[length:var(--text-caption)] font-semibold ${trendColor}`}>
+          {trendArrow(metric.trend, inverted)}
+        </span>
+      </div>
+      {prev && (
+        <p className="text-[length:var(--text-micro)] text-text-secondary/70 truncate">
+          {metric.unit === 'percent' ? `${prev.value}%` : prev.value} {prev.period}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function DisasterCard({ disaster }: { disaster: DisasterEvent }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const damageT = (disaster.totalDamage / 1e12).toFixed(2);
+
+  return (
+    <Link href="/recovery" className="relative flex flex-col gap-1 min-w-0 group">
+      <div className="flex items-center gap-1.5">
+        <p className="text-[length:var(--text-caption)] text-status-off-track font-medium truncate">
+          {disaster.name}
+        </p>
+        <button
+          className="relative flex-shrink-0 w-3.5 h-3.5 text-status-off-track/50 hover:text-status-off-track transition-colors cursor-pointer"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          onFocus={() => setShowTooltip(true)}
+          onBlur={() => setShowTooltip(false)}
+          onClick={e => e.preventDefault()}
+          aria-label={`Info about ${disaster.name}`}
+        >
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} className="w-full h-full">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+          {showTooltip && (
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 bg-page border border-border-default rounded-sm shadow-lg p-3 whitespace-normal">
+              <MelissaTooltip disaster={disaster} />
+            </div>
+          )}
+        </button>
+      </div>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary leading-none tracking-tight group-hover:text-gold-dark transition-colors">
+          J${damageT}T
+        </span>
+      </div>
+      <p className="text-[length:var(--text-micro)] text-text-secondary/70 truncate">
+        {disaster.gdpPctImpact}% of GDP · {disaster.category}
+      </p>
+    </Link>
+  );
+}
+
+function UtilizationCard({ allData, mockDataEnabled }: { allData: MinistryData[]; mockDataEnabled: boolean }) {
+  const totalAlloc = allData.reduce((s, d) => s + d.overview.totalAllocation, 0);
+  const totalSpent = allData.reduce((s, d) => s + d.overview.totalSpent, 0);
+  const utilPct = totalAlloc > 0 ? (totalSpent / totalAlloc) * 100 : 0;
+
+  return (
+    <div className="relative flex flex-col gap-1 min-w-0">
+      <p className="text-[length:var(--text-caption)] text-text-secondary font-medium truncate">
+        GOJ Utilization
+      </p>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary leading-none tracking-tight">
+          {mockDataEnabled ? formatPct(utilPct) : '—'}
+        </span>
+      </div>
+      <p className="text-[length:var(--text-micro)] text-text-secondary/70 truncate">
+        {mockDataEnabled
+          ? `${formatCurrency(totalSpent)} of ${formatCurrency(totalAlloc)}`
+          : 'Enable mock data to view'
+        }
+      </p>
+    </div>
+  );
+}
+
+function NationalPulseBand({ allData, mockDataEnabled }: { allData: MinistryData[]; mockDataEnabled: boolean }) {
+  const { metrics, disasters } = nationalPulse;
+
+  return (
+    <section className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
+      <div className="flex items-baseline justify-between mb-[var(--space-md)] sm:mb-[var(--space-lg)]">
+        <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
+          Jamaica at a Glance
+        </h1>
+        <p className="text-[length:var(--text-micro)] text-text-secondary hidden sm:block">
+          As of {nationalPulse.lastUpdated}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[var(--space-lg)] sm:gap-[var(--space-xl)] py-[var(--space-lg)] sm:py-[var(--space-xl)] px-[var(--space-base)] sm:px-[var(--space-lg)] bg-surface border border-border-default rounded-sm">
+        {metrics.map(metric => (
+          <PulseCard key={metric.id} metric={metric} />
+        ))}
+        {disasters.map(disaster => (
+          <DisasterCard key={disaster.id} disaster={disaster} />
+        ))}
+        <UtilizationCard allData={allData} mockDataEnabled={mockDataEnabled} />
+      </div>
+    </section>
+  );
+}
+
 export default function CabinetOverview() {
   const { mockDataEnabled } = useMockData();
 
@@ -344,10 +554,12 @@ export default function CabinetOverview() {
     <>
       <DashboardShell freshness={<DataFreshness inline />}>
         <div className="animate-fade-up">
-          <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
-            <h1 className="text-[length:var(--text-h1)] sm:text-[length:var(--text-display)] font-bold text-text-primary tracking-tight">
+          <NationalPulseBand allData={ministries} mockDataEnabled={mockDataEnabled} />
+
+          <header className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)] border-t border-border-default pt-[var(--space-lg)] sm:pt-[var(--space-xl)]">
+            <h2 className="text-[length:var(--text-h2)] sm:text-[length:var(--text-h1)] font-bold text-text-primary tracking-tight">
               All Ministries
-            </h1>
+            </h2>
             <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
               Budget execution overview · Fiscal Year 2026-27 · {ministries.length} ministries
               {mockDataEnabled && ' · Reporting period: September 2026'}

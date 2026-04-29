@@ -248,3 +248,53 @@ export interface MinistryData {
   capital: CapitalData;
   leadership: SeniorOfficer[];
 }
+
+/* ─── National / Government-Wide Metrics ─── */
+
+export type MetricTrend = 'improving' | 'declining' | 'stable';
+export type MetricUnit = 'percent' | 'currency_jmd' | 'currency_usd' | 'ratio' | 'index' | 'rate' | 'count';
+export type MetricCategory = 'macro_economic' | 'social' | 'disaster';
+
+export interface MetricDataPoint {
+  period: string;
+  value: number;
+  provisional?: boolean;
+}
+
+export interface NationalMetric {
+  id: string;
+  label: string;
+  category: MetricCategory;
+  value: number;
+  unit: MetricUnit;
+  format?: string;
+  period: string;
+  trend: MetricTrend;
+  context?: string;
+  source: string;
+  sourceUrl?: string;
+  asOf: string;
+  history: MetricDataPoint[];
+}
+
+export interface DisasterEvent {
+  id: string;
+  name: string;
+  date: string;
+  category: string;
+  totalDamage: number;
+  damageUnit: MetricUnit;
+  gdpPctImpact: number;
+  description: string;
+  source: string;
+  sourceUrl?: string;
+  asOf: string;
+  sectorImpacts: { sector: string; damage: number; losses: number }[];
+  comparison?: { event: string; year: number; cost: number };
+}
+
+export interface NationalPulseData {
+  metrics: NationalMetric[];
+  disasters: DisasterEvent[];
+  lastUpdated: string;
+}

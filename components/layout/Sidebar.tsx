@@ -18,6 +18,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/recovery',
+    label: 'Recovery',
+    section: 'National',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+      </svg>
+    ),
+  },
+  {
     href: '/meetings',
     label: 'Meetings',
     icon: (
@@ -81,36 +91,48 @@ export function Sidebar() {
     return pathname.startsWith(href);
   };
 
-  const navLinks = (isMobile = false) => (
-    <nav className="flex-1 px-2 py-4 space-y-1">
-      {NAV_ITEMS.map(item => {
-        const active = isActive(item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => isMobile && setMobileOpen(false)}
-            aria-current={active ? 'page' : undefined}
-            className={`relative group/tip flex items-center gap-3 rounded-lg text-[length:var(--text-body)] font-medium transition-all focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none ${
-              collapsed && !isMobile ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'
-            } ${
-              active
-                ? 'bg-gold/15 text-gold'
-                : 'text-text-inverse/60 hover:text-text-inverse hover:bg-text-inverse/5'
-            }`}
-          >
-            <span className="flex-shrink-0">{item.icon}</span>
-            {(!collapsed || isMobile) && <span>{item.label}</span>}
-            {collapsed && !isMobile && (
-              <span className="absolute left-full ml-2 px-2 py-1 rounded bg-text-primary text-page text-[length:var(--text-caption)] font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity z-50 shadow-lg">
-                {item.label}
-              </span>
-            )}
-          </Link>
-        );
-      })}
-    </nav>
-  );
+  const navLinks = (isMobile = false) => {
+    let lastSection: string | undefined;
+    return (
+      <nav className="flex-1 px-2 py-4 space-y-1">
+        {NAV_ITEMS.map(item => {
+          const active = isActive(item.href);
+          const section = (item as { section?: string }).section;
+          const showSection = section && section !== lastSection;
+          if (section) lastSection = section;
+          return (
+            <div key={item.href}>
+              {showSection && (!collapsed || isMobile) && (
+                <p className="px-3 pt-4 pb-1 text-[length:var(--text-micro)] font-semibold uppercase tracking-wider text-text-inverse/30">
+                  {section}
+                </p>
+              )}
+              <Link
+                href={item.href}
+                onClick={() => isMobile && setMobileOpen(false)}
+                aria-current={active ? 'page' : undefined}
+                className={`relative group/tip flex items-center gap-3 rounded-lg text-[length:var(--text-body)] font-medium transition-all focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none ${
+                  collapsed && !isMobile ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'
+                } ${
+                  active
+                    ? 'bg-gold/15 text-gold'
+                    : 'text-text-inverse/60 hover:text-text-inverse hover:bg-text-inverse/5'
+                }`}
+              >
+                <span className="flex-shrink-0">{item.icon}</span>
+                {(!collapsed || isMobile) && <span>{item.label}</span>}
+                {collapsed && !isMobile && (
+                  <span className="absolute left-full ml-2 px-2 py-1 rounded bg-text-primary text-page text-[length:var(--text-caption)] font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity z-50 shadow-lg">
+                    {item.label}
+                  </span>
+                )}
+              </Link>
+            </div>
+          );
+        })}
+      </nav>
+    );
+  };
 
   const userControls = (isMobile = false) => (
     <div className={`border-t border-text-inverse/10 flex-shrink-0 ${collapsed && !isMobile ? 'px-2 py-3' : 'px-3 py-3'}`}>

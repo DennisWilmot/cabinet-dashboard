@@ -2,6 +2,7 @@ import { ministryRegistry, ministryOrder, getMinistryData } from '@/lib/data';
 import { mockMeetings, getAllActionItems, getActionItemsByMinistry, getMinisterAttendanceRate, allMinisters } from '@/lib/meetings/data';
 import { mockBlockers } from '@/lib/blockers/data';
 import { deriveUtilizationStatus, deriveMinistryStatus } from '@/lib/status';
+import { getNationalMetricsByCategory, getDisasterById, getDisasterEvents, filterMetricHistory } from '@/lib/data/national';
 import type { MinistryData, CapitalProject, OperationalEntity, Obligation } from '@/lib/types';
 import type { ActionItem, CabinetMeeting } from '@/lib/meetings/types';
 import type { Blocker } from '@/lib/blockers/types';
@@ -883,6 +884,76 @@ export const toolExecutors: Record<string, (params: Record<string, unknown>) => 
       format,
       success: true,
       message: `Export to ${format.toUpperCase()} triggered. The previous response will be prepared for download.`,
+    };
+  },
+
+  getMacroEconomicIndicators: (params) => {
+    const periodFilter = params.period as string | undefined;
+    const metrics = getNationalMetricsByCategory('macro_economic');
+    return metrics.map(m => ({
+      id: m.id,
+      label: m.label,
+      value: m.value,
+      unit: m.unit,
+      format: m.format,
+      period: m.period,
+      trend: m.trend,
+      context: m.context,
+      source: m.source,
+      asOf: m.asOf,
+      history: periodFilter ? filterMetricHistory(m, { periodContains: periodFilter }) : m.history,
+      availablePeriods: m.history.map(h => h.period),
+    }));
+  },
+
+  getSocialIndicators: (params) => {
+    const periodFilter = params.period as string | undefined;
+    const metrics = getNationalMetricsByCategory('social');
+    return metrics.map(m => ({
+      id: m.id,
+      label: m.label,
+      value: m.value,
+      unit: m.unit,
+      period: m.period,
+      trend: m.trend,
+      context: m.context,
+      source: m.source,
+      asOf: m.asOf,
+      history: periodFilter ? filterMetricHistory(m, { periodContains: periodFilter }) : m.history,
+      availablePeriods: m.history.map(h => h.period),
+    }));
+  },
+
+  getDisasterImpact: (params) => {
+    const id = (params.disasterId as string) || 'hurricane_melissa';
+    const disaster = getDisasterById(id);
+    if (!disaster) {
+      const available = getDisasterEvents().map(d => d.id);
+      return { error: `Disaster "${id}" not found. Available: ${available.join(', ')}` };
+    }
+    return {
+      id: disaster.id,
+      name: disaster.name,
+      date: disaster.date,
+      category: disaster.category,
+      totalDamage: `J$${(disaster.totalDamage / 1e12).toFixed(2)} trillion`,
+      totalDamageRaw: disaster.totalDamage,
+      gdpPctImpact: disaster.gdpPctImpact + '% of GDP',
+      description: disaster.description,
+      sectorImpacts: disaster.sectorImpacts.map(s => ({
+        sector: s.sector,
+        damage: `J$${(s.damage / 1e9).toFixed(1)}B`,
+        losses: `J$${(s.losses / 1e9).toFixed(1)}B`,
+        total: `J$${((s.damage + s.losses) / 1e9).toFixed(1)}B`,
+      })),
+      comparison: disaster.comparison ? {
+        event: disaster.comparison.event,
+        year: disaster.comparison.year,
+        cost: `J$${(disaster.comparison.cost / 1e9).toFixed(0)}B`,
+        multiplier: `${(disaster.totalDamage / disaster.comparison.cost).toFixed(1)}x`,
+      } : null,
+      source: disaster.source,
+      asOf: disaster.asOf,
     };
   },
 };
