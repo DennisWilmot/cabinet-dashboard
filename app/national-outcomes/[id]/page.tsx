@@ -119,7 +119,7 @@ function IndicatorCard({ indicator, index }: { indicator: Vision2030Indicator; i
 
       {/* Row 4: Context line — baseline + direction + ministry */}
       <div className="flex items-center justify-between gap-[var(--space-sm)] mt-[var(--space-sm)]">
-        <span className="text-[length:var(--text-micro)] text-text-secondary/50">
+        <span className="text-[length:var(--text-caption)] text-text-primary/70">
           {indicator.baseline2007 !== null && `From ${formatValue(indicator.baseline2007, indicator.unit)} in 2007`}
           {indicator.direction === 'lower_is_better' && (indicator.baseline2007 !== null ? ' · ' : '')}
           {indicator.direction === 'lower_is_better' && 'lower is better'}
