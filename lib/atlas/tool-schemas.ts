@@ -271,4 +271,15 @@ export const TOOL_SCHEMAS = [
       required: ['metric'],
     },
   },
+  {
+    name: 'triggerExport',
+    description: 'Trigger a PDF/print export of the last response shown to the user. Call this when the user asks to print, export, save, or download the previous analysis or report. Do NOT call this for new analysis — only when the user wants to export what was already shown.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        format: { type: 'string', description: 'Export format: "pdf" (default). Only pdf is currently supported.' },
+      },
+      required: [],
+    },
+  },
 ];

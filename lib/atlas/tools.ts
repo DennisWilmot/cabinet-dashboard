@@ -875,4 +875,14 @@ export const toolExecutors: Record<string, (params: Record<string, unknown>) => 
         .sort((a, b) => b.value - a.value),
     };
   },
+
+  triggerExport: (params) => {
+    const format = (params.format as string) || 'pdf';
+    return {
+      action: 'export',
+      format,
+      success: true,
+      message: `Export to ${format.toUpperCase()} triggered. The previous response will be prepared for download.`,
+    };
+  },
 };

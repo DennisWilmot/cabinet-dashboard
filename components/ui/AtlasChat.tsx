@@ -19,6 +19,8 @@ function getSuggestions(path: string): string[] {
   return ['Give me a system overview', 'Which ministries need attention?', 'Show overdue action items'];
 }
 
+/* ── Chart renderer ── */
+
 function ChartRenderer({ block }: { block: ChartBlock }) {
   const max = Math.max(...block.data.map(x => Math.max(x.value, x.value2 ?? 0)));
   const h = 96;
@@ -38,7 +40,7 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
     const pathD2 = points2?.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
 
     return (
-      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg atlas-print-block">
         {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
         {block.series && (
           <div className="flex items-center gap-3 mb-1.5">
@@ -62,7 +64,7 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
 
   if (block.chartType === 'grouped_bar') {
     return (
-      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+      <div className="my-2 p-3 bg-surface border border-border-default rounded-lg atlas-print-block">
         {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
         {block.series && (
           <div className="flex items-center gap-3 mb-1.5">
@@ -89,9 +91,8 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
     );
   }
 
-  // Default: simple bar chart
   return (
-    <div className="my-2 p-3 bg-surface border border-border-default rounded-lg">
+    <div className="my-2 p-3 bg-surface border border-border-default rounded-lg atlas-print-block">
       {block.title && <p className="text-[length:var(--text-micro)] font-semibold text-text-primary mb-2">{block.title}</p>}
       <div className="flex items-end gap-1 h-24">
         {block.data.map((d, i) => {
@@ -107,6 +108,8 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
     </div>
   );
 }
+
+/* ── Block renderer ── */
 
 function BlockRenderer({ block }: { block: AtlasBlock }) {
   const router = useRouter();
@@ -159,13 +162,14 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
         </div>
       );
 
-    case 'list':
+    case 'list': {
       const Tag = block.ordered ? 'ol' : 'ul';
       return (
         <Tag className={`my-1 text-[length:var(--text-caption)] text-text-primary space-y-0.5 ${block.ordered ? 'list-decimal' : 'list-disc'} pl-4`}>
           {block.items.map((item, i) => <li key={i} dangerouslySetInnerHTML={{ __html: simpleMarkdown(item) }} />)}
         </Tag>
       );
+    }
 
     case 'status': {
       const cfg = { on_track: { bg: 'bg-jm-green/15', text: 'text-jm-green-dark', label: 'On Track' }, at_risk: { bg: 'bg-gold/15', text: 'text-gold-dark', label: 'At Risk' }, off_track: { bg: 'bg-status-off-track/15', text: 'text-status-off-track', label: 'Off Track' } };
@@ -179,11 +183,11 @@ function BlockRenderer({ block }: { block: AtlasBlock }) {
     }
 
     case 'link':
-      return <button onClick={() => router.push(block.href)} className="text-[length:var(--text-caption)] text-gold-dark hover:underline cursor-pointer font-medium my-0.5 block">{block.label} →</button>;
+      return <button onClick={() => router.push(block.href)} className="text-[length:var(--text-caption)] text-gold-dark hover:underline cursor-pointer font-medium my-0.5 block atlas-no-print">{block.label} →</button>;
 
     case 'navigation':
       return (
-        <button onClick={() => router.push(block.route)} className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-sidebar text-text-on-dark rounded-lg text-[length:var(--text-caption)] font-semibold hover:bg-sidebar/90 transition-colors cursor-pointer">
+        <button onClick={() => router.push(block.route)} className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-sidebar text-text-on-dark rounded-lg text-[length:var(--text-caption)] font-semibold hover:bg-sidebar/90 transition-colors cursor-pointer atlas-no-print">
           {block.label}
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
         </button>
@@ -220,8 +224,177 @@ function simpleMarkdown(text: string): string {
     .replace(/\n/g, '<br/>');
 }
 
+/* ── Staggered block reveal ── */
+
+function StaggeredBlocks({ blocks, content, toolsUsed }: { blocks?: AtlasBlock[]; content: string; toolsUsed?: string[] }) {
+  const [visibleCount, setVisibleCount] = useState(0);
+  const hasBlocks = blocks && blocks.length > 0;
+  const totalItems = hasBlocks ? blocks.length + (toolsUsed && toolsUsed.length > 0 ? 1 : 0) : 1;
+
+  useEffect(() => {
+    setVisibleCount(0);
+    let i = 0;
+    const reveal = () => {
+      i++;
+      setVisibleCount(i);
+      if (i < totalItems) {
+        timers.push(setTimeout(reveal, 80 + Math.min(i * 20, 120)));
+      }
+    };
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    timers.push(setTimeout(reveal, 60));
+    return () => timers.forEach(clearTimeout);
+  }, [totalItems]);
+
+  if (!hasBlocks) {
+    return (
+      <div
+        className="transition-all duration-300 ease-out"
+        style={{ opacity: visibleCount > 0 ? 1 : 0, transform: visibleCount > 0 ? 'translateY(0)' : 'translateY(6px)' }}
+      >
+        <div className="text-[length:var(--text-caption)] text-text-primary atlas-prose" dangerouslySetInnerHTML={{ __html: simpleMarkdown(content) }} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-1">
+      {blocks.map((block, i) => (
+        <div
+          key={i}
+          className="transition-all duration-300 ease-out"
+          style={{
+            opacity: i < visibleCount ? 1 : 0,
+            transform: i < visibleCount ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
+          <BlockRenderer block={block} />
+        </div>
+      ))}
+      {toolsUsed && toolsUsed.length > 0 && (
+        <div
+          className="transition-all duration-300 ease-out"
+          style={{
+            opacity: blocks.length < visibleCount ? 1 : 0,
+            transform: blocks.length < visibleCount ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
+          <details className="mt-2 atlas-no-print">
+            <summary className="text-[length:var(--text-micro)] text-text-secondary/50 cursor-pointer hover:text-text-secondary">
+              Analyzed {toolsUsed.length} data source{toolsUsed.length > 1 ? 's' : ''}
+            </summary>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {[...new Set(toolsUsed)].map((t, i) => (
+                <span key={i} className="px-1.5 py-0.5 bg-surface border border-border-default rounded text-[9px] text-text-secondary font-mono">{t}</span>
+              ))}
+            </div>
+          </details>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Print single response ── */
+
+function printResponse(msg: AtlasMessage, question?: string) {
+  const printWin = window.open('', '_blank');
+  if (!printWin) return;
+
+  const container = document.createElement('div');
+  const responseEl = document.querySelector(`[data-msg-id="${msg.id}"]`);
+  if (responseEl) {
+    container.innerHTML = responseEl.innerHTML;
+  }
+
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map(el => el.outerHTML)
+    .join('\n');
+
+  printWin.document.write(`<!DOCTYPE html>
+<html><head>
+<title>Atlas Report — ${new Date().toLocaleDateString('en-JM', { year: 'numeric', month: 'long', day: 'numeric' })}</title>
+${styles}
+<style>
+  body { margin: 0; padding: 40px; font-family: system-ui, -apple-system, sans-serif; color: #1a1a1a; background: white; }
+  .atlas-print-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e5e5e5; }
+  .atlas-print-header img { width: 32px; height: 32px; border-radius: 50%; }
+  .atlas-print-header h1 { font-size: 18px; font-weight: 700; margin: 0; }
+  .atlas-print-header p { font-size: 12px; color: #666; margin: 0; }
+  .atlas-print-question { background: #f5f5f5; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; }
+  .atlas-print-question strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; display: block; margin-bottom: 4px; }
+  .atlas-print-content { font-size: 13px; line-height: 1.6; }
+  .atlas-print-content table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .atlas-print-content th, .atlas-print-content td { padding: 6px 8px; border-bottom: 1px solid #e5e5e5; text-align: left; font-size: 11px; }
+  .atlas-print-content th { font-weight: 600; color: #666; }
+  .atlas-print-footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e5e5; font-size: 10px; color: #999; display: flex; justify-content: space-between; }
+  .atlas-no-print { display: none !important; }
+  .atlas-print-block { border: 1px solid #e5e5e5 !important; background: #fafafa !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  svg { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  @media print {
+    body { padding: 20px; }
+    .atlas-print-block { break-inside: avoid; }
+  }
+</style>
+</head><body>
+<div class="atlas-print-header">
+  <img src="/intellibus-logo.png" alt="Atlas" />
+  <div>
+    <h1>Atlas Budget Intelligence Report</h1>
+    <p>Government of Jamaica Cabinet Dashboard</p>
+  </div>
+</div>
+${question ? `<div class="atlas-print-question"><strong>Question</strong>${question}</div>` : ''}
+<div class="atlas-print-content">${container.innerHTML}</div>
+<div class="atlas-print-footer">
+  <span>Generated by Atlas — cabinet.digitaljamaica.com</span>
+  <span>${new Date().toLocaleDateString('en-JM', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+</div>
+</body></html>`);
+
+  printWin.document.close();
+  setTimeout(() => { printWin.print(); }, 400);
+}
+
+/* ── Expand/fullscreen icon ── */
+
+function ExpandIcon({ expanded }: { expanded: boolean }) {
+  if (expanded) {
+    return (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+    </svg>
+  );
+}
+
+/* ── Print icon on hover ── */
+
+function PrintButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="opacity-0 group-hover/msg:opacity-100 transition-opacity w-7 h-7 flex items-center justify-center rounded-md text-text-secondary/50 hover:text-text-primary hover:bg-surface cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none"
+      aria-label="Export as PDF"
+      title="Export as PDF"
+    >
+      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m0 0a48.159 48.159 0 0 1 12.5 0m-12.5 0V4.875c0-.621.504-1.125 1.125-1.125h8.25c.621 0 1.125.504 1.125 1.125v2.234" />
+      </svg>
+    </button>
+  );
+}
+
+/* ── Main component ── */
+
 export function AtlasChat() {
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState<AtlasMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -230,7 +403,7 @@ export function AtlasChat() {
   const inputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => { setOpen(false); setExpanded(false); }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -249,6 +422,7 @@ export function AtlasChat() {
 
   const send = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
+
     const userMsg: AtlasMessage = { id: `u-${Date.now()}`, role: 'user', content: text.trim(), timestamp: Date.now() };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -280,6 +454,17 @@ export function AtlasChat() {
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, assistantMsg]);
+
+      if (assistantMsg.toolsUsed?.includes('triggerExport')) {
+        const prevAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+        if (prevAssistant) {
+          const question = (() => {
+            const idx = messages.findIndex(m => m.id === prevAssistant.id);
+            return idx > 0 && messages[idx - 1].role === 'user' ? messages[idx - 1].content : undefined;
+          })();
+          setTimeout(() => printResponse(prevAssistant, question), 800);
+        }
+      }
     } catch {
       setMessages(prev => [...prev, {
         id: `e-${Date.now()}`, role: 'assistant', content: 'Atlas is temporarily unavailable.',
@@ -293,7 +478,19 @@ export function AtlasChat() {
     }
   }, [loading, messages, pathname]);
 
+  const getQuestionForResponse = (msgId: string): string | undefined => {
+    const idx = messages.findIndex(m => m.id === msgId);
+    if (idx > 0 && messages[idx - 1].role === 'user') return messages[idx - 1].content;
+    return undefined;
+  };
+
   const suggestions = getSuggestions(pathname);
+
+  const panelClasses = expanded
+    ? 'w-full h-dvh inset-0 rounded-none opacity-100 scale-100'
+    : open
+      ? 'w-full sm:w-[440px] h-dvh sm:h-[calc(100dvh-48px)] sm:rounded-xl opacity-100 scale-100 bottom-0 right-0 sm:right-6 sm:bottom-6'
+      : 'w-0 h-0 opacity-0 scale-95 pointer-events-none bottom-0 right-0 sm:right-6 sm:bottom-6';
 
   return (
     <>
@@ -303,11 +500,8 @@ export function AtlasChat() {
         role="dialog"
         aria-modal={open}
         aria-label="Atlas budget assistant"
-        className={`fixed z-50 bottom-0 right-0 sm:right-6 sm:bottom-6 flex flex-col bg-page border border-border-default shadow-2xl transition-all duration-300 ease-out origin-bottom-right ${
-        open
-          ? 'w-full sm:w-[440px] h-dvh sm:h-[calc(100dvh-48px)] sm:rounded-xl opacity-100 scale-100'
-          : 'w-0 h-0 opacity-0 scale-95 pointer-events-none'
-      }`}>
+        className={`fixed z-50 flex flex-col bg-page border border-border-default shadow-2xl transition-all duration-300 ease-out origin-bottom-right ${panelClasses}`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-default flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -319,10 +513,18 @@ export function AtlasChat() {
           </div>
           <div className="flex items-center gap-1">
             {messages.length > 0 && (
-              <button onClick={() => setMessages([])} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer" aria-label="Clear chat" title="New conversation">
+              <button onClick={() => setMessages([])} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none" aria-label="Clear chat" title="New conversation">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" /></svg>
               </button>
             )}
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none"
+              aria-label={expanded ? 'Exit full screen' : 'Full screen'}
+              title={expanded ? 'Exit full screen' : 'Full screen'}
+            >
+              <ExpandIcon expanded={expanded} />
+            </button>
             <button onClick={close} className="w-8 h-8 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:outline-none" aria-label="Close Atlas">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
             </button>
@@ -330,18 +532,18 @@ export function AtlasChat() {
         </div>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        <div ref={scrollRef} className={`flex-1 overflow-y-auto py-4 space-y-4 ${expanded ? 'px-6 sm:px-12 lg:px-24 max-w-5xl mx-auto w-full' : 'px-4'}`}>
           {messages.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <img src="/intellibus-logo.png" alt="Atlas" className="w-12 h-12 rounded-full object-cover mb-4" />
-              <p className="text-[length:var(--text-h3)] font-semibold text-text-primary mb-1">Ask Atlas anything</p>
-              <p className="text-[length:var(--text-caption)] text-text-secondary mb-6 max-w-[280px] leading-relaxed">
+              <p className={`font-semibold text-text-primary mb-1 ${expanded ? 'text-[length:var(--text-h2)]' : 'text-[length:var(--text-h3)]'}`}>Ask Atlas anything</p>
+              <p className={`text-text-secondary mb-6 leading-relaxed ${expanded ? 'text-[length:var(--text-body)] max-w-[400px]' : 'text-[length:var(--text-caption)] max-w-[280px]'}`}>
                 Budget analysis, ministry comparisons, accountability tracking — powered by your data.
               </p>
-              <div className="flex flex-col gap-2 w-full max-w-[300px]">
+              <div className={`flex flex-col gap-2 w-full ${expanded ? 'max-w-[480px]' : 'max-w-[300px]'}`}>
                 {suggestions.map((s, i) => (
                   <button key={i} onClick={() => send(s)}
-                    className="text-left px-3 py-2.5 bg-surface border border-border-default rounded-lg text-[length:var(--text-caption)] text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors cursor-pointer">
+                    className={`text-left px-3 py-2.5 bg-surface border border-border-default rounded-lg text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors cursor-pointer ${expanded ? 'text-[length:var(--text-body)]' : 'text-[length:var(--text-caption)]'}`}>
                     {s}
                   </button>
                 ))}
@@ -350,36 +552,29 @@ export function AtlasChat() {
           )}
 
           {messages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              key={msg.id}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-atlas-msg-in`}
+            >
               {msg.role === 'user' ? (
-                <div className="max-w-[85%] px-4 py-2.5 bg-sidebar text-text-on-dark rounded-2xl rounded-br-sm text-[length:var(--text-caption)]">
+                <div className={`px-4 py-2.5 bg-sidebar text-text-on-dark rounded-2xl rounded-br-sm ${expanded ? 'max-w-[70%] text-[length:var(--text-body)]' : 'max-w-[85%] text-[length:var(--text-caption)]'}`}>
                   {msg.content}
                 </div>
               ) : (
-                <div className="max-w-[95%] space-y-1">
-                  {msg.blocks && msg.blocks.length > 0
-                    ? msg.blocks.map((block, i) => <BlockRenderer key={i} block={block} />)
-                    : <div className="text-[length:var(--text-caption)] text-text-primary atlas-prose" dangerouslySetInnerHTML={{ __html: simpleMarkdown(msg.content) }} />
-                  }
-                  {msg.toolsUsed && msg.toolsUsed.length > 0 && (
-                    <details className="mt-2">
-                      <summary className="text-[length:var(--text-micro)] text-text-secondary/50 cursor-pointer hover:text-text-secondary">
-                        Analyzed {msg.toolsUsed.length} data source{msg.toolsUsed.length > 1 ? 's' : ''}
-                      </summary>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {[...new Set(msg.toolsUsed)].map((t, i) => (
-                          <span key={i} className="px-1.5 py-0.5 bg-surface border border-border-default rounded text-[9px] text-text-secondary font-mono">{t}</span>
-                        ))}
-                      </div>
-                    </details>
-                  )}
+                <div className={`group/msg relative ${expanded ? 'max-w-full' : 'max-w-[95%]'}`}>
+                  <div data-msg-id={msg.id}>
+                    <StaggeredBlocks blocks={msg.blocks} content={msg.content} toolsUsed={msg.toolsUsed} />
+                  </div>
+                  <div className="absolute -top-1 right-0">
+                    <PrintButton onClick={() => printResponse(msg, getQuestionForResponse(msg.id))} />
+                  </div>
                 </div>
               )}
             </div>
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 animate-atlas-msg-in">
               <div className="flex gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-jm-green animate-pulse" style={{ animationDelay: '0ms' }} />
                 <span className="w-1.5 h-1.5 rounded-full bg-jm-green animate-pulse" style={{ animationDelay: '150ms' }} />
@@ -391,7 +586,7 @@ export function AtlasChat() {
         </div>
 
         {/* Input */}
-        <div className="px-4 pb-4 pt-2 border-t border-border-default flex-shrink-0">
+        <div className={`pb-4 pt-2 border-t border-border-default flex-shrink-0 ${expanded ? 'px-6 sm:px-12 lg:px-24 max-w-5xl mx-auto w-full' : 'px-4'}`}>
           <form onSubmit={e => { e.preventDefault(); send(input); }} className="flex items-center gap-2">
             <input
               ref={inputRef}
@@ -401,7 +596,7 @@ export function AtlasChat() {
               placeholder="Ask a question..."
               aria-label="Message to Atlas"
               disabled={loading}
-              className="flex-1 bg-surface border border-border-default rounded-lg px-4 py-2.5 text-[length:var(--text-body)] placeholder:text-text-secondary/50 outline-none focus:border-jm-green focus:ring-1 focus:ring-jm-green/30 disabled:opacity-50"
+              className={`flex-1 bg-surface border border-border-default rounded-lg px-4 py-2.5 placeholder:text-text-secondary/50 outline-none focus:border-jm-green focus:ring-1 focus:ring-jm-green/30 disabled:opacity-50 ${expanded ? 'text-[length:var(--text-body)]' : 'text-[length:var(--text-body)]'}`}
             />
             <button type="submit" disabled={!input.trim() || loading}
               aria-label="Send message"
