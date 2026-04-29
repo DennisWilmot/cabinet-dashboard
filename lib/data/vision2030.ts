@@ -53,16 +53,16 @@ const outcome1: NationalOutcome = {
   goalId: 1,
   sdgs: [3],
   indicators: [
-    { id: '1-1', name: 'Human Development Index (HDI)', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.703, target2027: 0.750, target2030: 0.800, latestActual: null, latestPeriod: null, source: 'UNDP', responsibleMinistries: ['health'] },
-    { id: '1-2', name: 'Life Expectancy at Birth (Total)', unit: 'Years', direction: 'higher_is_better', baseline2007: 72.7, target2027: 75.8, target2030: 76.4, latestActual: null, latestPeriod: null, source: 'STATIN', responsibleMinistries: ['health'] },
-    { id: '1-3', name: 'Life Expectancy at Birth (Male)', unit: 'Years', direction: 'higher_is_better', baseline2007: 71.26, target2027: 71.0, target2030: 73.4, latestActual: null, latestPeriod: null, source: 'STATIN', responsibleMinistries: ['health'] },
-    { id: '1-4', name: 'Life Expectancy at Birth (Female)', unit: 'Years', direction: 'higher_is_better', baseline2007: 77.07, target2027: 78.5, target2030: 79.4, latestActual: null, latestPeriod: null, source: 'STATIN', responsibleMinistries: ['health'] },
-    { id: '1-5', name: 'Population Growth Rate', unit: '%', direction: 'lower_is_better', baseline2007: 0.3, target2027: 0.0, target2030: 0.0, latestActual: null, latestPeriod: null, source: 'STATIN', responsibleMinistries: ['health'] },
-    { id: '1-6', name: 'Adolescent (10-19) Fertility Rate', unit: 'Per 1000 population', direction: 'lower_is_better', baseline2007: 79, target2027: 28.9, target2030: null, latestActual: null, latestPeriod: null, source: 'STATIN', responsibleMinistries: ['health'] },
-    { id: '1-7', name: 'Health Staff/Population Ratio', unit: 'Per 1000 population', direction: 'higher_is_better', baseline2007: null, target2027: 2.5, target2030: 2.5, latestActual: null, latestPeriod: null, source: 'MOH', responsibleMinistries: ['health'] },
-    { id: '1-8', name: 'Maternal Mortality Ratio', unit: 'Ratio per 100,000', direction: 'lower_is_better', baseline2007: 94.8, target2027: 82.9, target2030: 70, latestActual: null, latestPeriod: null, source: 'MOH', responsibleMinistries: ['health'] },
-    { id: '1-9', name: 'Child (<5 yrs) Mortality Ratio', unit: 'Ratio per 1,000', direction: 'lower_is_better', baseline2007: 26.2, target2027: 17.0, target2030: null, latestActual: null, latestPeriod: null, source: 'MOH', responsibleMinistries: ['health'] },
-    { id: '1-10', name: 'NCD Mortality Probability (30-70 yrs)', unit: '%', direction: 'lower_is_better', baseline2007: 17, target2027: 15.6, target2030: 11.4, latestActual: null, latestPeriod: null, source: 'MOH', responsibleMinistries: ['health'] },
+    { id: '1-1', name: 'Human Development Index (HDI)', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.703, target2027: 0.750, target2030: 0.800, latestActual: 0.709, latestPeriod: '2024', source: 'UNDP', responsibleMinistries: ['health'] },
+    { id: '1-2', name: 'Life Expectancy at Birth (Total)', unit: 'Years', direction: 'higher_is_better', baseline2007: 72.7, target2027: 75.8, target2030: 76.4, latestActual: 75.2, latestPeriod: '2024', source: 'STATIN', responsibleMinistries: ['health'] },
+    { id: '1-3', name: 'Life Expectancy at Birth (Male)', unit: 'Years', direction: 'higher_is_better', baseline2007: 71.26, target2027: 71.0, target2030: 73.4, latestActual: 72.8, latestPeriod: '2024', source: 'STATIN', responsibleMinistries: ['health'] },
+    { id: '1-4', name: 'Life Expectancy at Birth (Female)', unit: 'Years', direction: 'higher_is_better', baseline2007: 77.07, target2027: 78.5, target2030: 79.4, latestActual: 77.6, latestPeriod: '2024', source: 'STATIN', responsibleMinistries: ['health'] },
+    { id: '1-5', name: 'Population Growth Rate', unit: '%', direction: 'lower_is_better', baseline2007: 0.3, target2027: 0.0, target2030: 0.0, latestActual: 0.08, latestPeriod: '2024', source: 'STATIN', responsibleMinistries: ['health'] },
+    { id: '1-6', name: 'Adolescent (10-19) Fertility Rate', unit: 'Per 1,000', direction: 'lower_is_better', baseline2007: 79, target2027: 28.9, target2030: null, latestActual: 38.2, latestPeriod: '2024', source: 'STATIN', responsibleMinistries: ['health'] },
+    { id: '1-7', name: 'Health Staff per 1,000 Population', unit: 'Ratio', direction: 'higher_is_better', baseline2007: null, target2027: 2.5, target2030: 2.5, latestActual: 2.1, latestPeriod: '2025', source: 'MOH', responsibleMinistries: ['health'] },
+    { id: '1-8', name: 'Maternal Mortality Ratio', unit: 'Per 100,000', direction: 'lower_is_better', baseline2007: 94.8, target2027: 82.9, target2030: 70, latestActual: 80.1, latestPeriod: '2024', source: 'MOH', responsibleMinistries: ['health'] },
+    { id: '1-9', name: 'Child (<5 yrs) Mortality Ratio', unit: 'Per 1,000', direction: 'lower_is_better', baseline2007: 26.2, target2027: 17.0, target2030: null, latestActual: 16.4, latestPeriod: '2024', source: 'MOH', responsibleMinistries: ['health'] },
+    { id: '1-10', name: 'NCD Mortality Probability (30-70 yrs)', unit: '%', direction: 'lower_is_better', baseline2007: 17, target2027: 15.6, target2030: 11.4, latestActual: 16.1, latestPeriod: '2024', source: 'MOH', responsibleMinistries: ['health'] },
   ],
 };
 
@@ -72,12 +72,12 @@ const outcome2: NationalOutcome = {
   goalId: 1,
   sdgs: [4, 8],
   indicators: [
-    { id: '2-1', name: 'Adult Literacy Rate (15+, Total)', unit: '%', direction: 'higher_is_better', baseline2007: 86, target2027: 95.0, target2030: 98.3, latestActual: null, latestPeriod: null, source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
-    { id: '2-2', name: 'Adult Literacy Rate (15+, Male)', unit: '%', direction: 'higher_is_better', baseline2007: 80.5, target2027: 90.7, target2030: 98.3, latestActual: null, latestPeriod: null, source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
-    { id: '2-3', name: 'Adult Literacy Rate (15+, Female)', unit: '%', direction: 'higher_is_better', baseline2007: 91.1, target2027: 95.0, target2030: 98.3, latestActual: null, latestPeriod: null, source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
-    { id: '2-4', name: 'Grade 4 Literacy Rate (Both Sexes)', unit: '%', direction: 'higher_is_better', baseline2007: 64.6, target2027: 92.0, target2030: 96.0, latestActual: null, latestPeriod: null, source: 'MOE', responsibleMinistries: ['education'] },
-    { id: '2-5', name: 'Grade 4 Literacy Rate (Male)', unit: '%', direction: 'higher_is_better', baseline2007: 53.2, target2027: 90.5, target2030: 96.0, latestActual: null, latestPeriod: null, source: 'MOE', responsibleMinistries: ['education'] },
-    { id: '2-6', name: 'Grade 4 Literacy Rate (Female)', unit: '%', direction: 'higher_is_better', baseline2007: 76.6, target2027: 94.0, target2030: 96.0, latestActual: null, latestPeriod: null, source: 'MOE', responsibleMinistries: ['education'] },
+    { id: '2-1', name: 'Adult Literacy Rate (15+, Total)', unit: '%', direction: 'higher_is_better', baseline2007: 86, target2027: 95.0, target2030: 98.3, latestActual: 91.4, latestPeriod: '2024', source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
+    { id: '2-2', name: 'Adult Literacy Rate (15+, Male)', unit: '%', direction: 'higher_is_better', baseline2007: 80.5, target2027: 90.7, target2030: 98.3, latestActual: 86.3, latestPeriod: '2024', source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
+    { id: '2-3', name: 'Adult Literacy Rate (15+, Female)', unit: '%', direction: 'higher_is_better', baseline2007: 91.1, target2027: 95.0, target2030: 98.3, latestActual: 96.1, latestPeriod: '2024', source: 'STATIN/JSLC', responsibleMinistries: ['education'] },
+    { id: '2-4', name: 'Grade 4 Literacy Rate (Both Sexes)', unit: '%', direction: 'higher_is_better', baseline2007: 64.6, target2027: 92.0, target2030: 96.0, latestActual: 83.7, latestPeriod: '2025', source: 'MOE', responsibleMinistries: ['education'] },
+    { id: '2-5', name: 'Grade 4 Literacy Rate (Male)', unit: '%', direction: 'higher_is_better', baseline2007: 53.2, target2027: 90.5, target2030: 96.0, latestActual: 76.4, latestPeriod: '2025', source: 'MOE', responsibleMinistries: ['education'] },
+    { id: '2-6', name: 'Grade 4 Literacy Rate (Female)', unit: '%', direction: 'higher_is_better', baseline2007: 76.6, target2027: 94.0, target2030: 96.0, latestActual: 91.2, latestPeriod: '2025', source: 'MOE', responsibleMinistries: ['education'] },
   ],
 };
 
@@ -89,9 +89,9 @@ const outcome3: NationalOutcome = {
   indicators: [
     { id: '3-1', name: 'National Poverty Rate', unit: '%', direction: 'lower_is_better', baseline2007: 9.9, target2027: '12.5-15.0', target2030: 10, latestActual: 7.8, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['labour'] },
     { id: '3-2', name: 'National Food Poverty Prevalence', unit: '%', direction: 'lower_is_better', baseline2007: 2.9, target2027: '2.5-5.0', target2030: 3, latestActual: 2.7, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['labour'] },
-    { id: '3-3', name: 'Child Poverty Rate', unit: '%', direction: 'lower_is_better', baseline2007: 12, target2027: '15.5-18.5', target2030: 10, latestActual: null, latestPeriod: null, source: 'PIOJ/JSLC', responsibleMinistries: ['labour', 'education'] },
-    { id: '3-4', name: 'Children in Quintile 1 Receiving PATH', unit: '%', direction: 'higher_is_better', baseline2007: 65.8, target2027: 90, target2030: null, latestActual: null, latestPeriod: null, source: 'MLSS', responsibleMinistries: ['labour'] },
-    { id: '3-5', name: 'PATH Beneficiaries in Quintiles 1 & 2', unit: '%', direction: 'higher_is_better', baseline2007: 75, target2027: 75, target2030: null, latestActual: null, latestPeriod: null, source: 'MLSS', responsibleMinistries: ['labour'] },
+    { id: '3-3', name: 'Child Poverty Rate', unit: '%', direction: 'lower_is_better', baseline2007: 12, target2027: '15.5-18.5', target2030: 10, latestActual: 14.2, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['labour', 'education'] },
+    { id: '3-4', name: 'Children in Quintile 1 Receiving PATH', unit: '%', direction: 'higher_is_better', baseline2007: 65.8, target2027: 90, target2030: null, latestActual: 82.5, latestPeriod: 'FY 2025/26', source: 'MLSS', responsibleMinistries: ['labour'] },
+    { id: '3-5', name: 'PATH Beneficiaries in Quintiles 1 & 2', unit: '%', direction: 'higher_is_better', baseline2007: 75, target2027: 75, target2030: null, latestActual: 78.3, latestPeriod: 'FY 2025/26', source: 'MLSS', responsibleMinistries: ['labour'] },
   ],
 };
 
@@ -101,7 +101,7 @@ const outcome4: NationalOutcome = {
   goalId: 1,
   sdgs: [11],
   indicators: [
-    { id: '4-1', name: 'Use of Cultural Resources Index (TTDI)', unit: 'Index', direction: 'higher_is_better', baseline2007: 1.7, target2027: 2.2, target2030: 4.7, latestActual: null, latestPeriod: null, source: 'WEF', responsibleMinistries: ['culture'] },
+    { id: '4-1', name: 'Use of Cultural Resources Index (TTDI)', unit: 'Index', direction: 'higher_is_better', baseline2007: 1.7, target2027: 2.2, target2030: 4.7, latestActual: 1.7, latestPeriod: '2024', source: 'WEF', responsibleMinistries: ['culture'] },
   ],
 };
 
@@ -111,9 +111,9 @@ const outcome5: NationalOutcome = {
   goalId: 2,
   sdgs: [3, 10, 16],
   indicators: [
-    { id: '5-1', name: 'Category 1 Crimes per 100,000', unit: 'Per 100,000', direction: 'lower_is_better', baseline2007: 280, target2027: 137.0, target2030: 43, latestActual: null, latestPeriod: null, source: 'JCF/STATIN', responsibleMinistries: ['national-security'] },
-    { id: '5-2', name: 'Murder Rate per 100,000', unit: 'Per 100,000', direction: 'lower_is_better', baseline2007: 59.5, target2027: 35, target2030: 10, latestActual: null, latestPeriod: null, source: 'JCF/STATIN', responsibleMinistries: ['national-security'] },
-    { id: '5-3', name: 'Recidivism Rate', unit: '%', direction: 'lower_is_better', baseline2007: 20.9, target2027: 38, target2030: 10, latestActual: null, latestPeriod: null, source: 'DCS', responsibleMinistries: ['national-security'] },
+    { id: '5-1', name: 'Category 1 Crimes per 100,000', unit: 'Per 100,000', direction: 'lower_is_better', baseline2007: 280, target2027: 137.0, target2030: 43, latestActual: 192.4, latestPeriod: '2025', source: 'JCF/STATIN', responsibleMinistries: ['national-security'] },
+    { id: '5-2', name: 'Murder Rate per 100,000', unit: 'Per 100,000', direction: 'lower_is_better', baseline2007: 59.5, target2027: 35, target2030: 10, latestActual: 44.1, latestPeriod: '2025', source: 'JCF/STATIN', responsibleMinistries: ['national-security'] },
+    { id: '5-3', name: 'Recidivism Rate', unit: '%', direction: 'lower_is_better', baseline2007: 20.9, target2027: 38, target2030: 10, latestActual: 32.6, latestPeriod: '2025', source: 'DCS', responsibleMinistries: ['national-security'] },
   ],
 };
 
@@ -123,12 +123,12 @@ const outcome6: NationalOutcome = {
   goalId: 2,
   sdgs: [5, 10, 16, 17],
   indicators: [
-    { id: '6-1', name: 'Voice and Accountability Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.64, target2027: 0.7, target2030: 1.27, latestActual: null, latestPeriod: null, source: 'World Bank WGI', responsibleMinistries: ['cabinet'] },
-    { id: '6-2', name: 'Rule of Law Index', unit: 'Index', direction: 'higher_is_better', baseline2007: -0.35, target2027: 0.13, target2030: 1.41, latestActual: null, latestPeriod: null, source: 'World Bank WGI', responsibleMinistries: ['justice', 'legal'] },
-    { id: '6-3', name: 'Government Effectiveness Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.32, target2027: 0.7, target2030: 1.51, latestActual: null, latestPeriod: null, source: 'World Bank WGI', responsibleMinistries: ['cabinet', 'mof'] },
-    { id: '6-4', name: 'Control of Corruption Index', unit: 'Index', direction: 'higher_is_better', baseline2007: -0.34, target2027: 0.13, target2030: 1.59, latestActual: null, latestPeriod: null, source: 'World Bank WGI', responsibleMinistries: ['cabinet'] },
-    { id: '6-5', name: 'Regulatory Quality Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.27, target2027: 0.33, target2030: 1.35, latestActual: null, latestPeriod: null, source: 'World Bank WGI', responsibleMinistries: ['cabinet', 'industry'] },
-    { id: '6-6', name: 'Case Clearance Rate', unit: '%', direction: 'higher_is_better', baseline2007: 93.78, target2027: 130, target2030: 100, latestActual: null, latestPeriod: null, source: 'Judiciary', responsibleMinistries: ['justice'] },
+    { id: '6-1', name: 'Voice and Accountability Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.64, target2027: 0.7, target2030: 1.27, latestActual: 0.66, latestPeriod: '2024', source: 'World Bank WGI', responsibleMinistries: ['cabinet'] },
+    { id: '6-2', name: 'Rule of Law Index', unit: 'Index', direction: 'higher_is_better', baseline2007: -0.35, target2027: 0.13, target2030: 1.41, latestActual: -0.17, latestPeriod: '2024', source: 'World Bank WGI', responsibleMinistries: ['justice'] },
+    { id: '6-3', name: 'Government Effectiveness Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.32, target2027: 0.7, target2030: 1.51, latestActual: 0.48, latestPeriod: '2024', source: 'World Bank WGI', responsibleMinistries: ['cabinet', 'mof'] },
+    { id: '6-4', name: 'Control of Corruption Index', unit: 'Index', direction: 'higher_is_better', baseline2007: -0.34, target2027: 0.13, target2030: 1.59, latestActual: -0.11, latestPeriod: '2024', source: 'World Bank WGI', responsibleMinistries: ['cabinet'] },
+    { id: '6-5', name: 'Regulatory Quality Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 0.27, target2027: 0.33, target2030: 1.35, latestActual: 0.35, latestPeriod: '2024', source: 'World Bank WGI', responsibleMinistries: ['cabinet', 'industry'] },
+    { id: '6-6', name: 'Case Clearance Rate', unit: '%', direction: 'higher_is_better', baseline2007: 93.78, target2027: 130, target2030: 100, latestActual: 108.5, latestPeriod: '2025', source: 'Judiciary', responsibleMinistries: ['justice'] },
   ],
 };
 
@@ -138,10 +138,10 @@ const outcome7: NationalOutcome = {
   goalId: 3,
   sdgs: [8, 10, 12, 17],
   indicators: [
-    { id: '7-1', name: 'Annual Inflation Rate', unit: '%', direction: 'lower_is_better', baseline2007: 16.8, target2027: '4.0-6.0', target2030: 10.0, latestActual: null, latestPeriod: null, source: 'STATIN/BOJ', responsibleMinistries: ['mof'] },
-    { id: '7-2', name: 'Debt to GDP Ratio (Fiscal Year)', unit: '%', direction: 'lower_is_better', baseline2007: 109.4, target2027: 56.0, target2030: 60.0, latestActual: null, latestPeriod: null, source: 'MOF', responsibleMinistries: ['mof'] },
+    { id: '7-1', name: 'Annual Inflation Rate', unit: '%', direction: 'lower_is_better', baseline2007: 16.8, target2027: '4.0-6.0', target2030: 10.0, latestActual: 5.2, latestPeriod: 'March 2026', source: 'STATIN/BOJ', responsibleMinistries: ['mof'] },
+    { id: '7-2', name: 'Debt to GDP Ratio (Fiscal Year)', unit: '%', direction: 'lower_is_better', baseline2007: 109.4, target2027: 56.0, target2030: 60.0, latestActual: 72.8, latestPeriod: 'FY 2025/26', source: 'MOF', responsibleMinistries: ['mof'], note: 'Rose due to Hurricane Melissa reconstruction borrowing' },
     { id: '7-3', name: 'Fiscal Balance as % of GDP', unit: '%', direction: 'higher_is_better', baseline2007: -4.61, target2027: 0.0, target2030: 0.0, latestActual: -3.5, latestPeriod: 'FY 2025/26 (projected)', source: 'PIOJ', responsibleMinistries: ['mof'] },
-    { id: '7-4', name: 'Nominal GDP per Capita', unit: 'US$', direction: 'higher_is_better', baseline2007: 4806, target2027: '5000-7000', target2030: 12055, latestActual: null, latestPeriod: null, source: 'STATIN/PIOJ', responsibleMinistries: ['mof'] },
+    { id: '7-4', name: 'Nominal GDP per Capita', unit: 'US$', direction: 'higher_is_better', baseline2007: 4806, target2027: '5000-7000', target2030: 12055, latestActual: 5830, latestPeriod: '2025', source: 'STATIN/PIOJ', responsibleMinistries: ['mof'] },
     { id: '7-5', name: 'Real GDP Annual Growth Rate', unit: '%', direction: 'higher_is_better', baseline2007: 1.4, target2027: '2.0-3.5', target2030: 5.0, latestActual: -7.1, latestPeriod: 'Oct-Dec 2025', source: 'STATIN', responsibleMinistries: ['mof'], note: 'Reflects Hurricane Melissa impact' },
   ],
 };
@@ -173,9 +173,9 @@ const outcome10: NationalOutcome = {
   goalId: 3,
   sdgs: [7],
   indicators: [
-    { id: '10-1', name: 'Energy Intensity Index', unit: 'BTU per US$ GDP', direction: 'lower_is_better', baseline2007: 14587, target2027: 6000, target2030: 4422, latestActual: null, latestPeriod: null, source: 'MSETT', responsibleMinistries: ['energy-transport'] },
-    { id: '10-2', name: 'Renewables in Energy Mix', unit: '%', direction: 'higher_is_better', baseline2007: 5, target2027: 20.0, target2030: 20, latestActual: null, latestPeriod: null, source: 'MSETT', responsibleMinistries: ['energy-transport'] },
-    { id: '10-3', name: 'Renewables in Electricity Generation', unit: '%', direction: 'higher_is_better', baseline2007: 5.2, target2027: 50.0, target2030: 30, latestActual: null, latestPeriod: null, source: 'MSETT', responsibleMinistries: ['energy-transport'] },
+    { id: '10-1', name: 'Energy Intensity Index', unit: 'BTU/US$ GDP', direction: 'lower_is_better', baseline2007: 14587, target2027: 6000, target2030: 4422, latestActual: 7200, latestPeriod: '2024', source: 'MSETT', responsibleMinistries: ['energy-transport'] },
+    { id: '10-2', name: 'Renewables in Energy Mix', unit: '%', direction: 'higher_is_better', baseline2007: 5, target2027: 20.0, target2030: 20, latestActual: 14.8, latestPeriod: '2025', source: 'MSETT', responsibleMinistries: ['energy-transport'] },
+    { id: '10-3', name: 'Renewables in Electricity Generation', unit: '%', direction: 'higher_is_better', baseline2007: 5.2, target2027: 50.0, target2030: 30, latestActual: 13.6, latestPeriod: '2025', source: 'MSETT', responsibleMinistries: ['energy-transport'] },
   ],
 };
 
@@ -185,9 +185,9 @@ const outcome11: NationalOutcome = {
   goalId: 3,
   sdgs: [9],
   indicators: [
-    { id: '11-1', name: 'Scientific Publications per Million', unit: 'Per million population', direction: 'higher_is_better', baseline2007: 48, target2027: 105, target2030: 105, latestActual: null, latestPeriod: null, source: 'SCImago/UNESCO', responsibleMinistries: ['education', 'energy-transport'] },
-    { id: '11-2', name: 'Resident Patent Filing per Million', unit: 'Per million population', direction: 'higher_is_better', baseline2007: 2.2, target2027: 6.1, target2030: 53, latestActual: null, latestPeriod: null, source: 'JIPO', responsibleMinistries: ['industry'] },
-    { id: '11-3', name: 'Global Innovation Index Rank', unit: 'Rank', direction: 'lower_is_better', baseline2007: 52, target2027: 70, target2030: null, latestActual: null, latestPeriod: null, source: 'WIPO', responsibleMinistries: ['energy-transport', 'industry'] },
+    { id: '11-1', name: 'Scientific Publications per Million', unit: 'Per million', direction: 'higher_is_better', baseline2007: 48, target2027: 105, target2030: 105, latestActual: 88, latestPeriod: '2024', source: 'SCImago/UNESCO', responsibleMinistries: ['education', 'energy-transport'] },
+    { id: '11-2', name: 'Resident Patent Filing per Million', unit: 'Per million', direction: 'higher_is_better', baseline2007: 2.2, target2027: 6.1, target2030: 53, latestActual: 2.8, latestPeriod: '2024', source: 'JIPO', responsibleMinistries: ['industry'] },
+    { id: '11-3', name: 'Global Innovation Index Rank', unit: 'Rank', direction: 'lower_is_better', baseline2007: 52, target2027: 70, target2030: null, latestActual: 78, latestPeriod: '2025', source: 'WIPO', responsibleMinistries: ['energy-transport', 'industry'] },
   ],
 };
 
@@ -197,8 +197,8 @@ const outcome12: NationalOutcome = {
   goalId: 3,
   sdgs: [8, 10, 12, 17],
   indicators: [
-    { id: '12-1', name: 'Share of GDP based on PPPs', unit: '%', direction: 'higher_is_better', baseline2007: 0.028, target2027: 0.021, target2030: 0.032, latestActual: null, latestPeriod: null, source: 'World Bank', responsibleMinistries: ['mof', 'industry'] },
-    { id: '12-2', name: 'Travel & Tourism Development Index', unit: 'Rank', direction: 'lower_is_better', baseline2007: 48, target2027: 84, target2030: 35, latestActual: null, latestPeriod: null, source: 'WEF TTDI', responsibleMinistries: ['tourism'] },
+    { id: '12-1', name: 'Share of GDP based on PPPs', unit: '%', direction: 'higher_is_better', baseline2007: 0.028, target2027: 0.021, target2030: 0.032, latestActual: 0.025, latestPeriod: '2024', source: 'World Bank', responsibleMinistries: ['mof', 'industry'] },
+    { id: '12-2', name: 'Travel & Tourism Development Index', unit: 'Rank', direction: 'lower_is_better', baseline2007: 48, target2027: 84, target2030: 35, latestActual: 82, latestPeriod: '2024', source: 'WEF TTDI', responsibleMinistries: ['tourism'] },
   ],
 };
 
@@ -208,7 +208,7 @@ const outcome13: NationalOutcome = {
   goalId: 4,
   sdgs: [6, 11, 12, 14, 15],
   indicators: [
-    { id: '13-1', name: 'Environmental Performance Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 74.7, target2027: 60, target2030: 80, latestActual: null, latestPeriod: null, source: 'Yale/Columbia EPI', responsibleMinistries: ['water-environment'] },
+    { id: '13-1', name: 'Environmental Performance Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 74.7, target2027: 60, target2030: 80, latestActual: 51.3, latestPeriod: '2024', source: 'Yale/Columbia EPI', responsibleMinistries: ['water-environment'] },
   ],
 };
 
@@ -228,10 +228,10 @@ const outcome15: NationalOutcome = {
   goalId: 4,
   sdgs: [1, 11],
   indicators: [
-    { id: '15-1', name: 'Housing Quality Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 68.1, target2027: 86, target2030: 86, latestActual: null, latestPeriod: null, source: 'PIOJ/JSLC', responsibleMinistries: ['economic-growth'] },
-    { id: '15-2', name: 'Households with Access to Secure Tenure', unit: '%', direction: 'higher_is_better', baseline2007: 80.5, target2027: 78.9, target2030: 95, latestActual: null, latestPeriod: null, source: 'PIOJ/JSLC', responsibleMinistries: ['economic-growth'] },
-    { id: '15-3', name: 'Poverty in Rural Areas', unit: '%', direction: 'lower_is_better', baseline2007: 15.3, target2027: 15, target2030: 12, latestActual: null, latestPeriod: null, source: 'PIOJ/JSLC', responsibleMinistries: ['labour', 'economic-growth'] },
-    { id: '15-4', name: 'Parishes with Sustainable Development Plans (<5 yrs)', unit: 'Number', direction: 'higher_is_better', baseline2007: 0, target2027: 14, target2030: 15, latestActual: null, latestPeriod: null, source: 'PIOJ', responsibleMinistries: ['economic-growth'] },
+    { id: '15-1', name: 'Housing Quality Index', unit: 'Index', direction: 'higher_is_better', baseline2007: 68.1, target2027: 86, target2030: 86, latestActual: 74.2, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['economic-growth'] },
+    { id: '15-2', name: 'Households with Secure Tenure', unit: '%', direction: 'higher_is_better', baseline2007: 80.5, target2027: 78.9, target2030: 95, latestActual: 77.0, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['economic-growth'] },
+    { id: '15-3', name: 'Poverty in Rural Areas', unit: '%', direction: 'lower_is_better', baseline2007: 15.3, target2027: 15, target2030: 12, latestActual: 12.8, latestPeriod: '2024', source: 'PIOJ/JSLC', responsibleMinistries: ['labour', 'economic-growth'] },
+    { id: '15-4', name: 'Parishes with Development Plans (<5 yrs)', unit: 'Number', direction: 'higher_is_better', baseline2007: 0, target2027: 14, target2030: 15, latestActual: 9, latestPeriod: '2025', source: 'PIOJ', responsibleMinistries: ['economic-growth'] },
   ],
 };
 
