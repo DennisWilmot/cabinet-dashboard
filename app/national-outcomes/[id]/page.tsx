@@ -1,8 +1,12 @@
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useMemo } from 'react';
+import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { DataFreshness } from '@/components/layout/DataFreshness';
-import { getOutcomeById, getGoalForOutcome, deriveIndicatorStatus, getStatusTooltip } from '@/lib/data/vision2030';
+import { getOutcomeById, getGoalForOutcome, deriveIndicatorStatus, getStatusTooltip, stripIndicatorActuals } from '@/lib/data/vision2030';
+import { useMockData } from '@/lib/context';
 import { ministryRegistry } from '@/lib/data';
 import type { Vision2030Indicator, IndicatorStatus } from '@/lib/types';
 
@@ -77,7 +81,6 @@ function IndicatorCard({ indicator, index }: { indicator: Vision2030Indicator; i
         </div>
       </div>
 
-      {/* Values row */}
       <div className="grid grid-cols-3 gap-[var(--space-sm)] mb-[var(--space-sm)]">
         <div>
           <p className="text-[length:var(--text-micro)] text-text-secondary/40">Baseline 2007</p>
@@ -110,10 +113,8 @@ function IndicatorCard({ indicator, index }: { indicator: Vision2030Indicator; i
         </div>
       </div>
 
-      {/* Progress bar */}
       <ProgressBar indicator={indicator} />
 
-      {/* Footer: notes + ministries */}
       <div className="flex items-center justify-between gap-[var(--space-sm)] mt-[var(--space-sm)]">
         <div className="flex flex-wrap gap-1">
           {ministries.map(name => (
@@ -136,14 +137,17 @@ function IndicatorCard({ indicator, index }: { indicator: Vision2030Indicator; i
   );
 }
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export default function OutcomeDetailPage() {
+  const params = useParams();
+  const outcomeId = parseInt(params.id as string, 10);
+  const rawOutcome = getOutcomeById(outcomeId);
 
-export default async function OutcomeDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  const outcomeId = parseInt(id, 10);
-  const outcome = getOutcomeById(outcomeId);
+  const { mockDataEnabled } = useMockData();
+
+  const outcome = useMemo(() => {
+    if (!rawOutcome) return null;
+    return mockDataEnabled ? rawOutcome : stripIndicatorActuals(rawOutcome);
+  }, [rawOutcome, mockDataEnabled]);
 
   if (!outcome) return notFound();
 
@@ -178,7 +182,6 @@ export default async function OutcomeDetailPage({ params }: PageProps) {
             {outcome.name}
           </h1>
 
-          {/* Status summary */}
           <div className="flex flex-wrap items-center gap-[var(--space-md)] mt-[var(--space-md)] p-[var(--space-sm)] sm:p-[var(--space-md)] rounded-lg bg-surface/70 border border-border-default/50">
             <span className="text-[length:var(--text-caption)] text-text-secondary">
               {counts.total} indicator{counts.total !== 1 ? 's' : ''}
@@ -224,14 +227,12 @@ export default async function OutcomeDetailPage({ params }: PageProps) {
           </div>
         </header>
 
-        {/* Indicator cards grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[var(--space-md)] sm:gap-[var(--space-lg)]">
           {outcome.indicators.map((indicator, i) => (
             <IndicatorCard key={indicator.id} indicator={indicator} index={i} />
           ))}
         </div>
 
-        {/* Footer */}
         <div className="mt-[var(--space-xl)] pt-[var(--space-lg)] border-t border-border-default">
           <p className="text-[length:var(--text-micro)] text-text-secondary/50 leading-relaxed">
             Targets from the Medium-Term Socio-Economic Policy Framework (MTF) 2024-2027.

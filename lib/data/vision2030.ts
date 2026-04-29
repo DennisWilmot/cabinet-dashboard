@@ -284,3 +284,21 @@ export function getOutcomesByMinistry(ministrySlug: string): NationalOutcome[] {
     o.indicators.some(ind => ind.responsibleMinistries.includes(ministrySlug))
   );
 }
+
+export function stripIndicatorActuals(outcome: NationalOutcome): NationalOutcome {
+  return {
+    ...outcome,
+    indicators: outcome.indicators.map(ind => ({
+      ...ind,
+      latestActual: null,
+      latestPeriod: null,
+    })),
+  };
+}
+
+export function stripGoalActuals(goal: NationalGoal): NationalGoal {
+  return {
+    ...goal,
+    outcomes: goal.outcomes.map(stripIndicatorActuals),
+  };
+}

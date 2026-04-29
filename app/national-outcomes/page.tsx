@@ -1,7 +1,11 @@
+'use client';
+
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { DataFreshness } from '@/components/layout/DataFreshness';
-import { vision2030Goals, getOutcomeSummary, deriveIndicatorStatus } from '@/lib/data/vision2030';
+import { vision2030Goals, getOutcomeSummary, deriveIndicatorStatus, stripGoalActuals } from '@/lib/data/vision2030';
+import { useMockData } from '@/lib/context';
 import type { NationalOutcome, Vision2030Indicator, IndicatorStatus } from '@/lib/types';
 
 const STATUS_CONFIG: Record<IndicatorStatus, { dot: string; text: string; label: string; bar: string }> = {
@@ -153,8 +157,15 @@ function OutcomeCard({ outcome }: { outcome: NationalOutcome }) {
 }
 
 export default function NationalOutcomesPage() {
-  const totalIndicators = vision2030Goals.flatMap(g => g.outcomes).flatMap(o => o.indicators).length;
-  const allIndicators = vision2030Goals.flatMap(g => g.outcomes).flatMap(o => o.indicators);
+  const { mockDataEnabled } = useMockData();
+
+  const goals = useMemo(() =>
+    mockDataEnabled ? vision2030Goals : vision2030Goals.map(stripGoalActuals),
+    [mockDataEnabled]
+  );
+
+  const totalIndicators = goals.flatMap(g => g.outcomes).flatMap(o => o.indicators).length;
+  const allIndicators = goals.flatMap(g => g.outcomes).flatMap(o => o.indicators);
   const allStatuses = allIndicators.map(deriveIndicatorStatus);
   const globalSummary = {
     onTrack: allStatuses.filter(s => s === 'on_track').length,
@@ -177,7 +188,8 @@ export default function NationalOutcomesPage() {
             Vision 2030 National Outcomes
           </h1>
           <p className="text-text-secondary text-[length:var(--text-caption)] sm:text-[length:var(--text-body)] mt-[var(--space-xs)]">
-            {vision2030Goals.length} goals · 15 outcomes · {totalIndicators} indicators · MTF 2024-2027 targets
+            {goals.length} goals · 15 outcomes · {totalIndicators} indicators · MTF 2024-2027 targets
+            {mockDataEnabled && ' · Mock data enabled'}
           </p>
 
           {/* Global status summary */}
@@ -205,7 +217,7 @@ export default function NationalOutcomesPage() {
           </div>
         </header>
 
-        {vision2030Goals.map((goal, gi) => (
+        {goals.map((goal, gi) => (
           <section key={goal.id} className="mb-[var(--space-xl)] sm:mb-[var(--space-2xl)]">
             <div className="mb-[var(--space-md)] sm:mb-[var(--space-lg)]">
               <p className="text-[length:var(--text-micro)] font-semibold uppercase tracking-wider text-text-secondary/50">
